@@ -5,6 +5,7 @@ import "./globals.css";
 
 // 1. Importa tu nuevo componente Header
 import Header from "@/components/Header";
+import Footer from '@/components/Footer';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,14 +21,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={inter.className}>
-        {/* 2. Añade el Header aquí, antes de {children} */}
-        <Header />
-        
-        {/* {children} es donde se renderizará el contenido de cada página */}
-        <main className="container mx-auto p-6">
-          {children}
-        </main>
+      <body className={`${inter.className} flex flex-col min-h-screen`}>
+        <div className="flex-grow">
+          {/* 2. Añade el Header aquí, antes de {children} */}
+          <Header />
+          
+          {/* {children} es donde se renderizará el contenido de cada página */}
+          <main className="container mx-auto p-6">
+            {children}
+          </main>
+        </div>
+        <Footer />
       </body>
     </html>
   );

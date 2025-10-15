@@ -1,4 +1,4 @@
-import type { Product } from '@/types';
+import type { Product } from '@/types'; // Asegúrate de que este import ahora apunte a tu nuevo archivo de tipos
 import Catalog from "@/components/Catalog";
 import Banner from '@/components/Banner';
 
