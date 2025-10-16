@@ -1,12 +1,19 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 const Footer = () => {
   return (
     <footer className="bg-white mt-12">
       <div className="container mx-auto px-6 py-8">
         <div className="flex flex-col items-center text-center">
-          <Link href="/" className="text-2xl font-bold text-primary hover:text-accent">
-            two-six-web
+          <Link href="/">
+            <Image
+              src="/logo.png"
+              alt="two-six-web Logo"
+              width={120}
+              height={40}
+              className="h-auto w-auto"
+            />
           </Link>
 
           <div className="flex justify-center mt-4">

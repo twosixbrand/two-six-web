@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
  const Header = () => {
   // Estado para controlar la visibilidad del menú móvil
@@ -22,8 +23,14 @@ import Link from 'next/link';
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
         {/* Logo o Nombre de la Tienda */}
-        <Link href="/" className="text-2xl font-bold text-primary hover:text-accent">
-          two-six-web
+        <Link href="/">
+          <Image
+            src="/logo.png" // Next.js busca esto en la carpeta /public
+            alt="two-six-web Logo"
+            width={300} // Ajusta el ancho según el tamaño de tu logo
+            height={100} // Ajusta la altura según el tamaño de tu logo
+            className="h-auto w-auto" // Mantiene la proporción de la imagen
+          />
         </Link>
 
         {/* Menú para Escritorio (Desktop) */}
