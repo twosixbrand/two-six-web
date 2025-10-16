@@ -1,9 +1,9 @@
 import Catalog from "@/components/Catalog";
 import Banner from "@/components/Banner";
-import { getProductsByCategory } from '@/data/products';
+import { prisma } from "@/lib/db";
 
-export default function ManPage() {
-  const products = getProductsByCategory('hombre');
+export default async function ManPage() {
+  const products = await prisma.product.findMany({ where: { category: 'HOMBRE' } });
 
   return (
     <>
