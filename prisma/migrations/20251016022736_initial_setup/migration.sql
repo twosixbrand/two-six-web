@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Category" AS ENUM ('HOMBRE', 'MUJER');
+CREATE TYPE "Category" AS ENUM ('HOMBRE', 'MUJER','OUTLET');
 
 -- CreateTable
 CREATE TABLE "Product" (

@@ -1,14 +1,24 @@
 import Banner from "@/components/Banner";
+import Catalog from "@/components/Catalog";
+import { prisma } from "@/lib/db";
 
-export default function Home() {
+export default async function HomePage() {
+  // En un caso real, filtrarías por productos con descuento.
+  // Por ahora, tomaremos los 4 primeros productos como ejemplo.
+  const products = await prisma.product.findMany({
+    take: 4,
+  });
+
   return (
     <>
       <Banner
-        imageUrl="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=80"
-        title="two-six-web"
-        subtitle="Estilo que define tu historia"
+        imageUrl="/banner-two-six.png"
+        title=""
+        subtitle=""
       />
-      {/* Aquí puedes añadir secciones de productos destacados, etc. */}
+      <div className="container mx-auto px-6 py-12">
+        <Catalog products={products} />
+      </div>
     </>
   );
 }

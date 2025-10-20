@@ -1,11 +1,17 @@
 "use client"; // Directiva para indicar que es un Componente de Cliente
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
- const Header = () => {
+interface HeaderProps {
+  showOutletLink: boolean;
+}
+
+ const Header = ({ showOutletLink }: HeaderProps) => {
   // Estado para controlar la visibilidad del menú móvil
+  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Efecto para cerrar el menú si la pantalla se agranda
@@ -36,13 +42,35 @@ import Image from 'next/image';
         {/* Menú para Escritorio (Desktop) */}
         <ul className="hidden md:flex items-center space-x-6">
           <li>
-            <Link href="/man" className="text-primary hover:text-accent font-semibold transition-colors duration-300">
+            <Link href="/" className={`font-semibold transition-colors duration-300 ${pathname === '/' ? 'text-accent' : 'text-primary hover:text-accent'}`}>
+              Inicio
+            </Link>
+          </li>
+          <li>
+            <Link href="/man" className={`font-semibold transition-colors duration-300 ${pathname === '/man' ? 'text-accent' : 'text-primary hover:text-accent'}`}>
               Hombre
             </Link>
           </li>
           <li>
-            <Link href="/woman" className="text-primary hover:text-accent font-semibold transition-colors duration-300">
+            <Link href="/woman" className={`font-semibold transition-colors duration-300 ${pathname === '/woman' ? 'text-accent' : 'text-primary hover:text-accent'}`}>
               Mujer
+            </Link>
+          </li>
+          {showOutletLink && (
+            <li>
+              <Link href="/outlet" className={`font-semibold transition-colors duration-300 ${pathname === '/outlet' ? 'text-accent' : 'text-primary hover:text-accent'}`}>
+                Outlet
+              </Link>
+            </li>
+          )}
+          <li>
+            <Link href="/about" className={`font-semibold transition-colors duration-300 ${pathname === '/about' ? 'text-accent' : 'text-primary hover:text-accent'}`}>
+              Nosotros
+            </Link>
+          </li>
+          <li>
+            <Link href="/contact" className={`font-semibold transition-colors duration-300 ${pathname === '/contact' ? 'text-accent' : 'text-primary hover:text-accent'}`}>
+              Contacto
             </Link>
           </li>
         </ul>
@@ -69,13 +97,35 @@ import Image from 'next/image';
       >
         <ul className="flex flex-col items-center space-y-6 py-6">
           <li>
-            <Link href="/man" onClick={() => setIsMenuOpen(false)} className="text-lg text-primary hover:text-accent font-semibold">
+            <Link href="/" onClick={() => setIsMenuOpen(false)} className={`text-lg font-semibold ${pathname === '/' ? 'text-accent' : 'text-primary hover:text-accent'}`}>
+              Inicio
+            </Link>
+          </li>
+          <li>
+            <Link href="/man" onClick={() => setIsMenuOpen(false)} className={`text-lg font-semibold ${pathname === '/man' ? 'text-accent' : 'text-primary hover:text-accent'}`}>
               Hombre
             </Link>
           </li>
           <li>
-            <Link href="/woman" onClick={() => setIsMenuOpen(false)} className="text-lg text-primary hover:text-accent font-semibold">
+            <Link href="/woman" onClick={() => setIsMenuOpen(false)} className={`text-lg font-semibold ${pathname === '/woman' ? 'text-accent' : 'text-primary hover:text-accent'}`}>
               Mujer
+            </Link>
+          </li>
+          {showOutletLink && (
+            <li>
+              <Link href="/outlet" onClick={() => setIsMenuOpen(false)} className={`text-lg font-semibold ${pathname === '/outlet' ? 'text-accent' : 'text-primary hover:text-accent'}`}>
+                Outlet
+              </Link>
+            </li>
+          )}
+          <li>
+            <Link href="/about" onClick={() => setIsMenuOpen(false)} className={`text-lg font-semibold ${pathname === '/about' ? 'text-accent' : 'text-primary hover:text-accent'}`}>
+              Nosotros
+            </Link>
+          </li>
+          <li>
+            <Link href="/contact" onClick={() => setIsMenuOpen(false)} className={`text-lg font-semibold ${pathname === '/contact' ? 'text-primary hover:text-accent' : 'text-accent'}`}>
+              Contacto
             </Link>
           </li>
         </ul>
