@@ -14,6 +14,7 @@ datasource db {
 enum Category {
   HOMBRE
   MUJER
+  OUTLET
 }
 
 // Modelo para la tabla de Productos
@@ -26,4 +27,12 @@ model Product {
   category    Category
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// Modelo para registrar errores en la aplicación
+model ErrorLog {
+  id        Int      @id @default(autoincrement())
+  message   String   @db.Text
+  stack     String?  @db.Text
+  createdAt DateTime @default(now())
 }
