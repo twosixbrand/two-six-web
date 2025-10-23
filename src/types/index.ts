@@ -3,6 +3,6 @@ export interface Product {
   name: string;
   price: number;
   imageUrl: string;
-  category: "HOMBRE" | "MUJER" | "OUTLET";
+  gender: "HOMBRE" | "MUJER";
   description: string;
 }

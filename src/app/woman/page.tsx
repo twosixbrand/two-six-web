@@ -1,9 +1,10 @@
 import Catalog from "@/components/Catalog";
 import Banner from "@/components/Banner";
-import { prisma } from "@/lib/db";
+import { getProducts } from "@/data/products";
 
 export default async function WomanPage() {
-  const products = await prisma.product.findMany({ where: { category: 'MUJER' } });
+  // Obtenemos productos de la categoría MUJER que no sean de OUTLET
+  const products = await getProducts({ gender: 'MUJER', isOutlet: false });
 
   return (
     <>
