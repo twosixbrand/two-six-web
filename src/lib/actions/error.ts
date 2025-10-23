@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/lib/db";
+import { apiClient } from "@/lib/api-client";
 
 interface ErrorDetails {
   message: string;
@@ -9,15 +9,15 @@ interface ErrorDetails {
 
 export async function logError(details: ErrorDetails) {
   try {
-    await prisma.errorLog.create({
-      data: {
+    await apiClient('/logs/error', {
+      method: 'POST',
+      body: JSON.stringify({
         message: details.message,
-        stack: details.stack,
-      },
+        stack: details.stack ?? 'No stack trace available',
+      }),
     });
-  } catch (dbError) {
-    console.error("PANIC: Failed to log error to database.", dbError);
+  } catch (apiError) {
+    console.error("PANIC: Failed to log error to API.", apiError);
     console.error("Original error that was not logged:", details);
   }
 }
-

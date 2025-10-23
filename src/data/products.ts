@@ -1,49 +1,54 @@
 import type { Product } from '@/types';
+import { logError } from '@/lib/actions/error';
+import { apiClient } from '@/lib/api-client';
 
-export const products: Product[] = [
-  // Hombre
-  {
-    id: 1,
-    name: "Camisa Casual de Lino",
-    price: 45.0,
-    imageUrl: "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=500&q=80",
-    category: "HOMBRE",
-    description: "Una camisa de lino ligera y transpirable, perfecta para climas cálidos. Su corte moderno y tejido de alta calidad la convierten en un básico imprescindible en cualquier armario.",
-  },
-  {
-    id: 2,
-    name: "Pantalón Chino Slim Fit",
-    price: 60.0,
-    imageUrl: "https://images.unsplash.com/photo-1604176354204-9268737828e4?w=500&q=80",
-    category: "HOMBRE",
-    description: "Pantalón chino de corte slim fit, fabricado con algodón elástico para mayor comodidad. Versátil y elegante, ideal tanto para la oficina como para el fin de semana.",
-  },
-  // ... más productos de hombre
+export const getProducts = async (options?: { gender?: Product['gender'], take?: number, isOutlet?: boolean }): Promise<Product[]> => {
+  try {
+    // Construimos los parámetros de forma limpia, eliminando los indefinidos.
+    const params: Record<string, any> = {};
+    if (options?.gender) params.gender = options.gender;
+    if (options?.take) params.take = options.take;
+    if (typeof options?.isOutlet === 'boolean') params.isOutlet = options.isOutlet;
 
-  // Mujer
-  { 
-    id: 5, 
-    name: 'Blusa Elegante de Seda', 
-    price: 50.00, 
-    imageUrl: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=500&q=80', 
-    category: 'MUJER',
-    description: "Blusa de seda con un tacto suave y una caída impecable. Su diseño minimalista y cuello en V la hacen perfecta para cualquier ocasión, desde una reunión de trabajo hasta una cena especial."
-  },
-  { 
-    id: 6, 
-    name: 'Jeans Skinny de Tiro Alto', 
-    price: 65.00, 
-    imageUrl: 'https://images.unsplash.com/photo-1603217041431-9a99374797c3?w=500&q=80', 
-    category: 'OUTLET',
-    description: "Jeans skinny de tiro alto que realzan la figura. Fabricados con un tejido denim elástico que ofrece comodidad y estilo durante todo el día."
-  },
-  // ... más productos de mujer
-];
-
-export const getProductsByCategory = (category: Product['category']) => {
-  return products.filter(product => product.category === category);
+    return await apiClient<Product[]>('/products', { params });
+  } catch (error) {
+    console.error(error);
+    await logError({
+      message: `Fallo en getProducts con opciones: ${JSON.stringify(options)}`,
+      stack: error instanceof Error ? error.stack : String(error),
+    });
+    return [];
+  }
 };
 
-export const getProductById = (id: number) => {
-  return products.find(product => product.id === id);
+export const getProductsByGender = async (gender: Product['gender']): Promise<Product[]> => {
+  try {
+    return await getProducts({ gender });
+  } catch (error) {
+    console.error(error);
+    await logError({
+      message: `Fallo en getProductsByGender para el género: ${gender}`,
+      stack: error instanceof Error ? error.stack : String(error),
+    });
+    return [];
+  }
+};
+
+export const getProductById = async (id: number): Promise<Product | null> => {
+  try {
+    return await apiClient<Product>(`/products/${id}`);
+  } catch (error) {
+    // El nuevo apiClient lanzará un error que podemos inspeccionar.
+    // Si el backend devuelve 404, el error lo indicará.
+    if (error instanceof Error && error.message.includes('404')) {
+      return null;
+    }
+
+    console.error(error);
+    await logError({
+      message: `Fallo en getProductById para el id: ${id}`,
+      stack: error instanceof Error ? error.stack : String(error),
+    });
+    return null;
+  }
 };

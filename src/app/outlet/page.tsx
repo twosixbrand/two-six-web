@@ -1,11 +1,10 @@
 import Catalog from "@/components/Catalog";
 import Banner from "@/components/Banner";
-import { prisma } from "@/lib/db";
+import { getProducts } from "@/data/products";
 
 export default async function OutletPage() {
-  const products = await prisma.product.findMany({
-    where: { category: "OUTLET" },
-  });
+  // Obtenemos todos los productos que están marcados como outlet
+  const products = await getProducts({ isOutlet: true });
   return (
     <>
       <Banner

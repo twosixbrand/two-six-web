@@ -1,12 +1,19 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import type { Product } from '@prisma/client';
+import type { Product } from '@/types';
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const formattedPrice = new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    minimumFractionDigits: 0, // No mostrar centavos
+    maximumFractionDigits: 0, // No mostrar centavos
+  }).format(product.price);
+
   return (
     <Link href={`/product/${product.id}`} className="group block overflow-hidden">
       <div className="relative h-[350px] sm:h-[450px]">
@@ -19,7 +26,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
       </div>
       <div className="relative mt-3">
         <h3 className="text-sm text-primary/90 group-hover:underline group-hover:underline-offset-4">{product.name}</h3>
-        <p className="mt-1.5 tracking-wider text-primary font-semibold">${product.price.toFixed(2)}</p>
+        <p className="mt-1.5 tracking-wider text-primary font-semibold">
+          {formattedPrice}
+        </p>
       </div>
     </Link>
   );

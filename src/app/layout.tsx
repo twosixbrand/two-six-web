@@ -4,8 +4,8 @@ import { Inter } from "next/font/google";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import "./globals.css";
 import Header from "@/components/Header";
-import { prisma } from "@/lib/db";
 import Footer from "@/components/Footer";
+import { getProducts } from "@/data/products";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,11 +19,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const outletProductCount = await prisma.product.count({
-    where: {
-      category: "OUTLET",
-    },
-  });
+  // Obtenemos los productos de outlet y contamos su longitud
+  // Consultamos si existen productos de outlet para mostrar el enlace en el menú
+  const outletProducts = await getProducts({ isOutlet: true });
+  const outletProductCount = outletProducts.length;
   const showOutletLink = outletProductCount > 0;
 
   return (

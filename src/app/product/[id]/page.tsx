@@ -4,7 +4,7 @@ import { getProductById } from '@/data/products';
 
 // Esta función genera metadatos dinámicos para el <head> de la página
 export async function generateMetadata({ params }: { params: { id: string } }) {
-  const product = getProductById(Number(params.id));
+  const product = await getProductById(Number(params.id));
 
   if (!product) {
     return {
@@ -18,8 +18,8 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   };
 }
 
-export default function ProductDetailPage({ params }: { params: { id: string } }) {
-  const product = getProductById(Number(params.id));
+export default async function ProductDetailPage({ params }: { params: { id: string } }) {
+  const product = await getProductById(Number(params.id));
 
   // Si el producto no existe, muestra la página 404 de Next.js
   if (!product) {
@@ -27,6 +27,13 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
   }
 
   const availableSizes = ['XS', 'S', 'M', 'L', 'XL'];
+
+  const formattedPrice = new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(product.price);
 
   return (
     <section className="py-8 md:py-16">
@@ -44,7 +51,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
         {/* Columna de Información */}
         <div className="flex flex-col justify-center">
           <h1 className="text-3xl md:text-4xl font-bold text-primary">{product.name}</h1>
-          <p className="mt-2 text-2xl font-semibold text-accent">${product.price.toFixed(2)}</p>
+          <p className="mt-2 text-2xl font-semibold text-accent">{formattedPrice}</p>
           
           <p className="mt-4 text-base text-primary/80 leading-relaxed">{product.description}</p>
 
