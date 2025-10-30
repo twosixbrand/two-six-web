@@ -1,65 +1,24 @@
 "use client";
 
-import Banner from "@/components/Banner";
 import { useActionState } from "react";
-import { useFormStatus } from "react-dom";
 import { sendContactEmail, type FormState } from "./actions";
+import { SubmitButton } from "@/components/SubmitButton";
+import Banner from "@/components/Banner";
 
-const initialState: FormState = { success: false, message: "" };
+const initialState: FormState = {
+  success: false,
+  message: "",
+};
 
-export default function ContactPage() {
+export default function ContactPage() {  
   return (
     <>
       <Banner
-        imageUrl="https://images.unsplash.com/photo-1534536281715-e28d76689b4d?w=1200&q=80"
+        imageUrl="https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?w=1200&q=80"
         title="Contacto"
-        subtitle="Estamos aquí para ayudarte"
+        subtitle="Estamos aquí para ayudarte. ¡Hablemos!"
       />
-
-      <div className="container mx-auto px-6 py-12">
-        <div className="grid md:grid-cols-2 gap-12 items-start">
-          {/* Formulario de Contacto */}
-          <div>
-            <h2 className="text-2xl font-bold text-primary mb-6">Envíanos un mensaje</h2>
-            <ContactForm />
-          </div>
-
-          {/* Información de Contacto */}
-          <div className="bg-secondary p-8 rounded-lg">
-            <h2 className="text-2xl font-bold text-primary mb-6">
-              Información Adicional
-            </h2>
-            <div className="space-y-4 text-primary/90">
-              <p>
-                <strong>Correo Electrónico:</strong>
-                <a
-                  href="mailto:twosixmarca@gmail.com"
-                  className="block text-accent hover:underline"
-                >
-                  twosixmarca@gmail.com
-                </a>
-              </p>
-              <p>
-                <strong>WhatsApp:</strong>
-                <a
-                  href="https://wa.me/3013975582"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-accent hover:underline"
-                >
-                  +57 301 397 5582
-                </a>
-              </p>
-              <p>
-                <strong>Horario de Atención:</strong>
-                <span className="block">
-                  Lunes a Viernes: 9:00 AM - 6:00 PM
-                </span>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ContactForm />
     </>
   );
 }
@@ -68,41 +27,76 @@ function ContactForm() {
   const [state, formAction] = useActionState(sendContactEmail, initialState);
 
   return (
-    <form action={formAction} className="space-y-6">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-primary/90">Nombre</label>
-                <input type="text" id="name" name="name" className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-accent focus:border-accent" />
-              </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-primary/90">Correo Electrónico</label>
-                <input type="email" id="email" name="email" className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-accent focus:border-accent" />
-              </div>
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium text-primary/90">Mensaje</label>
-                <textarea id="message" name="message" rows={4} className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-accent focus:border-accent"></textarea>
-              </div>
-              <div>
-        <SubmitButton />
-              </div>
-      {state.message && (
-        <p className={`mt-4 text-sm ${state.success ? 'text-green-600' : 'text-red-600'}`}>
-          {state.message}
-        </p>
-      )}
-    </form>
-  );
-}
+    <section className="container mx-auto px-6 py-16 md:py-24">
+      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 lg:gap-16">
+        {/* Columna de Información */}
+        <div className="flex flex-col justify-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-primary">Ponte en contacto</h2>
+          <p className="mt-4 text-lg text-gray-600 leading-relaxed">
+            ¿Tienes alguna pregunta sobre nuestros productos, tu pedido o simplemente quieres saludarnos? Completa el formulario y nuestro equipo se pondrá en contacto contigo lo antes posible.
+          </p>
+          <div className="mt-8 space-y-4 text-gray-700">
+            <div className="flex items-center">
+              <svg className="w-6 h-6 text-accent mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+              <span>Medellín, Colombia</span>
+            </div>
+            <div className="flex items-center">
+              <svg className="w-6 h-6 text-accent mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+              <a href="mailto:info@twosixbrand.com" className="hover:text-accent">info@twosixbrand.com</a>
+            </div>
+          </div>
+        </div>
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="w-full bg-accent text-white font-bold py-3 px-6 rounded-lg hover:bg-accent-hover transition-colors duration-300 shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
-    >
-      {pending ? "Enviando..." : "Enviar Mensaje"}
-    </button>
+        {/* Columna del Formulario */}
+        <div className="bg-white p-8 rounded-lg shadow-lg">
+          <form action={formAction} className="space-y-6">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-primary">
+                Nombre Completo
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-accent focus:border-accent"
+              />
+            </div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-primary">
+                Correo Electrónico
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-accent focus:border-accent"
+              />
+            </div>
+            <div>
+              <label htmlFor="message" className="block text-sm font-medium text-primary">
+                Mensaje
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                rows={5}
+                required
+                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-accent focus:border-accent"
+              ></textarea>
+            </div>
+            <div>
+              <SubmitButton text="Enviar Mensaje" pendingText="Enviando..." />
+            </div>
+            {state.message && (
+              <p className={`text-sm ${state.success ? 'text-green-600' : 'text-red-600'}`}>
+                {state.message}
+              </p>
+            )}
+          </form>
+        </div>
+      </div>
+    </section>
   );
 }
