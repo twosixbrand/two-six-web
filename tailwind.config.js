@@ -8,7 +8,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#313835", // Tu nuevo color oscuro para texto principal
+        primary: "#000000", // Tu nuevo color oscuro para texto principal
         secondary: "#f7f5f0", // Un blanco cálido para fondos, complementa los dorados
         accent: {
           DEFAULT: "#c09549", // Tu dorado más oscuro para botones y enlaces
