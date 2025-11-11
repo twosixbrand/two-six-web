@@ -20,7 +20,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
       {/* Contenedor para el efecto de zoom */}
       <div className="relative overflow-hidden rounded-lg">
         <Image
-          src={product.imageUrl}
+          src={product.image_url || '/placeholder.png'}
           alt={product.name}
           width={500}
           height={650}

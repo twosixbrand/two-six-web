@@ -4,7 +4,7 @@ import { getProducts } from "@/data/products";
 
 export default async function ManPage() {
   // Obtenemos productos de la categoría HOMBRE que no sean de OUTLET
-  const products = await getProducts({ gender: 'HOMBRE', isOutlet: false });
+  const products = await getProducts({ gender: 'MASCULINO', isOutlet: false });
 
   return (
     <>

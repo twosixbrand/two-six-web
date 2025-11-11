@@ -54,7 +54,7 @@ const Footer = () => {
                   className="text-white/80 group-hover:text-accent"
                 />
               </SocialLink>
-              <SocialLink href="https://wa.me/3108777629" label="WhatsApp">
+              <SocialLink href="https://wa.me/+573108777629" label="WhatsApp">
                 <Image
                   src="/whatsApp.svg"
                   alt="WhatsApp"
@@ -116,6 +116,12 @@ const Footer = () => {
               className="text-white/80 hover:text-accent transition-colors"
             >
               Mujer
+            </Link>
+             <Link
+              href="/unisex"
+              className="text-white/80 hover:text-accent transition-colors"
+            >
+              Unisex
             </Link>
             <Link
               href="/about"
