@@ -1,9 +1,9 @@
 import { logError } from './actions/error';
 
-const API_URL = process.env.API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 if (!API_URL) {
-  throw new Error('La variable de entorno API_URL no está definida.');
+  throw new Error('La variable de entorno NEXT_PUBLIC_API_URL no está definida.');
 }
 
 type FetchOptions = RequestInit & {

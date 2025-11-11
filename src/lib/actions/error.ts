@@ -9,7 +9,7 @@ interface ErrorDetails {
 
 export async function logError(details: ErrorDetails) {
   try {
-    await apiClient('/logs/error', {
+    await apiClient('/error-log', {
       method: 'POST',
       body: JSON.stringify({
         message: details.message,
