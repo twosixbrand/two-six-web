@@ -9,7 +9,7 @@ export const getProducts = async (options?: {
 }): Promise<Product[]> => {
   try {
     // Construimos los parámetros de forma limpia, eliminando los indefinidos.
-    const params: Record<string, any> = {};
+    const params: Record<string, string | number | boolean> = {};
     if (options?.gender) params.gender = options.gender;
     if (options?.take) params.take = options.take;
     if (typeof options?.isOutlet === "boolean")

@@ -1,7 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
 
-const Footer = () => {
+// 1. Definir la interfaz para las props del componente
+interface FooterProps {
+  showOutletLink: boolean;
+}
+
+const Footer = ({ showOutletLink }: FooterProps) => {
   return (
     <footer className="bg-primary text-white mt-16">
       <div className="container mx-auto px-8 py-12">
@@ -123,6 +128,15 @@ const Footer = () => {
             >
               Unisex
             </Link>
+            {/* 2. Usar la prop para mostrar el enlace al Outlet condicionalmente */}
+            {showOutletLink && (
+              <Link
+                href="/outlet"
+                className="text-red-500 hover:text-red-400 transition-colors"
+              >
+                Outlet
+              </Link>
+            )}
             <Link
               href="/about"
               className="text-white/80 hover:text-accent transition-colors"

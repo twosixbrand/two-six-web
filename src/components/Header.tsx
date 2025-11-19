@@ -5,11 +5,15 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import Image from "next/image";
 
-const Header = () => {
+// 1. Definir la interfaz para las props del componente
+interface HeaderProps {
+  showOutletLink: boolean;
+}
+
+const Header = ({ showOutletLink }: HeaderProps) => {
   // Estado para controlar la visibilidad del menú móvil
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { itemCount } = useCart();
-
 
   // Efecto para cerrar el menú si la pantalla se agranda
   useEffect(() => {
@@ -207,6 +211,18 @@ const Header = () => {
               Unisex
             </Link>
           </li>
+          {/* 3. Añadir el enlace al Outlet también en el menú móvil */}
+          {showOutletLink && (
+            <li>
+              <Link
+                href="/outlet"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-lg font-medium uppercase tracking-wider text-red-500"
+              >
+                Outlet
+              </Link>
+            </li>
+          )}
         </ul>
       </div>
     </header>
