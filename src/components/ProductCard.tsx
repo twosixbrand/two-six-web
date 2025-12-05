@@ -1,5 +1,8 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 import type { Product } from '@/types';
 
 interface ProductCardProps {
@@ -7,6 +10,8 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const [imgSrc, setImgSrc] = useState(product.image_url || '/placeholder.png');
+
   // Formatea el precio a la moneda local (Peso Colombiano) sin decimales.
   const formattedPrice = new Intl.NumberFormat('es-CO', {
     style: 'currency',
@@ -20,11 +25,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
       {/* Contenedor para el efecto de zoom */}
       <div className="relative overflow-hidden rounded-lg">
         <Image
-          src={product.image_url || '/placeholder.png'}
+          src={imgSrc}
           alt={product.name}
           width={500}
           height={650}
           className="w-full object-cover aspect-[3/4] transition-transform duration-300 ease-in-out group-hover:scale-105"
+          onError={() => setImgSrc('/placeholder.png')}
         />
       </div>
       <div className="mt-4">

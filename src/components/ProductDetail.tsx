@@ -44,15 +44,13 @@ export default function ProductDetail({
       >
         <h3 className="font-semibold text-primary">{title}</h3>
         <ChevronDownIcon
-          className={`w-5 h-5 transition-transform ${
-            openAccordion === id ? "rotate-180" : ""
-          }`}
+          className={`w-5 h-5 transition-transform ${openAccordion === id ? "rotate-180" : ""
+            }`}
         />
       </button>
       <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          openAccordion === id ? "max-h-screen py-4" : "max-h-0"
-        }`}
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${openAccordion === id ? "max-h-screen py-4" : "max-h-0"
+          }`}
       >
         {children}
       </div>
@@ -146,6 +144,7 @@ export default function ProductDetail({
                 fill
                 className="object-cover transition-opacity duration-300"
                 key={imageUrl} // Forza a Next/Image a recargar al cambiar la imagen
+                onError={() => setImageUrl("/placeholder.png")}
               />
             </div>
           </div>
@@ -153,7 +152,7 @@ export default function ProductDetail({
           {/* Columna de Información (ocupa 3 de 5 columnas en LG) */}
           <div className="lg:col-span-3 flex flex-col justify-center">
             <h1 className="text-3xl md:text-4xl font-bold text-primary">
-              {initialProduct.designClothing.design.name}
+              {initialProduct.name}
             </h1>
             <p className="mt-2 text-2xl font-semibold text-accent">
               {formattedPrice}
@@ -240,7 +239,7 @@ export default function ProductDetail({
               }
             >
               {selectedVariant &&
-              selectedVariant.designClothing.quantity_available > 0
+                selectedVariant.designClothing.quantity_available > 0
                 ? "Añadir al Carrito"
                 : "Agotado"}
             </button>
