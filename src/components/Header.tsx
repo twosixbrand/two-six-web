@@ -71,6 +71,15 @@ const Header = ({ showOutletLink }: HeaderProps) => {
               <span className="absolute -bottom-2 left-0 w-full h-0.5 bg-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></span>
             </Link>
           </li>
+          <li>
+            <Link
+              href="/tracking"
+              className="text-sm font-medium uppercase tracking-wider text-primary transition-colors duration-300 relative group"
+            >
+              Rastrear Pedido
+              <span className="absolute -bottom-2 left-0 w-full h-0.5 bg-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></span>
+            </Link>
+          </li>
         </ul>
 
         {/* Iconos de Acción */}
@@ -179,9 +188,8 @@ const Header = ({ showOutletLink }: HeaderProps) => {
 
       {/* Menú Desplegable para Móvil */}
       <div
-        className={`md:hidden bg-white absolute w-full shadow-xl transition-all duration-300 ease-in-out overflow-hidden ${
-          isMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
-        }`}
+        className={`md:hidden bg-white absolute w-full shadow-xl transition-all duration-300 ease-in-out overflow-hidden ${isMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+          }`}
       >
         <ul className="flex flex-col items-center space-y-6 py-6">
           <li>
@@ -209,6 +217,15 @@ const Header = ({ showOutletLink }: HeaderProps) => {
               className="text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
             >
               Unisex
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/tracking"
+              onClick={() => setIsMenuOpen(false)}
+              className="text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
+            >
+              Rastrear Pedido
             </Link>
           </li>
           {/* 3. Añadir el enlace al Outlet también en el menú móvil */}

@@ -1,9 +1,8 @@
 "use client";
 
 import { useCart } from "@/context/CartContext";
-import Image from "next/image";
+import CartItem from "@/components/CartItem";
 import Link from "next/link";
-import { TrashIcon, PlusIcon, MinusIcon } from "@heroicons/react/24/solid";
 
 export default function CartPage() {
   const { cartItems, itemCount, cartTotal, removeFromCart, updateQuantity } = useCart();
@@ -38,57 +37,13 @@ export default function CartPage() {
           {/* Columna de Items del Carrito */}
           <div className="lg:col-span-2 space-y-6">
             {cartItems.map((item) => (
-              <div key={item.id} className="flex items-center bg-white p-4 rounded-lg shadow-md">
-                {/* Imagen */}
-                <div className="relative w-24 h-24 rounded-md overflow-hidden mr-6">
-                  <Image
-                    src={item.image_url || '/placeholder.png'}
-                    alt={item.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-
-                {/* Detalles del Producto */}
-                <div className="flex-grow">
-                  <h2 className="font-bold text-primary">{item.name}</h2>
-                  <p className="text-sm text-primary/70">
-                    Color: {item.designClothing.color.name} / Talla: {item.designClothing.size.name}
-                  </p>
-                  <p className="text-accent font-semibold mt-1">{formatPrice(item.price)}</p>
-                </div>
-
-                {/* Controles de Cantidad */}
-                <div className="flex items-center space-x-3 mx-6">
-                  <button
-                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                    className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition"
-                    aria-label="Reducir cantidad"
-                  >
-                    <MinusIcon className="w-4 h-4 text-primary" />
-                  </button>
-                  <span className="w-8 text-center font-medium">{item.quantity}</span>
-                  <button
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                    className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition"
-                    aria-label="Aumentar cantidad"
-                  >
-                    <PlusIcon className="w-4 h-4 text-primary" />
-                  </button>
-                </div>
-
-                {/* Subtotal y Botón de Eliminar */}
-                <div className="text-right">
-                  <p className="font-bold text-primary mb-2">{formatPrice(item.price * item.quantity)}</p>
-                  <button
-                    onClick={() => removeFromCart(item.id)}
-                    className="text-red-500 hover:text-red-700 transition"
-                    aria-label={`Eliminar ${item.name}`}
-                  >
-                    <TrashIcon className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
+              <CartItem
+                key={item.id}
+                item={item}
+                updateQuantity={updateQuantity}
+                removeFromCart={removeFromCart}
+                formatPrice={formatPrice}
+              />
             ))}
           </div>
 
@@ -96,7 +51,7 @@ export default function CartPage() {
           <div className="lg:col-span-1">
             <div className="bg-white p-6 rounded-lg shadow-md sticky top-24">
               <h2 className="text-xl font-bold text-primary border-b pb-4 mb-4">Resumen del Pedido</h2>
-              
+
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-primary/80">Subtotal</span>
@@ -115,9 +70,9 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <button className="mt-6 w-full bg-accent text-white font-bold py-3 rounded-lg hover:bg-accent-hover transition-colors duration-300 shadow-md">
+              <Link href="/checkout" className="block mt-6 w-full bg-accent text-white font-bold py-3 rounded-lg hover:bg-accent-hover transition-colors duration-300 shadow-md text-center">
                 Finalizar Compra
-              </button>
+              </Link>
             </div>
           </div>
         </div>
