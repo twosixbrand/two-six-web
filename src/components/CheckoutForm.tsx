@@ -39,6 +39,46 @@ export default function CheckoutForm() {
             try {
                 const data = await getDepartments();
                 setDepartments(data);
+
+                // Check for logged-in user
+                const customerData = localStorage.getItem('customerData');
+                if (customerData) {
+                    const customer = JSON.parse(customerData);
+                    setFormData(prev => ({
+                        ...prev,
+                        name: customer.name || "",
+                        email: customer.email || "",
+                        phone: customer.current_phone_number || "",
+                        address: customer.shipping_address || "",
+                        city: customer.city || "",
+                        department: customer.state || "",
+                    }));
+
+                    // Try to match department
+                    if (customer.state) {
+                        const dept = data.find((d: Department) => d.name.toLowerCase() === customer.state.toLowerCase());
+                        if (dept) {
+                            setSelectedDepartment(dept);
+                            // Fetch cities for this department
+                            try {
+                                const citiesData = await getCities(dept.id);
+                                setCities(citiesData);
+
+                                // Try to match city
+                                if (customer.city) {
+                                    const city = citiesData.find((c: City) => c.name.toLowerCase() === customer.city.toLowerCase());
+                                    if (city) {
+                                        setSelectedCity(city);
+                                        setShippingCost(city.shipping_cost || 0);
+                                    }
+                                }
+                            } catch (error) {
+                                console.error("Error fetching cities:", error);
+                            }
+                        }
+                    }
+                }
+
             } catch {
                 setError("Error al cargar los departamentos. Por favor recarga la página.");
             } finally {
