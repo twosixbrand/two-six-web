@@ -6,9 +6,16 @@ import { useCart } from "@/context/CartContext";
 import { useWompiPayment } from "@/hooks/useWompiPayment";
 import { getDepartments, getCities, Department, City } from "@/services/locationApi";
 
+interface WompiTransaction {
+    id: string;
+    reference: string;
+    status: string;
+    [key: string]: any;
+}
+
 export default function CheckoutForm() {
     const router = useRouter();
-    const { cartItems, cartTotal, itemCount, clearCart } = useCart();
+    const { cartItems, cartTotal, itemCount } = useCart();
     const [error, setError] = useState<string | null>(null);
 
     const [departments, setDepartments] = useState<Department[]>([]);
@@ -33,7 +40,6 @@ export default function CheckoutForm() {
                 const data = await getDepartments();
                 setDepartments(data);
             } catch (err) {
-                console.error("Error loading departments:", err);
                 setError("Error al cargar los departamentos. Por favor recarga la página.");
             } finally {
                 setLoadingLocations(false);
@@ -43,8 +49,7 @@ export default function CheckoutForm() {
     }, []);
 
     const { startPaymentFlow, loadingPayment } = useWompiPayment({
-        onSuccess: (transaction: any) => {
-            console.log("Pago exitoso (callback)", transaction);
+        onSuccess: (transaction: WompiTransaction) => {
             const referenceParts = transaction.reference.split('-');
             let orderId = transaction.reference;
             if (referenceParts.length >= 2 && referenceParts[0] === 'ORDER') {

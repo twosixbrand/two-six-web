@@ -1,7 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+
+export interface WompiTransaction {
+    id: string;
+    reference: string;
+    status: string;
+    [key: string]: any;
+}
 
 interface UseWompiPaymentProps {
-    onSuccess: (transaction: any) => void;
+    onSuccess: (transaction: WompiTransaction) => void;
     onError: (error: string) => void;
     onCancel: () => void;
 }
@@ -20,15 +27,48 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
         document.body.appendChild(script);
     }, []);
 
+    const transactionReference = useRef<string | null>(null);
+
     // 2. Detectar cuando el usuario cierra el modal con la X o presiona ESC
     useEffect(() => {
-        const handleMessage = (event: MessageEvent) => {
-            // Wompi envía esto al cerrar la ventana
-            // Nota: Validar el origen es buena práctica, pero a veces varía en sandbox/prod
-            // if (event.origin !== "https://checkout.wompi.co") return;
-
+        const handleMessage = async (event: MessageEvent) => {
             if (event.data?.event === "escpressed" || (event.data?.from === 'widget-checkout' && event.data?.type === 'widget-closed')) {
-                console.log("Wompi: Modal cerrado por usuario (X o ESC)");
+
+                if (transactionReference.current) {
+                    try {
+                        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/order/check-status`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ reference: transactionReference.current }),
+                        });
+                        const data = await response.json();
+
+                        if (data.status === 'APPROVED') {
+                            console.log("Wompi: Pago aprobado detectado al cerrar modal");
+                            onSuccess({
+                                id: data.transactionId || 'unknown',
+                                status: 'APPROVED',
+                                reference: transactionReference.current
+                            });
+                            // No llamamos a onCancel ni setLoadingPayment(false) aquí para permitir que onSuccess maneje la redirección
+                            return;
+                        } else if (data.status === 'DECLINED') {
+                            console.log("Wompi: Pago rechazado detectado al cerrar modal");
+                            onError?.("La transacción fue rechazada por el banco.");
+                            setLoadingPayment(false);
+                            return;
+                        } else if (data.status === 'ERROR') {
+                            console.log("Wompi: Error en pago detectado al cerrar modal");
+                            onError?.("Ocurrió un error en la transacción.");
+                            setLoadingPayment(false);
+                            return;
+                        }
+                    } catch (error) {
+                        console.error("Error verificando estado al cerrar modal:", error);
+                    }
+                }
+
+                console.log("Wompi: Cancelando flujo de pago");
                 onCancel?.();
                 setLoadingPayment(false);
             }
@@ -36,7 +76,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
 
         window.addEventListener("message", handleMessage);
         return () => window.removeEventListener("message", handleMessage);
-    }, [onCancel]);
+    }, [onCancel, onSuccess]);
 
     // 4. Polling para verificar estado (Fallback para PSE)
     useEffect(() => {
@@ -50,7 +90,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
                 if (!loadingPayment || !referenceToCheck) return;
 
                 try {
-                    const response = await fetch("http://localhost:3050/api/order/check-status", {
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/order/check-status`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ reference: referenceToCheck }),
@@ -60,9 +100,8 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
 
                     if (data.status === 'APPROVED') {
                         clearInterval(intervalId);
-                        // Simular transacción exitosa
-                        onSuccess({ id: data.transactionId || 'unknown', status: 'APPROVED' });
-                        window.location.href = `${window.location.origin}/checkout?id=${data.transactionId}`;
+                        // No llamamos a onSuccess aquí para no cerrar el modal automáticamente.
+                        // El evento 'widget-closed' manejará la transición.
                     } else if (data.status === 'DECLINED' || data.status === 'ERROR') {
                         clearInterval(intervalId);
                         onError?.(`El pago finalizó con estado: ${data.status}`);
@@ -90,7 +129,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
 
         try {
             // A. Iniciar en backend (Checkout)
-            const response = await fetch("http://localhost:3050/api/order/checkout", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/order/checkout`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -103,9 +142,10 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
                 throw new Error(errorData.message || "Error al iniciar el pago");
             }
 
-            const { order, wompi } = await response.json();
+            const { wompi } = await response.json();
 
             // Iniciar polling con la referencia generada
+            transactionReference.current = wompi.reference;
             if ((window as any).__startWompiPolling) {
                 (window as any).__startWompiPolling(wompi.reference);
             }

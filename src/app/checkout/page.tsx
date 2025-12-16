@@ -5,7 +5,7 @@ import CheckoutForm from "@/components/CheckoutForm";
 import CheckoutSummaryItem from "@/components/CheckoutSummaryItem";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export default function CheckoutPage() {
     const { cartItems, itemCount, cartTotal, clearCart } = useCart();
@@ -25,16 +25,10 @@ export default function CheckoutPage() {
         }).format(price);
     };
 
-    useEffect(() => {
-        if (transactionId) {
-            verifyTransaction(transactionId);
-        }
-    }, [transactionId]);
-
-    const verifyTransaction = async (id: string) => {
+    const verifyTransaction = useCallback(async (id: string) => {
         setVerifying(true);
         try {
-            const response = await fetch("http://localhost:3050/api/order/verify-payment", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/order/verify-payment`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -45,8 +39,11 @@ export default function CheckoutPage() {
             const data = await response.json();
 
             if (data.status === "APPROVED") {
-                setVerificationResult({ status: "APPROVED", message: "¡Pago aprobado! Tu pedido ha sido confirmado." });
+                setVerificationResult({ status: "APPROVED", message: "¡Pago aprobado! Redirigiendo..." });
                 clearCart();
+                setTimeout(() => {
+                    router.push(`/checkout/success?orderId=${data.orderId}`);
+                }, 2000);
             } else if (data.status === "DECLINED") {
                 setVerificationResult({ status: "DECLINED", message: "El pago fue rechazado por el banco." });
             } else {
@@ -58,7 +55,16 @@ export default function CheckoutPage() {
         } finally {
             setVerifying(false);
         }
-    };
+    }, [clearCart]);
+
+    const [verifiedId, setVerifiedId] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (transactionId && transactionId !== verifiedId) {
+            setVerifiedId(transactionId);
+            verifyTransaction(transactionId);
+        }
+    }, [transactionId, verifiedId, verifyTransaction]);
 
     if (verifying) {
         return (

@@ -1,4 +1,4 @@
-let API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3050/api';
+let API_URL = process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api` : 'http://localhost:3050/api';
 if (API_URL && !API_URL.endsWith('/api')) {
     API_URL = `${API_URL}/api`;
 }
