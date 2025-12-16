@@ -170,7 +170,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
             };
 
             // C. Abrir widget
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
             const checkout = new window.WidgetCheckout!(checkoutConfig);
 
             checkout.open((result: { transaction: WompiTransaction }) => {

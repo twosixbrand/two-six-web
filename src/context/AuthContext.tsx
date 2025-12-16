@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 interface AuthContextType {
     isLoggedIn: boolean;
     userName: string | null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     login: (token: string, customerData: any) => void;
     logout: () => void;
     loading: boolean;
@@ -35,6 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
     }, []);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const login = (token: string, customerData: any) => {
         localStorage.setItem('customerToken', token);
         localStorage.setItem('customerData', JSON.stringify(customerData));
