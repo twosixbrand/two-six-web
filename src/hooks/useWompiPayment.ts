@@ -4,7 +4,14 @@ export interface WompiTransaction {
     id: string;
     reference: string;
     status: string;
-    [key: string]: any;
+    [key: string]: unknown;
+}
+
+declare global {
+    interface Window {
+        __startWompiPolling?: (reference: string) => void;
+        WidgetCheckout?: new (config: unknown) => { open: (callback: (result: { transaction: WompiTransaction }) => void) => void };
+    }
 }
 
 interface UseWompiPaymentProps {
@@ -44,7 +51,6 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
                         const data = await response.json();
 
                         if (data.status === 'APPROVED') {
-                            console.log("Wompi: Pago aprobado detectado al cerrar modal");
                             onSuccess({
                                 id: data.transactionId || 'unknown',
                                 status: 'APPROVED',
@@ -53,12 +59,10 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
                             // No llamamos a onCancel ni setLoadingPayment(false) aquí para permitir que onSuccess maneje la redirección
                             return;
                         } else if (data.status === 'DECLINED') {
-                            console.log("Wompi: Pago rechazado detectado al cerrar modal");
                             onError?.("La transacción fue rechazada por el banco.");
                             setLoadingPayment(false);
                             return;
                         } else if (data.status === 'ERROR') {
-                            console.log("Wompi: Error en pago detectado al cerrar modal");
                             onError?.("Ocurrió un error en la transacción.");
                             setLoadingPayment(false);
                             return;
@@ -68,7 +72,6 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
                     }
                 }
 
-                console.log("Wompi: Cancelando flujo de pago");
                 onCancel?.();
                 setLoadingPayment(false);
             }
@@ -114,17 +117,16 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
         };
 
         // Exponer la función de inicio de polling en el objeto window para llamarla desde startPaymentFlow
-        // (Hack temporal porque startPaymentFlow no puede acceder fácilmente al estado actualizado de referencia en este scope)
-        (window as any).__startWompiPolling = startPolling;
+        window.__startWompiPolling = startPolling;
 
         return () => {
             if (intervalId) clearInterval(intervalId);
-            delete (window as any).__startWompiPolling;
+            delete window.__startWompiPolling;
         };
-    }, [loadingPayment, onSuccess, onError]);
+    }, [loadingPayment, onError]);
 
     // 3. Iniciar flujo de pago
-    const startPaymentFlow = async (checkoutData: any) => {
+    const startPaymentFlow = async (checkoutData: unknown) => {
         setLoadingPayment(true);
 
         try {
@@ -146,11 +148,11 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
 
             // Iniciar polling con la referencia generada
             transactionReference.current = wompi.reference;
-            if ((window as any).__startWompiPolling) {
-                (window as any).__startWompiPolling(wompi.reference);
+            if (window.__startWompiPolling) {
+                window.__startWompiPolling(wompi.reference);
             }
 
-            if (!wompi.publicKey || typeof (window as any).WidgetCheckout === 'undefined') {
+            if (!wompi.publicKey || typeof window.WidgetCheckout === 'undefined') {
                 throw new Error("La pasarela de pagos no está lista. Por favor recarga la página.");
             }
 
@@ -168,9 +170,10 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
             };
 
             // C. Abrir widget
-            const checkout = new (window as any).WidgetCheckout(checkoutConfig);
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            const checkout = new window.WidgetCheckout!(checkoutConfig);
 
-            checkout.open((result: any) => {
+            checkout.open((result: { transaction: WompiTransaction }) => {
                 const transaction = result.transaction;
 
                 if (!transaction || !transaction.id || !transaction.status) {
@@ -189,9 +192,10 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
                 }
             });
 
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Error en startPaymentFlow:", error);
-            onError?.(error.message || "Error al iniciar el pago.");
+            const errorMessage = error instanceof Error ? error.message : "Error al iniciar el pago.";
+            onError?.(errorMessage);
             setLoadingPayment(false);
         }
     };

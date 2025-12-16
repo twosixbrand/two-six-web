@@ -55,7 +55,7 @@ export default function CheckoutPage() {
         } finally {
             setVerifying(false);
         }
-    }, [clearCart]);
+    }, [clearCart, router]);
 
     const [verifiedId, setVerifiedId] = useState<string | null>(null);
 
