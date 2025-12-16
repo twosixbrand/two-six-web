@@ -10,7 +10,7 @@ interface WompiTransaction {
     id: string;
     reference: string;
     status: string;
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 export default function CheckoutForm() {
@@ -39,7 +39,7 @@ export default function CheckoutForm() {
             try {
                 const data = await getDepartments();
                 setDepartments(data);
-            } catch (err) {
+            } catch {
                 setError("Error al cargar los departamentos. Por favor recarga la página.");
             } finally {
                 setLoadingLocations(false);
@@ -58,7 +58,7 @@ export default function CheckoutForm() {
             router.push(`/checkout/success?orderId=${orderId}&transactionId=${transaction.id}`);
         },
         onError: (msg: string) => setError(msg),
-        onCancel: () => console.log("Pago cancelado por usuario")
+        onCancel: () => { }
     });
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
