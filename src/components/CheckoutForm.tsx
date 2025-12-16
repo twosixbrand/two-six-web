@@ -25,11 +25,17 @@ export default function CheckoutForm() {
     const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
     const [selectedCity, setSelectedCity] = useState<City | null>(null);
 
+    // Address management
+    const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
+    const [selectedAddressId, setSelectedAddressId] = useState<string>("");
+
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         phone: "",
         address: "",
+        detail: "", // New field
+        instructions: "", // New field
         city: "",
         department: "",
     });
@@ -39,6 +45,66 @@ export default function CheckoutForm() {
             try {
                 const data = await getDepartments();
                 setDepartments(data);
+
+                // Check for logged-in user
+                const customerData = localStorage.getItem('customerData');
+                if (customerData) {
+                    const customer = JSON.parse(customerData);
+
+                    // Fetch saved addresses
+                    try {
+                        const addrResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/address/customer/${customer.id}`);
+                        if (addrResponse.ok) {
+                            const addresses = await addrResponse.json();
+                            setSavedAddresses(addresses);
+
+                            // If there is a default address, use it
+                            const defaultAddr = addresses.find((a: any) => a.is_default);
+                            if (defaultAddr) {
+                                setSelectedAddressId(defaultAddr.id.toString());
+                                fillFormWithAddress(defaultAddr, customer, data);
+                            } else {
+                                // Fallback to customer profile data
+                                setFormData(prev => ({
+                                    ...prev,
+                                    name: customer.name || "",
+                                    email: customer.email || "",
+                                    phone: customer.current_phone_number || "",
+                                    address: customer.shipping_address || "",
+                                    city: customer.city || "",
+                                    department: customer.state || "",
+                                }));
+                                matchLocation(customer.state, customer.city, data);
+                            }
+                        } else {
+                            // Fallback to customer profile data if address fetch fails
+                            setFormData(prev => ({
+                                ...prev,
+                                name: customer.name || "",
+                                email: customer.email || "",
+                                phone: customer.current_phone_number || "",
+                                address: customer.shipping_address || "",
+                                city: customer.city || "",
+                                department: customer.state || "",
+                            }));
+                            matchLocation(customer.state, customer.city, data);
+                        }
+                    } catch (e) {
+                        console.error("Error fetching addresses", e);
+                        // Fallback to customer profile data
+                        setFormData(prev => ({
+                            ...prev,
+                            name: customer.name || "",
+                            email: customer.email || "",
+                            phone: customer.current_phone_number || "",
+                            address: customer.shipping_address || "",
+                            city: customer.city || "",
+                            department: customer.state || "",
+                        }));
+                        matchLocation(customer.state, customer.city, data);
+                    }
+                }
+
             } catch {
                 setError("Error al cargar los departamentos. Por favor recarga la página.");
             } finally {
@@ -47,6 +113,70 @@ export default function CheckoutForm() {
         };
         fetchDepartments();
     }, []);
+
+    const matchLocation = async (stateName: string, cityName: string, depts: Department[]) => {
+        if (stateName) {
+            const dept = depts.find((d: Department) => d.name.toLowerCase() === stateName.toLowerCase());
+            if (dept) {
+                setSelectedDepartment(dept);
+                try {
+                    const citiesData = await getCities(dept.id);
+                    setCities(citiesData);
+
+                    if (cityName) {
+                        const city = citiesData.find((c: City) => c.name.toLowerCase() === cityName.toLowerCase());
+                        if (city) {
+                            setSelectedCity(city);
+                            setShippingCost(city.shipping_cost || 0);
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error fetching cities:", error);
+                }
+            }
+        }
+    };
+
+    const fillFormWithAddress = (address: any, customer: any, depts: Department[]) => {
+        setFormData(prev => ({
+            ...prev,
+            name: customer.name || "",
+            email: customer.email || "",
+            phone: customer.current_phone_number || "",
+            address: address.address,
+            detail: address.detail || "",
+            instructions: address.instructions || "",
+            city: address.city,
+            department: address.state,
+        }));
+        matchLocation(address.state, address.city, depts);
+    };
+
+    const handleAddressSelection = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const addrId = e.target.value;
+        setSelectedAddressId(addrId);
+
+        if (addrId === "new") {
+            setFormData(prev => ({
+                ...prev,
+                address: "",
+                detail: "",
+                instructions: "",
+                city: "",
+                department: "",
+            }));
+            setSelectedDepartment(null);
+            setSelectedCity(null);
+            setShippingCost(0);
+        } else {
+            const address = savedAddresses.find(a => a.id.toString() === addrId);
+            if (address) {
+                const customerData = localStorage.getItem('customerData');
+                const customer = customerData ? JSON.parse(customerData) : {};
+                fillFormWithAddress(address, customer, departments);
+            }
+        }
+    };
 
     const paymentHandlers = useMemo(() => ({
         onSuccess: (transaction: WompiTransaction) => {
@@ -139,6 +269,24 @@ export default function CheckoutForm() {
                 </div>
             )}
 
+            {savedAddresses.length > 0 && (
+                <div className="mb-6">
+                    <label className="block text-sm font-medium text-primary/80 mb-2">Mis Direcciones Guardadas</label>
+                    <select
+                        value={selectedAddressId}
+                        onChange={handleAddressSelection}
+                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent sm:text-sm p-2 border"
+                    >
+                        <option value="new">Usar una nueva dirección</option>
+                        {savedAddresses.map(addr => (
+                            <option key={addr.id} value={addr.id}>
+                                {addr.address} - {addr.city} {addr.is_default ? '(Predeterminada)' : ''}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            )}
+
             <div className="space-y-4">
                 <div>
                     <label htmlFor="name" className="block text-sm font-medium text-primary/80">Nombre Completo</label>
@@ -228,6 +376,30 @@ export default function CheckoutForm() {
                         name="address"
                         required
                         value={formData.address}
+                        onChange={handleChange}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent sm:text-sm p-2 border"
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="detail" className="block text-sm font-medium text-primary/80">Detalle (Apto, Unidad, etc.)</label>
+                    <input
+                        type="text"
+                        id="detail"
+                        name="detail"
+                        value={formData.detail}
+                        onChange={handleChange}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent sm:text-sm p-2 border"
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="instructions" className="block text-sm font-medium text-primary/80">Indicaciones de Entrega</label>
+                    <input
+                        type="text"
+                        id="instructions"
+                        name="instructions"
+                        value={formData.instructions}
                         onChange={handleChange}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent sm:text-sm p-2 border"
                     />

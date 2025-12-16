@@ -104,25 +104,52 @@ const Header = ({ showOutletLink }: HeaderProps) => {
             </svg>
           </button>
           <div className="h-6 border-l border-gray-300"></div>
-          <button
-            aria-label="Cuenta de usuario"
-            className="text-primary hover:text-accent transition-colors p-2"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+          <div className="relative group">
+            <button
+              aria-label="Menú de usuario"
+              className="text-primary hover:text-accent transition-colors p-2 focus:outline-none"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              ></path>
-            </svg>
-          </button>
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                ></path>
+              </svg>
+            </button>
+            {/* Dropdown Menu */}
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-right">
+              <Link
+                href="/profile"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                Mi Perfil
+              </Link>
+              <Link
+                href="/orders"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                Mis Pedidos
+              </Link>
+              <button
+                onClick={() => {
+                  localStorage.removeItem('customerToken');
+                  localStorage.removeItem('customerData');
+                  window.location.href = '/login';
+                }}
+                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+              >
+                Cerrar Sesión
+              </button>
+            </div>
+          </div>
           <div className="h-6 border-l border-gray-300"></div>
           <button
             aria-label={`Carrito de compras con ${itemCount} artículos`}
