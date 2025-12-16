@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
+import { AuthProvider } from "@/context/AuthContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getProducts } from "@/data/products";
@@ -30,10 +31,12 @@ export default async function RootLayout({
     <html lang="es">
       <body className={`${inter.className} flex flex-col min-h-screen`}>
         <CartProvider>
-          <Header showOutletLink={showOutletLink} />
-          <main className="flex-grow">{children}</main>
-          <WhatsAppButton />
-          <Footer showOutletLink={showOutletLink} />
+          <AuthProvider>
+            <Header showOutletLink={showOutletLink} />
+            <main className="flex-grow">{children}</main>
+            <WhatsAppButton />
+            <Footer showOutletLink={showOutletLink} />
+          </AuthProvider>
         </CartProvider>
       </body>
     </html>

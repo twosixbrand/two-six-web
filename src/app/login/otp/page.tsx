@@ -2,6 +2,7 @@
 
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 function OtpForm() {
     const [otp, setOtp] = useState('');
@@ -10,6 +11,7 @@ function OtpForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const email = searchParams.get('email');
+    const { login } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -37,9 +39,8 @@ function OtpForm() {
             }
 
             const data = await response.json();
-            // Store token
-            localStorage.setItem('customerToken', data.accessToken);
-            localStorage.setItem('customerData', JSON.stringify(data.customer));
+            // Store token and update context
+            login(data.accessToken, data.customer);
 
             // Redirect to orders
             router.push('/orders');
