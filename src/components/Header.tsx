@@ -104,10 +104,7 @@ const Header = ({ showOutletLink }: HeaderProps) => {
             </svg>
           </button>
           <div className="h-6 border-l border-gray-300"></div>
-          <button
-            aria-label="Cuenta de usuario"
-            className="text-primary hover:text-accent transition-colors p-2"
-          >
+          <Link href="/orders" aria-label="Cuenta de usuario" className="text-primary hover:text-accent transition-colors p-2">
             <svg
               className="w-6 h-6"
               fill="none"
@@ -122,7 +119,7 @@ const Header = ({ showOutletLink }: HeaderProps) => {
                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
               ></path>
             </svg>
-          </button>
+          </Link>
           <div className="h-6 border-l border-gray-300"></div>
           <button
             aria-label={`Carrito de compras con ${itemCount} artículos`}
