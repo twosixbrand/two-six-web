@@ -3,12 +3,48 @@
 import { useState } from "react";
 import Image from "next/image";
 
+interface TrackingHistory {
+    status: string;
+    location: string;
+}
+
+interface Shipment {
+    id: number;
+    guide_number: string;
+    status: string;
+    shippingProvider?: {
+        name: string;
+    };
+    trackingHistory?: TrackingHistory[];
+}
+
+interface OrderItem {
+    id: number;
+    product_name: string;
+    color: string;
+    size: string;
+    quantity: number;
+    unit_price: number;
+    product: {
+        image_url?: string;
+    };
+}
+
+interface Order {
+    id: number;
+    order_date: string;
+    status: string;
+    total_payment: number;
+    shipments?: Shipment[];
+    orderItems: OrderItem[];
+}
+
 export default function TrackingPage() {
     const [orderId, setOrderId] = useState("");
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const [order, setOrder] = useState<any>(null);
+    const [order, setOrder] = useState<Order | null>(null);
 
     const handleTrack = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -17,7 +53,7 @@ export default function TrackingPage() {
         setOrder(null);
 
         try {
-            const res = await fetch("http://localhost:3050/api/order/track", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/order/track`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ orderId: Number(orderId), email }),
@@ -30,8 +66,12 @@ export default function TrackingPage() {
 
             const data = await res.json();
             setOrder(data);
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("Ocurrió un error desconocido");
+            }
         } finally {
             setLoading(false);
         }
@@ -99,8 +139,8 @@ export default function TrackingPage() {
                             </p>
                         </div>
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${order.status === 'Pagado' ? 'bg-green-100 text-green-800' :
-                                order.status === 'Enviado' ? 'bg-blue-100 text-blue-800' :
-                                    'bg-gray-100 text-gray-800'
+                            order.status === 'Enviado' ? 'bg-blue-100 text-blue-800' :
+                                'bg-gray-100 text-gray-800'
                             }`}>
                             {order.status}
                         </span>
@@ -109,7 +149,7 @@ export default function TrackingPage() {
                     <div className="mb-6">
                         <h3 className="font-semibold mb-2">Detalles del Envío</h3>
                         {order.shipments && order.shipments.length > 0 ? (
-                            order.shipments.map((shipment: any) => (
+                            order.shipments.map((shipment) => (
                                 <div key={shipment.id} className="bg-gray-50 p-4 rounded-md mb-2">
                                     <p><span className="font-medium">Transportadora:</span> {shipment.shippingProvider?.name || 'N/A'}</p>
                                     <p><span className="font-medium">Guía:</span> {shipment.guide_number}</p>
@@ -130,7 +170,7 @@ export default function TrackingPage() {
                     <div>
                         <h3 className="font-semibold mb-2">Productos</h3>
                         <div className="space-y-4">
-                            {order.orderItems.map((item: any) => (
+                            {order.orderItems.map((item) => (
                                 <div key={item.id} className="flex items-center gap-4 border-b pb-4 last:border-0">
                                     <div className="relative w-16 h-16 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
                                         {item.product.image_url ? (
