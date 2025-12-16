@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState, Suspense } from "react";
 import { useCart } from "@/context/CartContext";
 
@@ -120,11 +121,14 @@ function SuccessContent() {
                             {order.orderItems.map((item) => (
                                 <div key={item.id} className="flex items-center justify-between">
                                     <div className="flex items-center space-x-4">
-                                        <img
-                                            src={item.product.image_url || '/placeholder.png'}
-                                            alt={item.product_name}
-                                            className="w-16 h-16 object-cover rounded"
-                                        />
+                                        <div className="relative w-16 h-16 rounded overflow-hidden">
+                                            <Image
+                                                src={item.product.image_url || '/placeholder.png'}
+                                                alt={item.product_name}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        </div>
                                         <div>
                                             <p className="font-medium">{item.product_name}</p>
                                             <p className="text-sm text-gray-500">

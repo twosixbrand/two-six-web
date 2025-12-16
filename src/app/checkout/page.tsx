@@ -7,7 +7,9 @@ import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 
-export default function CheckoutPage() {
+import { Suspense } from "react";
+
+function CheckoutContent() {
     const { cartItems, itemCount, cartTotal, clearCart } = useCart();
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -154,5 +156,17 @@ export default function CheckoutPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function CheckoutPage() {
+    return (
+        <Suspense fallback={
+            <div className="container mx-auto px-4 py-20 text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent mx-auto"></div>
+            </div>
+        }>
+            <CheckoutContent />
+        </Suspense>
     );
 }
