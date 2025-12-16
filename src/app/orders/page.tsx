@@ -139,11 +139,14 @@ export default function OrdersPage() {
                                             <li key={item.id} className="px-4 py-4 flex items-center">
                                                 <div className="flex-shrink-0 h-16 w-16 border border-gray-200 rounded-md overflow-hidden">
                                                     {item.product.image_url ? (
-                                                        <img
-                                                            src={item.product.image_url}
-                                                            alt={item.product_name}
-                                                            className="h-full w-full object-cover object-center"
-                                                        />
+                                                        <>
+                                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                            <img
+                                                                src={item.product.image_url}
+                                                                alt={item.product_name}
+                                                                className="h-full w-full object-cover object-center"
+                                                            />
+                                                        </>
                                                     ) : (
                                                         <div className="h-full w-full bg-gray-200 flex items-center justify-center text-gray-400">
                                                             No img
