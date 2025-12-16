@@ -26,6 +26,7 @@ export default function CheckoutForm() {
     const [selectedCity, setSelectedCity] = useState<City | null>(null);
 
     // Address management
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
     const [selectedAddressId, setSelectedAddressId] = useState<string>("");
 
@@ -59,6 +60,7 @@ export default function CheckoutForm() {
                             setSavedAddresses(addresses);
 
                             // If there is a default address, use it
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             const defaultAddr = addresses.find((a: any) => a.is_default);
                             if (defaultAddr) {
                                 setSelectedAddressId(defaultAddr.id.toString());
@@ -112,6 +114,7 @@ export default function CheckoutForm() {
             }
         };
         fetchDepartments();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const matchLocation = async (stateName: string, cityName: string, depts: Department[]) => {
@@ -137,6 +140,7 @@ export default function CheckoutForm() {
         }
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const fillFormWithAddress = (address: any, customer: any, depts: Department[]) => {
         setFormData(prev => ({
             ...prev,

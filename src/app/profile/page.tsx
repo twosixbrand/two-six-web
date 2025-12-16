@@ -73,8 +73,12 @@ export default function ProfilePage() {
                 postal_code: data.postal_code || '',
                 country: data.country || '',
             });
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('An unexpected error occurred');
+            }
         } finally {
             setLoading(false);
         }
@@ -127,8 +131,12 @@ export default function ProfilePage() {
             const updatedCustomer = await response.json();
             localStorage.setItem('customerData', JSON.stringify(updatedCustomer));
             setSuccess('Perfil actualizado correctamente');
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('An unexpected error occurred');
+            }
         } finally {
             setSaving(false);
         }
@@ -165,8 +173,12 @@ export default function ProfilePage() {
                 country: 'Colombia',
                 is_default: false,
             });
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('An unexpected error occurred');
+            }
         }
     };
 
@@ -325,7 +337,7 @@ export default function ProfilePage() {
                                     <div>
                                         <p className="font-medium">{addr.address} {addr.detail && ` - ${addr.detail}`}</p>
                                         <p className="text-sm text-gray-600">{addr.city}, {addr.state} - {addr.postal_code}</p>
-                                        {addr.instructions && <p className="text-sm text-gray-500 italic">"{addr.instructions}"</p>}
+                                        {addr.instructions && <p className="text-sm text-gray-500 italic">&quot;{addr.instructions}&quot;</p>}
                                         {addr.is_default && <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded mt-2">Predeterminada</span>}
                                     </div>
                                     <button onClick={() => handleDeleteAddress(addr.id)} className="text-red-600 hover:text-red-800 text-sm">Eliminar</button>
