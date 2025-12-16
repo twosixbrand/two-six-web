@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useWompiPayment } from "@/hooks/useWompiPayment";
@@ -48,7 +48,7 @@ export default function CheckoutForm() {
         fetchDepartments();
     }, []);
 
-    const { startPaymentFlow, loadingPayment } = useWompiPayment({
+    const paymentHandlers = useMemo(() => ({
         onSuccess: (transaction: WompiTransaction) => {
             const referenceParts = transaction.reference.split('-');
             let orderId = transaction.reference;
@@ -59,7 +59,9 @@ export default function CheckoutForm() {
         },
         onError: (msg: string) => setError(msg),
         onCancel: () => { }
-    });
+    }), [router]);
+
+    const { startPaymentFlow, loadingPayment } = useWompiPayment(paymentHandlers);
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;

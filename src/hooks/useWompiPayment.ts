@@ -79,7 +79,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
 
         window.addEventListener("message", handleMessage);
         return () => window.removeEventListener("message", handleMessage);
-    }, [onCancel, onSuccess]);
+    }, [onCancel, onSuccess, onError]);
 
     // 4. Polling para verificar estado (Fallback para PSE)
     useEffect(() => {
