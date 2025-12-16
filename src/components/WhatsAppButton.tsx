@@ -21,7 +21,7 @@ const WhatsAppButton = () => {
       aria-label="Contactar por WhatsApp"
     >
       <Image
-        src="/whatsApp.svg"
+        src="/whatsapp.svg"
         alt="WhatsApp"
         width={36}
         height={36}

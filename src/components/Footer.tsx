@@ -61,7 +61,7 @@ const Footer = ({ showOutletLink }: FooterProps) => {
               </SocialLink>
               <SocialLink href="https://wa.me/+573108777629" label="WhatsApp">
                 <Image
-                  src="/whatsApp.svg"
+                  src="/whatsapp.svg"
                   alt="WhatsApp"
                   width={24}
                   height={24}
@@ -122,7 +122,7 @@ const Footer = ({ showOutletLink }: FooterProps) => {
             >
               Mujer
             </Link>
-             <Link
+            <Link
               href="/unisex"
               className="text-white/80 hover:text-accent transition-colors"
             >
