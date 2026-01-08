@@ -1,10 +1,10 @@
 import Catalog from "@/components/Catalog";
 import Banner from "@/components/Banner";
-import { getProducts } from "@/data/products";
+import { getStoreDesigns } from "@/data/products";
 
 export default async function OutletPage() {
-  // Obtenemos todos los productos que están marcados como outlet
-  const products = await getProducts({ isOutlet: true });
+  // Obtenemos todos los diseños que están marcados como outlet
+  const products = await getStoreDesigns({ isOutlet: true });
   return (
     <>
       <Banner
