@@ -27,6 +27,18 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'twosix-catalog-storage.twosix-catalog-storage.atl1.digitaloceanspaces.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'twosix-catalog-storage.atl1.digitaloceanspaces.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };

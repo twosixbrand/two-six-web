@@ -58,20 +58,21 @@ export default function ProductDetail({
   );
   // La obtención de datos ahora se hace en el Server Component,
   // por lo que este useEffect ya no es necesario.
+
   useEffect(() => {
     setSelectedVariant(initialProduct);
-    setSelectedColor(initialProduct.designClothing.color);
-    setSelectedSize(initialProduct.designClothing.size);
-    setImageUrl(initialProduct.image_url);
+    setSelectedColor(initialProduct.clothingSize.clothingColor.color);
+    setSelectedSize(initialProduct.clothingSize.size);
+    setImageUrl(initialProduct.clothingSize.clothingColor.image_url);
 
     const uniqueColors = Array.from(
       new Map(
-        variants.map((v) => [v.designClothing.color.id, v.designClothing.color])
+        variants.map((v) => [v.clothingSize.clothingColor.color.id, v.clothingSize.clothingColor.color])
       ).values()
     );
     const uniqueSizes = Array.from(
       new Map(
-        variants.map((v) => [v.designClothing.size.id, v.designClothing.size])
+        variants.map((v) => [v.clothingSize.size.id, v.clothingSize.size])
       ).values()
     );
     setAvailableColors(uniqueColors);
@@ -93,18 +94,18 @@ export default function ProductDetail({
     // Si no existe, busca la primera variante disponible para ese color con cualquier talla.
     let newVariant = variants.find(
       (v) =>
-        v.designClothing.color.id === color.id &&
-        v.designClothing.size.id === selectedSize?.id
+        v.clothingSize.clothingColor.color.id === color.id &&
+        v.clothingSize.size.id === selectedSize?.id
     );
 
     if (!newVariant) {
-      newVariant = variants.find((v) => v.designClothing.color.id === color.id);
+      newVariant = variants.find((v) => v.clothingSize.clothingColor.color.id === color.id);
     }
 
     if (newVariant) {
-      setSelectedSize(newVariant.designClothing.size);
+      setSelectedSize(newVariant.clothingSize.size);
       setSelectedVariant(newVariant);
-      setImageUrl(newVariant.image_url); // Actualiza la imagen solo al cambiar de color
+      setImageUrl(newVariant.clothingSize.clothingColor.image_url); // Actualiza la imagen solo al cambiar de color
     }
   };
 
@@ -112,8 +113,8 @@ export default function ProductDetail({
     setSelectedSize(size);
     const newVariant = variants.find(
       (v) =>
-        v.designClothing.color.id === selectedColor?.id &&
-        v.designClothing.size.id === size.id
+        v.clothingSize.clothingColor.color.id === selectedColor?.id &&
+        v.clothingSize.size.id === size.id
     );
     setSelectedVariant(newVariant || null);
   };
@@ -168,7 +169,7 @@ export default function ProductDetail({
               <AccordionItem title="Detalles del Producto" id="details">
                 <ul className="list-disc list-inside text-primary/80 space-y-1">
                   <li>
-                    Referencia: {initialProduct.designClothing.design.reference}
+                    Referencia: {initialProduct.clothingSize.clothingColor.design.reference}
                   </li>
                 </ul>
               </AccordionItem>
@@ -210,9 +211,9 @@ export default function ProductDetail({
                 {availableSizes.map((size) => {
                   const isAvailable = variants.some(
                     (v) =>
-                      v.designClothing.color.id === selectedColor?.id &&
-                      v.designClothing.size.id === size.id &&
-                      v.designClothing.quantity_available > 0
+                      v.clothingSize.clothingColor.color.id === selectedColor?.id &&
+                      v.clothingSize.size.id === size.id &&
+                      v.clothingSize.quantity_available > 0
                   );
                   return (
                     <button
@@ -235,11 +236,11 @@ export default function ProductDetail({
               className="mt-10 w-full max-w-xs bg-accent text-white font-bold py-3 px-6 rounded-lg hover:bg-accent-hover transition-colors duration-300 shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
               disabled={
                 !selectedVariant ||
-                selectedVariant.designClothing.quantity_available === 0
+                selectedVariant.clothingSize.quantity_available === 0
               }
             >
               {selectedVariant &&
-                selectedVariant.designClothing.quantity_available > 0
+                selectedVariant.clothingSize.quantity_available > 0
                 ? "Añadir al Carrito"
                 : "Agotado"}
             </button>

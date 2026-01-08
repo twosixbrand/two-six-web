@@ -18,7 +18,7 @@ export default function CartItem({
     removeFromCart,
     formatPrice,
 }: CartItemProps) {
-    const [imgSrc, setImgSrc] = useState(item.image_url || "/placeholder.png");
+    const [imgSrc, setImgSrc] = useState(item.clothingSize.clothingColor.image_url || "/placeholder.png");
 
     return (
         <div className="flex items-center bg-white p-4 rounded-lg shadow-md">
@@ -37,8 +37,8 @@ export default function CartItem({
             <div className="flex-grow">
                 <h2 className="font-bold text-primary">{item.name}</h2>
                 <p className="text-sm text-primary/70">
-                    Color: {item.designClothing.color.name} / Talla:{" "}
-                    {item.designClothing.size.name}
+                    Color: {item.clothingSize.clothingColor.color.name} / Talla:{" "}
+                    {item.clothingSize.size.name}
                 </p>
                 <p className="text-accent font-semibold mt-1">
                     {formatPrice(item.price)}

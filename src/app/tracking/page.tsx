@@ -26,7 +26,11 @@ interface OrderItem {
     quantity: number;
     unit_price: number;
     product: {
-        image_url?: string;
+        clothingSize: {
+            clothingColor: {
+                image_url?: string;
+            }
+        };
     };
 }
 
@@ -173,9 +177,9 @@ export default function TrackingPage() {
                             {order.orderItems.map((item) => (
                                 <div key={item.id} className="flex items-center gap-4 border-b pb-4 last:border-0">
                                     <div className="relative w-16 h-16 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
-                                        {item.product.image_url ? (
+                                        {item.product.clothingSize?.clothingColor?.image_url ? (
                                             <Image
-                                                src={item.product.image_url}
+                                                src={item.product.clothingSize.clothingColor.image_url}
                                                 alt={item.product_name}
                                                 fill
                                                 className="object-cover"

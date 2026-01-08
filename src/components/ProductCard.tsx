@@ -3,10 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
-import type { Product } from '@/types';
+import type { StoreDesign } from '@/types/store';
 
 interface ProductCardProps {
-  product: Product;
+  product: StoreDesign;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
@@ -21,7 +21,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
   }).format(product.price);
 
   return (
-    <Link href={`/product/${product.id}`} className="group block text-center">
+    <Link href={`/product/${product.id_product}`} className="group block text-center">
       {/* Contenedor para el efecto de zoom */}
       <div className="relative overflow-hidden rounded-lg">
         <Image

@@ -30,24 +30,30 @@ interface Design {
   description: string;
 }
 
-interface DesignClothingEntity {
+
+interface ClothingSizeEntity {
   id: number;
   quantity_available: number;
-  color: Color;
+  // quantity_produced, sold, etc if needed
   size: Size;
-  design: Design & {
-    clothing: Clothing & {
-      typeClothing: TypeClothing;
-      category: Category;
+  clothingColor: {
+    id: number;
+    image_url: string | null;
+    color: Color;
+    design: Design & {
+      clothing: Clothing & {
+        typeClothing: TypeClothing;
+        category: Category;
+      };
     };
   };
 }
+
 export interface Product {
   id: number;
   name: string;
   price: number;
-  image_url: string;
   gender: "MASCULINO" | "FEMENINO" | "UNISEX";
   description: string;
-  designClothing: DesignClothingEntity;
+  clothingSize: ClothingSizeEntity;
 }

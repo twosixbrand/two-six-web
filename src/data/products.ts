@@ -1,4 +1,5 @@
 import type { Product } from "@/types";
+import type { StoreDesign } from "@/types/store";
 import { logError } from "@/lib/actions/error";
 import { apiClient } from "@/lib/api-client";
 
@@ -43,7 +44,7 @@ export const getProductsByGender = async (
 
 export const getProductById = async (id: number): Promise<Product | null> => {
   try {
-    console.log("id:",id);
+    console.log("id:", id);
     return await apiClient<Product>(`/products/${id}`);
   } catch (error) {
     // El nuevo apiClient lanzará un error que podemos inspeccionar.
@@ -79,3 +80,23 @@ export async function getProductsByDesignReference(
     return [];
   }
 }
+
+export const getStoreDesigns = async (options?: {
+  gender?: string;
+  isOutlet?: boolean;
+}): Promise<StoreDesign[]> => {
+  try {
+    const params: Record<string, string | boolean> = {};
+    if (options?.gender) params.gender = options.gender;
+    if (typeof options?.isOutlet === "boolean") params.is_outlet = options.isOutlet;
+
+    return await apiClient<StoreDesign[]>("/products/store/designs", { params });
+  } catch (error) {
+    console.error(error);
+    await logError({
+      message: `Fallo en getStoreDesigns con opciones: ${JSON.stringify(options)}`,
+      stack: error instanceof Error ? error.stack : String(error),
+    });
+    return [];
+  }
+};

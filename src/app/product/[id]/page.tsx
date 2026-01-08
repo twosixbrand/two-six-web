@@ -5,8 +5,11 @@ import { notFound } from "next/navigation";
 
 // Esta función genera metadatos dinámicos para el <head> de la página
 // Se ejecuta en el servidor, por lo que no puede estar en un archivo "use client".
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const id = Number(params.id);
+// Esta función genera metadatos dinámicos para el <head> de la página
+// Se ejecuta en el servidor, por lo que no puede estar en un archivo "use client".
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id: idString } = await params;
+  const id = Number(idString);
 
   // Si el ID no es un número, no intentes buscar el producto.
   if (isNaN(id)) {
@@ -27,11 +30,10 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 }
 
 // Este es el componente de página (Server Component).
-export default async function ProductDetailPage({
-  params,
-}: {
-  params: { id: string };
+export default async function ProductDetailPage(props: {
+  params: Promise<{ id: string }>;
 }) {
+  const params = await props.params;
   const id = Number(params.id);
   if (isNaN(id)) {
     return notFound();
@@ -42,7 +44,7 @@ export default async function ProductDetailPage({
     notFound();
   }
 
-  const variants = await getProductsByDesignReference(product.designClothing.design.reference);
+  const variants = await getProductsByDesignReference(product.clothingSize.clothingColor.design.reference);
 
   const genderMap: { [key: string]: string } = {
     'femenino': 'woman',
@@ -50,14 +52,14 @@ export default async function ProductDetailPage({
     'unisex': 'unisex',
   };
 
-  const gender = product.designClothing.design.clothing.gender;
+  const gender = product.clothingSize.clothingColor.design.clothing.gender;
   const genderSlug = genderMap[gender.toLowerCase()] || gender.toLowerCase();
- console.log("category", product.designClothing.design.clothing) ;
+  console.log("category", product.clothingSize.clothingColor.design.clothing);
   const breadcrumbItems = [
     { label: 'Inicio', href: '/' },
     { label: gender, href: `/${genderSlug}` },
-    { label: product.designClothing.design.clothing.name, href: `/${genderSlug}` }, // Asumiendo que la URL se basa en el género
-   
+    { label: product.clothingSize.clothingColor.design.clothing.name, href: `/${genderSlug}` }, // Asumiendo que la URL se basa en el género
+
   ];
 
   return (

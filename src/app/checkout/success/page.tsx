@@ -14,7 +14,11 @@ interface OrderItem {
     size: string;
     color: string;
     product: {
-        image_url: string;
+        clothingSize: {
+            clothingColor: {
+                image_url?: string;
+            }
+        };
     };
 }
 
@@ -123,7 +127,7 @@ function SuccessContent() {
                                     <div className="flex items-center space-x-4">
                                         <div className="relative w-16 h-16 rounded overflow-hidden">
                                             <Image
-                                                src={item.product.image_url || '/placeholder.png'}
+                                                src={item.product.clothingSize?.clothingColor?.image_url || '/placeholder.png'}
                                                 alt={item.product_name}
                                                 fill
                                                 className="object-cover"

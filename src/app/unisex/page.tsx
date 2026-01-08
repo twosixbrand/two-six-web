@@ -1,10 +1,10 @@
 import Catalog from "@/components/Catalog";
 import Banner from "@/components/Banner";
-import { getProducts } from "@/data/products";
+import { getStoreDesigns } from "@/data/products";
 
 export default async function UnisexPage() {
   // Obtenemos productos de la categoría MUJER que no sean de OUTLET
-  const products = await getProducts({ gender: 'UNISEX', isOutlet: false });
+  const products = await getStoreDesigns({ gender: 'UNISEX', isOutlet: false });
 
   return (
     <>

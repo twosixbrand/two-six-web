@@ -13,7 +13,7 @@ export default function CheckoutSummaryItem({
     item,
     formatPrice,
 }: CheckoutSummaryItemProps) {
-    const [imgSrc, setImgSrc] = useState(item.image_url || "/placeholder.png");
+    const [imgSrc, setImgSrc] = useState(item.clothingSize.clothingColor.image_url || "/placeholder.png");
 
     return (
         <div className="flex items-center space-x-4">
@@ -29,7 +29,7 @@ export default function CheckoutSummaryItem({
             <div className="flex-grow">
                 <h3 className="text-sm font-medium text-primary">{item.name}</h3>
                 <p className="text-xs text-primary/70">
-                    {item.designClothing.color.name} / {item.designClothing.size.name} x{" "}
+                    {item.clothingSize.clothingColor.color.name} / {item.clothingSize.size.name} x{" "}
                     {item.quantity}
                 </p>
             </div>
