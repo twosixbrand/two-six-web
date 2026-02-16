@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'example.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'twosix-catalog-storage.atl1.digitaloceanspaces.com',
+      },
     ],
   },
 };

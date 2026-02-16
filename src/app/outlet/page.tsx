@@ -2,6 +2,8 @@ import Catalog from "@/components/Catalog";
 import Banner from "@/components/Banner";
 import { getStoreDesigns } from "@/data/products";
 
+export const dynamic = 'force-dynamic';
+
 export default async function OutletPage() {
   // Obtenemos todos los diseños que están marcados como outlet
   const products = await getStoreDesigns({ isOutlet: true });

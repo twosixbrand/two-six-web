@@ -12,6 +12,8 @@ export async function apiClient<T>(endpoint: string, options: FetchOptions = {})
   const { params, ...fetchOptions } = options;
   const url = new URL(`${API_URL}/api${endpoint}`);
 
+
+
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
       url.searchParams.append(key, String(value));
@@ -21,7 +23,10 @@ export async function apiClient<T>(endpoint: string, options: FetchOptions = {})
   const urlString = url.toString();
 
   try {
-    const response = await fetch(urlString, fetchOptions);
+    const response = await fetch(urlString, {
+      cache: 'no-store', // Deshabilita el caché para asegurar datos frescos durante el desarrollo/pruebas
+      ...fetchOptions,
+    });
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -30,7 +35,7 @@ export async function apiClient<T>(endpoint: string, options: FetchOptions = {})
 
     return response.json() as Promise<T>;
   } catch (error) {
-    console.error(`Fallo al hacer fetch a: ${urlString}`);
+
     // Re-lanzamos el error original para no perder el stack trace
     throw error;
   }

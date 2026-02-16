@@ -59,11 +59,33 @@ export default function ProductDetail({
   // La obtención de datos ahora se hace en el Server Component,
   // por lo que este useEffect ya no es necesario.
 
+  const [currentImages, setCurrentImages] = useState<string[]>([]);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+  // Helper to extract images from a product variant
+  const getImages = (p: Product) => {
+    const variantImages = p.clothingSize.clothingColor.imageClothing
+      ?.sort((a, b) => (a.position || 0) - (b.position || 0))
+      ?.map(img => img.image_url) || [];
+
+    // If we have specific images, use them
+    if (variantImages.length > 0) {
+      return variantImages;
+    }
+
+    // Fallback to the main prioritized image_url (which is design image or single variant image)
+    return p.image_url ? [p.image_url] : ["/placeholder.png"];
+  };
+
   useEffect(() => {
     setSelectedVariant(initialProduct);
     setSelectedColor(initialProduct.clothingSize.clothingColor.color);
     setSelectedSize(initialProduct.clothingSize.size);
-    setImageUrl(initialProduct.clothingSize.clothingColor.image_url);
+
+    const images = getImages(initialProduct);
+    setCurrentImages(images);
+    setSelectedImageIndex(0);
+    setImageUrl(images[0]); // Mantener compatibilidad si se usa en otro lado
 
     const uniqueColors = Array.from(
       new Map(
@@ -105,7 +127,11 @@ export default function ProductDetail({
     if (newVariant) {
       setSelectedSize(newVariant.clothingSize.size);
       setSelectedVariant(newVariant);
-      setImageUrl(newVariant.clothingSize.clothingColor.image_url); // Actualiza la imagen solo al cambiar de color
+
+      const images = getImages(newVariant);
+      setCurrentImages(images);
+      setSelectedImageIndex(0);
+      setImageUrl(images[0]);
     }
   };
 
@@ -121,7 +147,15 @@ export default function ProductDetail({
 
   const handleAddToCart = () => {
     if (selectedVariant) {
-      addToCart(selectedVariant);
+      // Get the correct image for the cart (position 1)
+      const images = getImages(selectedVariant);
+      // Create a copy of the product with the correct image
+      const productForCart = {
+        ...selectedVariant,
+        image_url: images.length > 0 ? images[0] : (selectedVariant.image_url || "/placeholder.png")
+      };
+
+      addToCart(productForCart);
     }
   };
 
@@ -138,16 +172,57 @@ export default function ProductDetail({
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
           {/* Columna de la Imagen (ocupa 2 de 5 columnas en LG) */}
           <div className="lg:col-span-2">
-            <div className="relative aspect-square rounded-xl overflow-hidden shadow-lg">
+            <div className="relative aspect-square rounded-xl overflow-hidden shadow-lg mb-4">
               <Image
-                src={imageUrl || "/placeholder.png"}
+                src={currentImages[selectedImageIndex] || "/placeholder.png"}
                 alt={initialProduct.name}
                 fill
                 className="object-cover transition-opacity duration-300"
-                key={imageUrl} // Forza a Next/Image a recargar al cambiar la imagen
-                onError={() => setImageUrl("/placeholder.png")}
+                key={currentImages[selectedImageIndex]}
+                onError={() => {
+                  // If the current image fails, maybe fallback to placeholder
+                  // But usually validation happens before.
+                }}
               />
+              {/* Navigation Arrows if multiple images */}
+              {currentImages.length > 1 && (
+                <>
+                  <button
+                    onClick={() => setSelectedImageIndex(prev => (prev === 0 ? currentImages.length - 1 : prev - 1))}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full shadow hover:bg-white transition-colors"
+                  >
+                    <ChevronDownIcon className="w-5 h-5 rotate-90" />
+                  </button>
+                  <button
+                    onClick={() => setSelectedImageIndex(prev => (prev === currentImages.length - 1 ? 0 : prev + 1))}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full shadow hover:bg-white transition-colors"
+                  >
+                    <ChevronDownIcon className="w-5 h-5 -rotate-90" />
+                  </button>
+                </>
+              )}
             </div>
+
+            {/* Thumbnails */}
+            {currentImages.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {currentImages.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedImageIndex(idx)}
+                    className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all ${selectedImageIndex === idx ? "border-accent" : "border-transparent opacity-70 hover:opacity-100"
+                      }`}
+                  >
+                    <Image
+                      src={img}
+                      alt={`Vista ${idx + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Columna de Información (ocupa 3 de 5 columnas en LG) */}

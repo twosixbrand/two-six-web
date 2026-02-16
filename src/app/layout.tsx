@@ -9,7 +9,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getProducts } from "@/data/products";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 
 export const metadata: Metadata = {
   title: "two-six-web | Tu Tienda de Ropa",
@@ -29,7 +29,7 @@ export default async function RootLayout({
 
   return (
     <html lang="es">
-      <body className={`${inter.className} flex flex-col min-h-screen`}>
+      <body className={`${inter.variable} font-sans flex flex-col min-h-screen`}>
         <CartProvider>
           <AuthProvider>
             <Header showOutletLink={showOutletLink} />

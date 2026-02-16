@@ -3,6 +3,8 @@ import ProductDetail from "@/components/ProductDetail";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { notFound } from "next/navigation";
 
+export const dynamic = 'force-dynamic';
+
 // Esta función genera metadatos dinámicos para el <head> de la página
 // Se ejecuta en el servidor, por lo que no puede estar en un archivo "use client".
 // Esta función genera metadatos dinámicos para el <head> de la página
@@ -52,13 +54,13 @@ export default async function ProductDetailPage(props: {
     'unisex': 'unisex',
   };
 
-  const gender = product.clothingSize.clothingColor.design.clothing.gender;
+  const gender = product.gender || 'Unisex';
   const genderSlug = genderMap[gender.toLowerCase()] || gender.toLowerCase();
-  console.log("category", product.clothingSize.clothingColor.design.clothing);
+
   const breadcrumbItems = [
     { label: 'Inicio', href: '/' },
     { label: gender, href: `/${genderSlug}` },
-    { label: product.clothingSize.clothingColor.design.clothing.name, href: `/${genderSlug}` }, // Asumiendo que la URL se basa en el género
+    { label: product.name, href: `/${genderSlug}` }, // Asumiendo que la URL se basa en el género
 
   ];
 

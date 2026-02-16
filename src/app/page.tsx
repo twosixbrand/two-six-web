@@ -2,6 +2,8 @@ import Banner from "@/components/Banner";
 import Catalog from "@/components/Catalog";
 import { getStoreDesigns } from "@/data/products";
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   // En un caso real, filtrarías por productos con descuento.
   // Por ahora, tomaremos los 4 primeros productos como ejemplo.

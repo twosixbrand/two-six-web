@@ -19,6 +19,9 @@ module.exports = {
           text: "#313835", // Color de texto para usar sobre este fondo
         }
       },
+      fontFamily: {
+        sans: ['var(--font-inter)', 'sans-serif'],
+      },
     },
   },
   plugins: [],

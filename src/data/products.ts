@@ -44,7 +44,7 @@ export const getProductsByGender = async (
 
 export const getProductById = async (id: number): Promise<Product | null> => {
   try {
-    console.log("id:", id);
+
     return await apiClient<Product>(`/products/${id}`);
   } catch (error) {
     // El nuevo apiClient lanzará un error que podemos inspeccionar.

@@ -40,14 +40,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       const existingItem = prevItems.find(cartItem => cartItem.id === item.id);
 
       if (existingItem) {
-        // Si el item ya existe, incrementa la cantidad
+        // If the item already exists, update its details (like image) and increment quantity
         return prevItems.map(cartItem =>
           cartItem.id === item.id
-            ? { ...cartItem, quantity: cartItem.quantity + 1 }
+            ? { ...cartItem, ...item, quantity: cartItem.quantity + 1 }
             : cartItem
         );
       } else {
-        // Si es un item nuevo, lo añade al carrito con cantidad 1
+        // If it's a new item, add it with quantity 1
         return [...prevItems, { ...item, quantity: 1 }];
       }
     });

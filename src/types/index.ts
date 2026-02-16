@@ -21,7 +21,10 @@ interface Clothing {
   name: string;
   description: string;
   id_category: number;
-  gender: "MASCULINO" | "FEMENINO" | "UNISEX";
+  gender: {
+    id: number;
+    name: string;
+  };
 }
 interface Design {
   id: number;
@@ -39,6 +42,11 @@ interface ClothingSizeEntity {
   clothingColor: {
     id: number;
     image_url: string | null;
+    imageClothing: {
+      id: number;
+      image_url: string;
+      position: number;
+    }[];
     color: Color;
     design: Design & {
       clothing: Clothing & {
@@ -55,5 +63,6 @@ export interface Product {
   price: number;
   gender: "MASCULINO" | "FEMENINO" | "UNISEX";
   description: string;
+  image_url: string;
   clothingSize: ClothingSizeEntity;
 }

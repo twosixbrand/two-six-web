@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { TrashIcon, PlusIcon, MinusIcon } from "@heroicons/react/24/solid";
 import type { CartItem as CartItemType } from "@/context/CartContext";
@@ -18,7 +18,19 @@ export default function CartItem({
     removeFromCart,
     formatPrice,
 }: CartItemProps) {
-    const [imgSrc, setImgSrc] = useState(item.clothingSize.clothingColor.image_url || "/placeholder.png");
+    const getInitialImage = () => {
+        return item.image_url ||
+            item.clothingSize?.clothingColor?.imageClothing?.[0]?.image_url ||
+            item.clothingSize?.clothingColor?.image_url ||
+            "/placeholder.png";
+    };
+
+    const [imgSrc, setImgSrc] = useState(getInitialImage());
+
+    // Update image if the item prop changes (e.g. from context update)
+    useEffect(() => {
+        setImgSrc(getInitialImage());
+    }, [item.id, item.image_url, item.clothingSize?.clothingColor?.imageClothing?.[0]?.image_url, item.clothingSize?.clothingColor?.image_url]);
 
     return (
         <div className="flex items-center bg-white p-4 rounded-lg shadow-md">

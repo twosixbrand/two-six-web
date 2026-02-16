@@ -2,6 +2,8 @@ import Catalog from "@/components/Catalog";
 import Banner from "@/components/Banner";
 import { getStoreDesigns } from "@/data/products";
 
+export const dynamic = 'force-dynamic';
+
 export default async function WomanPage() {
   // Obtenemos productos de la categoría MUJER que no sean de OUTLET
   const products = await getStoreDesigns({ gender: 'FEMENINO', isOutlet: false });
