@@ -1,5 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 // 1. Definir la interfaz para las props del componente
 interface FooterProps {
@@ -8,196 +12,105 @@ interface FooterProps {
 
 const Footer = ({ showOutletLink }: FooterProps) => {
   return (
-    <footer className="bg-primary text-white mt-16">
-      <div className="container mx-auto px-8 py-12">
-        <div className="grid md:grid-cols-3 gap-8 text-center md:text-left">
-          {/* Columna 1: Logo y Redes Sociales */}
-          <div className="flex flex-col items-center">
-            <Link href="/">
+    <footer className="bg-primary text-secondary/90 mt-16 pb-8 border-t border-accent/20">
+      <div className="container mx-auto px-6 pt-16 pb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+
+          {/* Columna 1: Brand & Manifesto */}
+          <div className="flex flex-col space-y-6">
+            <Link href="/" className="inline-block">
               <Image
-                src="/logo-black.png" // Asumiendo que tienes una versión blanca del logo
+                src="/logo-black.png" // Idealmente logo invertido/blanco o dorado para el fondo oscuro
                 alt="two-six-web Logo"
-                width={140}
-                height={45}
-                className="h-auto w-auto"
+                width={120}
+                height={40}
+                className="h-auto w-auto opacity-90 hover:opacity-100 transition-opacity"
               />
             </Link>
-            <div className="flex justify-center md:justify-start mt-6 space-x-6">
-              <SocialLink
-                href="https://www.facebook.com/share/17Xesk5dkT/?mibextid=wwXIfr"
-                label="Facebook"
-              >
-                <Image
-                  src="/facebook.svg"
-                  alt="Facebook"
-                  width={24}
-                  height={24}
-                  className="text-white/80 group-hover:text-accent"
-                />
+            <p className="text-sm leading-relaxed text-secondary/70">
+              Redefiniendo el minimalismo moderno. Prendas atemporales diseñadas para destacar tu esencia y acompañarte en cada momento.
+            </p>
+            <div className="flex items-center space-x-4 pt-2">
+              <SocialLink href="https://instagram.com/twosix.brand/" label="Instagram">
+                <Image src="/instagram.svg" alt="Instagram" width={20} height={20} className="opacity-70 hover:opacity-100 transition-opacity filter invert" />
               </SocialLink>
-              <SocialLink
-                href="https://instagram.com/twosix.brand/"
-                label="Instagram"
-              >
-                <Image
-                  src="/instagram.svg"
-                  alt="Instagram"
-                  width={24}
-                  height={24}
-                  className="text-white/80 group-hover:text-accent"
-                />
-              </SocialLink>
-              <SocialLink
-                href="https://tiktok.com/@twosix_brand"
-                label="TikTok"
-              >
-                <Image
-                  src="/tiktok.svg"
-                  alt="Tiktok"
-                  width={24}
-                  height={24}
-                  className="text-white/80 group-hover:text-accent"
-                />
+              <SocialLink href="https://tiktok.com/@twosix_brand" label="TikTok">
+                <Image src="/tiktok.svg" alt="Tiktok" width={20} height={20} className="opacity-70 hover:opacity-100 transition-opacity filter invert" />
               </SocialLink>
               <SocialLink href="https://wa.me/+573108777629" label="WhatsApp">
-                <Image
-                  src="/whatsapp.svg"
-                  alt="WhatsApp"
-                  width={24}
-                  height={24}
-                  className="text-white/80 group-hover:text-accent"
-                />
-              </SocialLink>
-              <SocialLink
-                href="https://www.youtube.com/@twosix-brand"
-                label="Youtube"
-              >
-                <Image
-                  src="/youtube.svg"
-                  alt="Youtube"
-                  width={24}
-                  height={24}
-                  className="text-white/80 group-hover:text-accent"
-                />
-              </SocialLink>
-              <SocialLink
-                href="https://x.com/twosix_bran"
-                label="X"
-              >
-                <Image
-                  src="/x.svg"
-                  alt="X"
-                  width={24}
-                  height={24}
-                  className="text-white/80 group-hover:text-accent"
-                />
-              </SocialLink>
-              <SocialLink
-                href="https://x.com/twosix_bran"
-                label="Pinterest"
-              >
-                <Image
-                  src="/pinterest.svg"
-                  alt="Pinterest"
-                  width={24}
-                  height={24}
-                  className="text-white/80 group-hover:text-accent"
-                />
+                <Image src="/whatsapp.svg" alt="WhatsApp" width={20} height={20} className="opacity-70 hover:opacity-100 transition-opacity filter invert" />
               </SocialLink>
             </div>
           </div>
 
-          {/* Columna 2: Navegación */}
-          <div className="flex flex-col space-y-2">
-            <h3 className="font-bold text-lg mb-2">Navegación</h3>
-            <Link
-              href="/man"
-              className="text-white/80 hover:text-accent transition-colors"
-            >
-              Hombre
-            </Link>
-            <Link
-              href="/woman"
-              className="text-white/80 hover:text-accent transition-colors"
-            >
-              Mujer
-            </Link>
-            <Link
-              href="/unisex"
-              className="text-white/80 hover:text-accent transition-colors"
-            >
-              Unisex
-            </Link>
-            {/* 2. Usar la prop para mostrar el enlace al Outlet condicionalmente */}
+          {/* Columna 2: Colecciones */}
+          <div className="flex flex-col space-y-4">
+            <h3 className="font-serif text-lg text-secondary mb-2 tracking-wide">Colecciones</h3>
+            <FooterLink href="/man" label="Hombre" />
+            <FooterLink href="/woman" label="Mujer" />
+            <FooterLink href="/unisex" label="Unisex" />
             {showOutletLink && (
-              <Link
-                href="/outlet"
-                className="text-red-500 hover:text-red-400 transition-colors"
-              >
-                Outlet
+              <Link href="/outlet" className="text-sm text-red-400 hover:text-red-300 transition-colors w-fit">
+                Outlet Especial
               </Link>
             )}
-            <Link
-              href="/about"
-              className="text-white/80 hover:text-accent transition-colors"
-            >
-              Nosotros
-            </Link>
-            <Link
-              href="/contact"
-              className="text-white/80 hover:text-accent transition-colors"
-            >
-              Contacto
-            </Link>
           </div>
 
-          {/* Columna 3: Legal */}
-          <div className="flex flex-col space-y-2">
-            <h3 className="font-bold text-lg mb-2">Legal</h3>
-            <Link
-              href="/privacy-policy"
-              className="text-white/80 hover:text-accent transition-colors"
-            >
-              Política de Privacidad
-            </Link>
-            <Link
-              href="/terms-of-service"
-              className="text-white/80 hover:text-accent transition-colors"
-            >
-              Términos de Servicio
-            </Link>
+          {/* Columna 3: Asistencia */}
+          <div className="flex flex-col space-y-4">
+            <h3 className="font-serif text-lg text-secondary mb-2 tracking-wide">Asistencia</h3>
+            <FooterLink href="/tracking" label="Rastrear Pedido" />
+            <FooterLink href="/contact" label="Contacto / FAQ" />
+            <FooterLink href="/about" label="Sobre Nosotros" />
+            <FooterLink href="/privacy-policy" label="Política de Privacidad" />
+            <FooterLink href="/terms-of-service" label="Términos de Servicio" />
           </div>
+
+          {/* Columna 4: Newsletter (Shadcn UI) */}
+          <div className="flex flex-col space-y-4">
+            <h3 className="font-serif text-lg text-secondary mb-2 tracking-wide">Únete al Club</h3>
+            <p className="text-sm text-secondary/70">
+              Suscríbete para recibir accesos anticipados, lanzamientos exclusivos y un 10% de descuento en tu primer pedido.
+            </p>
+            <form className="flex flex-col gap-3 mt-2" onSubmit={(e) => e.preventDefault()}>
+              <Input
+                type="email"
+                placeholder="Tu correo electrónico"
+                className="bg-secondary/10 border-none text-secondary placeholder:text-secondary/50 focus-visible:ring-accent"
+              />
+              <Button type="submit" variant="default" className="w-full bg-accent text-primary hover:bg-accent/90">
+                Suscribirme
+              </Button>
+            </form>
+          </div>
+
         </div>
 
-        <hr className="my-8 border-white/20" />
-
-        <p className="text-center text-sm text-white/60">
-          © {new Date().getFullYear()} two-six-web. Todos los derechos
-          reservados.
-        </p>
+        {/* Separator and Copyright */}
+        <div className="mt-16 pt-8 border-t border-secondary/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-secondary/50">
+          <p>© {new Date().getFullYear()} T W O - S I X. Todos los derechos reservados.</p>
+          <div className="flex gap-4">
+            <span>Envios Nacionales</span>
+            <span>·</span>
+            <span>Pagos Seguros</span>
+          </div>
+        </div>
       </div>
     </footer>
   );
 };
 
-const SocialLink = ({
-  href,
-  label,
-  children,
-}: {
-  href: string;
-  label: string;
-  children: React.ReactNode;
-}) => (
-  <a
-    href={href}
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label={label}
-    className="text-white/80 hover:text-accent transition-colors"
-  >
+// Componentes estéticos de ayuda
+const SocialLink = ({ href, label, children }: { href: string; label: string; children: React.ReactNode }) => (
+  <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="text-secondary/70 hover:text-accent transition-colors">
     {children}
   </a>
+);
+
+const FooterLink = ({ href, label }: { href: string; label: string }) => (
+  <Link href={href} className="text-sm text-secondary/70 hover:text-accent transition-colors w-fit">
+    {label}
+  </Link>
 );
 
 export default Footer;

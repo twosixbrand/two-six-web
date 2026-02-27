@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useWompiPayment } from "@/hooks/useWompiPayment";
 import { getDepartments, getCities, Department, City } from "@/services/locationApi";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 interface WompiTransaction {
     id: string;
@@ -248,9 +251,9 @@ export default function CheckoutForm() {
                 quantity: item.quantity,
                 price: item.price,
                 productName: item.name || item.clothingSize?.clothingColor?.design?.clothing?.name || "Producto desconocido",
-                size: item.clothingSize.size.name,
-                color: item.clothingSize.clothingColor.color.name,
-                image: item.clothingSize.clothingColor.image_url || "https://example.com/placeholder.png",
+                size: item.clothingSize?.size?.name || "N/A",
+                color: item.clothingSize?.clothingColor?.color?.name || "N/A",
+                image: item.clothingSize?.clothingColor?.image_url || "https://example.com/placeholder.png",
             })),
             total: totalWithShipping,
             shippingCost: shippingCost || 0, // Send shipping cost to backend
@@ -264,22 +267,22 @@ export default function CheckoutForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold text-primary mb-6">Datos de Envío</h2>
+        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-sm border border-border">
+            <h2 className="text-2xl font-serif font-bold text-primary mb-8 tracking-tight">Datos de Envío</h2>
 
             {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-lg mb-6 text-sm">
                     {error}
                 </div>
             )}
 
             {savedAddresses.length > 0 && (
-                <div className="mb-6">
-                    <label className="block text-sm font-medium text-primary/80 mb-2">Mis Direcciones Guardadas</label>
+                <div className="mb-8 p-4 bg-secondary/30 rounded-xl border border-border">
+                    <Label className="text-primary font-semibold mb-3">Mis Direcciones Guardadas</Label>
                     <select
                         value={selectedAddressId}
                         onChange={handleAddressSelection}
-                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent sm:text-sm p-2 border"
+                        className="w-full bg-white rounded-lg border-gray-200 focus:border-primary focus:ring-primary text-sm p-3 border outline-none transition-colors"
                     >
                         <option value="new">Usar una nueva dirección</option>
                         {savedAddresses.map(addr => (
@@ -291,59 +294,61 @@ export default function CheckoutForm() {
                 </div>
             )}
 
-            <div className="space-y-4">
-                <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-primary/80">Nombre Completo</label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        required
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent sm:text-sm p-2 border"
-                    />
+            <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <Label htmlFor="name">Nombre Completo</Label>
+                        <Input
+                            type="text"
+                            id="name"
+                            name="name"
+                            required
+                            value={formData.name}
+                            onChange={handleChange}
+                            className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="phone">Teléfono</Label>
+                        <Input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            required
+                            value={formData.phone}
+                            onChange={handleChange}
+                            className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
+                        />
+                    </div>
                 </div>
 
-                <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-primary/80">Correo Electrónico</label>
-                    <input
+                <div className="space-y-2">
+                    <Label htmlFor="email">Correo Electrónico</Label>
+                    <Input
                         type="email"
                         id="email"
                         name="email"
                         required
                         value={formData.email}
                         onChange={handleChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent sm:text-sm p-2 border"
+                        className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
                     />
                 </div>
 
-                <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-primary/80">Teléfono</label>
-                    <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        required
-                        value={formData.phone}
-                        onChange={handleChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent sm:text-sm p-2 border"
-                    />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <label htmlFor="department" className="block text-sm font-medium text-primary/80">Departamento</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-border mt-6">
+                    <div className="space-y-2">
+                        <Label htmlFor="department">Departamento</Label>
                         <select
                             id="department"
                             name="department"
                             required
                             value={selectedDepartment ? selectedDepartment.id : ""}
                             onChange={handleDepartmentChange}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent sm:text-sm p-2 border"
+                            className="w-full h-12 bg-secondary/10 rounded-lg border-gray-200 focus:border-primary focus:ring-primary text-sm px-3 border outline-none transition-colors"
                             disabled={loadingLocations}
                         >
-                            <option value="">Seleccione...</option>
+                            <option value="">Seleccione un departamento...</option>
                             {departments.map((dept) => (
                                 <option key={dept.id} value={dept.id}>
                                     {dept.name}
@@ -351,18 +356,19 @@ export default function CheckoutForm() {
                             ))}
                         </select>
                     </div>
-                    <div>
-                        <label htmlFor="city" className="block text-sm font-medium text-primary/80">Ciudad / Municipio</label>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="city">Ciudad / Municipio</Label>
                         <select
                             id="city"
                             name="city"
                             required
                             value={selectedCity ? selectedCity.id : ""}
                             onChange={handleCityChange}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent sm:text-sm p-2 border"
+                            className="w-full h-12 bg-secondary/10 rounded-lg border-gray-200 focus:border-primary focus:ring-primary text-sm px-3 border outline-none transition-colors disabled:opacity-50"
                             disabled={!selectedDepartment}
                         >
-                            <option value="">Seleccione...</option>
+                            <option value="">Seleccione una ciudad...</option>
                             {cities.map((city) => (
                                 <option key={city.id} value={city.id}>
                                     {city.name}
@@ -372,66 +378,73 @@ export default function CheckoutForm() {
                     </div>
                 </div>
 
-                <div>
-                    <label htmlFor="address" className="block text-sm font-medium text-primary/80">Dirección de Envío</label>
-                    <input
+                <div className="space-y-2">
+                    <Label htmlFor="address">Dirección de Envío</Label>
+                    <Input
                         type="text"
                         id="address"
                         name="address"
                         required
                         value={formData.address}
                         onChange={handleChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent sm:text-sm p-2 border"
+                        placeholder="Ej. Calle 123 # 45-67"
+                        className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
                     />
                 </div>
 
-                <div>
-                    <label htmlFor="detail" className="block text-sm font-medium text-primary/80">Detalle (Apto, Unidad, etc.)</label>
-                    <input
-                        type="text"
-                        id="detail"
-                        name="detail"
-                        value={formData.detail}
-                        onChange={handleChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent sm:text-sm p-2 border"
-                    />
-                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <Label htmlFor="detail">Detalle (Opcional)</Label>
+                        <Input
+                            type="text"
+                            id="detail"
+                            name="detail"
+                            value={formData.detail}
+                            onChange={handleChange}
+                            placeholder="Apto, Unidad, Bloque, etc."
+                            className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
+                        />
+                    </div>
 
-                <div>
-                    <label htmlFor="instructions" className="block text-sm font-medium text-primary/80">Indicaciones de Entrega</label>
-                    <input
-                        type="text"
-                        id="instructions"
-                        name="instructions"
-                        value={formData.instructions}
-                        onChange={handleChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent sm:text-sm p-2 border"
-                    />
+                    <div className="space-y-2">
+                        <Label htmlFor="instructions">Indicaciones (Opcional)</Label>
+                        <Input
+                            type="text"
+                            id="instructions"
+                            name="instructions"
+                            value={formData.instructions}
+                            onChange={handleChange}
+                            placeholder="Dejar en portería, esquina azul..."
+                            className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
+                        />
+                    </div>
                 </div>
             </div>
 
-            <div className="mt-6 border-t pt-4">
-                <div className="flex justify-between text-sm mb-2">
-                    <span>Subtotal:</span>
+            <div className="mt-10 border-t pt-8">
+                <div className="flex justify-between items-center text-muted-foreground mb-3 text-sm">
+                    <span>Subtotal de productos:</span>
                     <span>${cartTotal.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-sm mb-2">
-                    <span>Envío:</span>
+                <div className="flex justify-between items-center text-muted-foreground mb-6 text-sm">
+                    <span>Costo de envío estimado:</span>
                     <span>${(shippingCost || 0).toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-xl font-bold text-primary mt-2">
-                    <span>Total:</span>
+                <div className="flex justify-between items-end text-2xl font-bold text-accent mb-8">
+                    <span className="text-sm font-semibold uppercase tracking-wider text-primary">Total a Pagar</span>
                     <span>${(cartTotal + (shippingCost || 0)).toLocaleString()}</span>
                 </div>
             </div>
 
-            <button
+            <Button
                 type="submit"
+                size="lg"
                 disabled={loadingPayment}
-                className="mt-6 w-full bg-accent text-white font-bold py-3 px-6 rounded-lg hover:bg-accent-hover transition-colors duration-300 shadow-md disabled:bg-gray-400"
+                className="w-full py-7 text-lg uppercase tracking-widest bg-primary text-secondary hover:bg-primary/90 transition-all shadow-xl"
             >
-                {loadingPayment ? "Procesando..." : "Pagar Ahora"}
-            </button>
+                {loadingPayment ? "Procesando de forma segura..." : "Realizar Pago"}
+            </Button>
+            <p className="text-xs text-center text-muted-foreground mt-4">Tus datos están protegidos y encriptados de forma segura.</p>
         </form>
     );
 }

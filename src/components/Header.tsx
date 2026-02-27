@@ -5,6 +5,44 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
+import * as React from "react";
+import { cn } from "@/lib/utils";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+
+const ListItem = React.forwardRef<
+  React.ElementRef<"a">,
+  React.ComponentPropsWithoutRef<"a">
+>(({ className, title, children, href, ...props }, ref) => {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <Link
+          ref={ref}
+          href={href || "#"}
+          className={cn(
+            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent/10 hover:text-accent focus:bg-accent/10 focus:text-accent",
+            className
+          )}
+          {...props}
+        >
+          <div className="text-sm font-medium leading-none mb-2">{title}</div>
+          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+            {children}
+          </p>
+        </Link>
+      </NavigationMenuLink>
+    </li>
+  )
+})
+ListItem.displayName = "ListItem";
 
 // 1. Definir la interfaz para las props del componente
 interface HeaderProps {
@@ -29,7 +67,7 @@ const Header = ({ showOutletLink }: HeaderProps) => {
   }, []);
 
   return (
-    <header className="bg-white sticky top-0 z-50 shadow-md">
+    <header className="bg-white/85 backdrop-blur-md sticky top-0 z-50 shadow-sm border-b border-gray-100/50">
       <nav className="container mx-auto px-4 flex justify-between items-center">
         {/* Logo o Nombre de la Tienda */}
         <div className="flex-1">
@@ -44,45 +82,81 @@ const Header = ({ showOutletLink }: HeaderProps) => {
           </Link>
         </div>
 
-        {/* Menú para Escritorio (Desktop) */}
-        <ul className="hidden md:flex items-center space-x-10">
-          <li>
-            <Link
-              href="/man"
-              className="text-sm font-medium uppercase tracking-wider text-primary transition-colors duration-300 relative group"
-            >
-              Hombre
-              <span className="absolute -bottom-2 left-0 w-full h-0.5 bg-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/woman"
-              className="text-sm font-medium uppercase tracking-wider text-primary transition-colors duration-300 relative group"
-            >
-              Mujer
-              <span className="absolute -bottom-2 left-0 w-full h-0.5 bg-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/unisex"
-              className="text-sm font-medium uppercase tracking-wider text-primary transition-colors duration-300 relative group"
-            >
-              Unisex
-              <span className="absolute -bottom-2 left-0 w-full h-0.5 bg-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/tracking"
-              className="text-sm font-medium uppercase tracking-wider text-primary transition-colors duration-300 relative group"
-            >
-              Rastrear Pedido
-              <span className="absolute -bottom-2 left-0 w-full h-0.5 bg-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></span>
-            </Link>
-          </li>
-        </ul>
+        {/* Menú para Escritorio (Desktop) con Shadcn Navigation-Menu */}
+        <div className="hidden md:flex flex-1 justify-center">
+          <NavigationMenu>
+            <NavigationMenuList>
+
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="text-sm font-medium uppercase tracking-wider text-primary bg-transparent hover:bg-transparent hover:text-accent">Hombre</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                    <li className="row-span-3">
+                      <NavigationMenuLink asChild>
+                        <Link
+                          className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                          href="/man"
+                        >
+                          <div className="mb-2 mt-4 text-lg font-serif">Colección Hombre</div>
+                          <p className="text-sm leading-tight text-muted-foreground">
+                            Descubre las últimas tendencias y clásicos atemporales para el guardarropa masculino.
+                          </p>
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                    <ListItem href="/man?category=camisas" title="Camisas">
+                      Estilos formales y casuales.
+                    </ListItem>
+                    <ListItem href="/man?category=pantalones" title="Pantalones">
+                      Jeans, chinos y de vestir.
+                    </ListItem>
+                    <ListItem href="/man?category=accesorios" title="Accesorios">
+                      Complementos perfectos.
+                    </ListItem>
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="text-sm font-medium uppercase tracking-wider text-primary bg-transparent hover:bg-transparent hover:text-accent">Mujer</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+                    {/* Ejemplos de links, ajustar a categorias reales si se tienen */}
+                    <ListItem title="Vestidos" href="/woman?category=vestidos">
+                      Elegancia natural para cada ocasión.
+                    </ListItem>
+                    <ListItem title="Blusas" href="/woman?category=blusas">
+                      Comodidad y estilo diario.
+                    </ListItem>
+                    <ListItem title="Faldas" href="/woman?category=faldas">
+                      Diseños exclusivos y dinámicos.
+                    </ListItem>
+                    <ListItem title="New Arrivals" href="/woman?sort=new">
+                      Lo último en la colección.
+                    </ListItem>
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-transparent text-sm font-medium uppercase tracking-wider text-primary hover:text-accent")}>
+                  <Link href="/unisex">
+                    Unisex
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-transparent text-sm font-medium uppercase tracking-wider text-primary hover:text-accent")}>
+                  <Link href="/tracking">
+                    Rastrear Pedido
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
 
         {/* Iconos de Acción */}
         <div className="hidden md:flex flex-1 justify-end items-center space-x-4">
@@ -244,7 +318,7 @@ const Header = ({ showOutletLink }: HeaderProps) => {
 
       {/* Menú Desplegable para Móvil */}
       <div
-        className={`md:hidden bg-white absolute w-full shadow-xl transition-all duration-300 ease-in-out overflow-hidden ${isMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+        className={`md:hidden bg-white/95 backdrop-blur-md absolute w-full shadow-xl transition-all duration-300 ease-in-out overflow-hidden ${isMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
           }`}
       >
         <ul className="flex flex-col items-center space-y-6 py-6">

@@ -86,51 +86,53 @@ export default function TrackingPage() {
             <h1 className="text-3xl font-bold text-center mb-8">Rastrea tu Pedido</h1>
 
             <div className="bg-white p-8 rounded-lg shadow-md mb-8">
-                <form onSubmit={handleTrack} className="space-y-4">
-                    <div>
-                        <label htmlFor="orderId" className="block text-sm font-medium text-gray-700 mb-1">
-                            Número de Orden
-                        </label>
-                        <input
-                            type="number"
-                            id="orderId"
-                            value={orderId}
-                            onChange={(e) => setOrderId(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-accent focus:border-accent"
-                            placeholder="Ej: 123"
-                            required
-                        />
-                    </div>
-
-                    <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                            Correo Electrónico
-                        </label>
-                        <input
-                            type="email"
-                            id="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-accent focus:border-accent"
-                            placeholder="tu@email.com"
-                            required
-                        />
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full bg-accent text-white font-bold py-3 px-6 rounded-lg hover:bg-accent-hover transition-colors duration-300 disabled:opacity-50"
-                    >
-                        {loading ? "Buscando..." : "Rastrear"}
-                    </button>
-
-                    {error && (
-                        <div className="p-4 bg-red-50 text-red-600 rounded-md text-sm text-center">
-                            {error}
+                <div className="space-y-4">
+                    <form onSubmit={handleTrack} className="space-y-4">
+                        <div>
+                            <label htmlFor="orderId" className="block text-sm font-medium text-gray-700 mb-1">
+                                Número de Orden
+                            </label>
+                            <input
+                                type="number"
+                                id="orderId"
+                                value={orderId}
+                                onChange={(e) => setOrderId(e.target.value)}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-accent focus:border-accent"
+                                placeholder="Ej: 123"
+                                required
+                            />
                         </div>
-                    )}
-                </form>
+
+                        <div>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                                Correo Electrónico
+                            </label>
+                            <input
+                                type="email"
+                                id="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-accent focus:border-accent"
+                                placeholder="tu@email.com"
+                                required
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full bg-accent text-white font-bold py-3 px-6 rounded-lg hover:bg-accent-hover transition-colors duration-300 disabled:opacity-50"
+                        >
+                            {loading ? "Buscando..." : "Rastrear"}
+                        </button>
+
+                        {error && (
+                            <div className="p-4 bg-red-50 text-red-600 rounded-md text-sm text-center">
+                                {error}
+                            </div>
+                        )}
+                    </form>
+                </div>
             </div>
 
             {order && (

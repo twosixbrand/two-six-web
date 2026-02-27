@@ -5,6 +5,13 @@ import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import type { Product, Color, Size } from "@/types"; // Asumiendo que tienes un archivo de tipos
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
 
 interface ProductDetailProps {
   initialProduct: Product;
@@ -23,39 +30,10 @@ export default function ProductDetail({
   const [availableColors, setAvailableColors] = useState<Color[]>([]);
   const [availableSizes, setAvailableSizes] = useState<Size[]>([]);
 
-  // Estado para el acordeón
   const [openAccordion, setOpenAccordion] = useState<string | null>(
     "description"
   );
 
-  const AccordionItem = ({
-    title,
-    id,
-    children,
-  }: {
-    title: string;
-    id: string;
-    children: React.ReactNode;
-  }) => (
-    <div className="border-b">
-      <button
-        onClick={() => setOpenAccordion(openAccordion === id ? null : id)}
-        className="flex justify-between items-center w-full py-4 text-left"
-      >
-        <h3 className="font-semibold text-primary">{title}</h3>
-        <ChevronDownIcon
-          className={`w-5 h-5 transition-transform ${openAccordion === id ? "rotate-180" : ""
-            }`}
-        />
-      </button>
-      <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${openAccordion === id ? "max-h-screen py-4" : "max-h-0"
-          }`}
-      >
-        {children}
-      </div>
-    </div>
-  );
   // La obtención de datos ahora se hace en el Server Component,
   // por lo que este useEffect ya no es necesario.
 
@@ -167,158 +145,164 @@ export default function ProductDetail({
   }).format(initialProduct.price);
 
   return (
-    <section className="bg-secondary py-12 md:py-20">
-      <div className="container mx-auto px-8 max-w-7xl">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
-          {/* Columna de la Imagen (ocupa 2 de 5 columnas en LG) */}
-          <div className="lg:col-span-2">
-            <div className="relative aspect-square rounded-xl overflow-hidden shadow-lg mb-4">
-              <Image
-                src={currentImages[selectedImageIndex] || "/placeholder.png"}
-                alt={initialProduct.name}
-                fill
-                className="object-cover transition-opacity duration-300"
-                key={currentImages[selectedImageIndex]}
-                onError={() => {
-                  // If the current image fails, maybe fallback to placeholder
-                  // But usually validation happens before.
-                }}
-              />
-              {/* Navigation Arrows if multiple images */}
-              {currentImages.length > 1 && (
-                <>
-                  <button
-                    onClick={() => setSelectedImageIndex(prev => (prev === 0 ? currentImages.length - 1 : prev - 1))}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full shadow hover:bg-white transition-colors"
-                  >
-                    <ChevronDownIcon className="w-5 h-5 rotate-90" />
-                  </button>
-                  <button
-                    onClick={() => setSelectedImageIndex(prev => (prev === currentImages.length - 1 ? 0 : prev + 1))}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full shadow hover:bg-white transition-colors"
-                  >
-                    <ChevronDownIcon className="w-5 h-5 -rotate-90" />
-                  </button>
-                </>
-              )}
-            </div>
+    <section className="bg-secondary/20 py-8 md:py-16 min-h-screen font-sans">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1400px]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
 
-            {/* Thumbnails */}
-            {currentImages.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto pb-2">
-                {currentImages.map((img, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setSelectedImageIndex(idx)}
-                    className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all ${selectedImageIndex === idx ? "border-accent" : "border-transparent opacity-70 hover:opacity-100"
-                      }`}
-                  >
-                    <Image
-                      src={img}
-                      alt={`Vista ${idx + 1}`}
-                      fill
-                      className="object-cover"
-                    />
-                  </button>
-                ))}
+          {/* Columna Izquierda: Galería de Imágenes (7 columnas) */}
+          <div className="lg:col-span-7 flex flex-col gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Imagen Principal en Móvil / Primera en Desktop */}
+              <div className="relative aspect-[3/4] md:col-span-2 rounded-xl overflow-hidden shadow-sm bg-white">
+                <Image
+                  src={currentImages[0] || "/placeholder.png"}
+                  alt={initialProduct.name}
+                  fill
+                  className="object-cover object-center"
+                  priority
+                />
               </div>
-            )}
+
+              {/* Imágenes Secundarias flotantes estilo grid estricto */}
+              {currentImages.slice(1).map((img, idx) => (
+                <div key={idx} className="relative aspect-[3/4] rounded-xl overflow-hidden shadow-sm bg-white hidden md:block">
+                  <Image
+                    src={img}
+                    alt={`${initialProduct.name} - Detalle ${idx + 2}`}
+                    fill
+                    className="object-cover object-center transition-transform hover:scale-105 duration-700"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Columna de Información (ocupa 3 de 5 columnas en LG) */}
-          <div className="lg:col-span-3 flex flex-col justify-center">
-            <h1 className="text-3xl md:text-4xl font-bold text-primary">
+          {/* Columna Derecha: Sticky Info (5 columnas) */}
+          <div className="lg:col-span-5 lg:sticky lg:top-32 flex flex-col">
+            <div className="mb-2">
+              <span className="text-sm tracking-widest uppercase text-muted-foreground font-medium">
+                Edición {initialProduct.gender || 'Unisex'}
+              </span>
+            </div>
+
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-semibold text-primary mb-4 leading-tight">
               {initialProduct.name}
             </h1>
-            <p className="mt-2 text-2xl font-semibold text-accent">
+
+            <p className="text-2xl font-medium text-accent mb-8">
               {formattedPrice}
             </p>
 
-            {/* Acordeón de Detalles */}
-            <div className="mt-8 space-y-4">
-              <AccordionItem title="Descripción" id="description">
-                <p className="text-primary/80 leading-relaxed">
-                  {initialProduct.description}
-                </p>
-              </AccordionItem>
-              <AccordionItem title="Detalles del Producto" id="details">
-                <ul className="list-disc list-inside text-primary/80 space-y-1">
-                  <li>
-                    Referencia: {initialProduct.clothingSize.clothingColor.design.reference}
-                  </li>
-                </ul>
-              </AccordionItem>
-              <AccordionItem title="Cuidados" id="care">
-                <p className="text-primary/80 leading-relaxed">
-                  Lavar a máquina con agua fría. No usar blanqueador. Secar a
-                  baja temperatura.
-                </p>
-              </AccordionItem>
-            </div>
+            <div className="h-px w-full bg-border mb-8"></div>
 
-            {/* Selector de Color */}
-            <div className="mt-8">
-              <h3 className="text-sm font-medium text-primary mb-3">
-                Color: <span className="font-bold">{selectedColor?.name}</span>
-              </h3>
-              <div className="flex flex-wrap gap-3">
-                {availableColors.map((color) => (
-                  <button
-                    key={color.id}
-                    onClick={() => handleColorSelect(color)}
-                    className="relative w-8 h-8 rounded-full border-2 transition-transform hover:scale-110 focus:outline-none"
-                    style={{ backgroundColor: color.hex }}
-                    aria-label={`Seleccionar color ${color.name}`}
-                    data-selected={selectedColor?.id === color.id}
-                  >
-                    {selectedColor?.id === color.id && (
-                      <span className="absolute inset-0 rounded-full ring-2 ring-offset-2 ring-accent"></span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* Selectores agrupados */}
+            <div className="space-y-8 mb-10">
 
-            {/* Selector de Tallas */}
-            <div className="mt-8">
-              <h3 className="text-sm font-medium text-primary mb-3">Talla:</h3>
-              <div className="flex flex-wrap gap-3">
-                {availableSizes.map((size) => {
-                  const isAvailable = variants.some(
-                    (v) =>
-                      v.clothingSize.clothingColor.color.id === selectedColor?.id &&
-                      v.clothingSize.size.id === size.id &&
-                      v.clothingSize.quantity_available > 0
-                  );
-                  return (
+              {/* Box Color */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-semibold text-primary uppercase tracking-wider">Color</h3>
+                  <span className="text-sm text-muted-foreground">{selectedColor?.name}</span>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  {availableColors.map((color) => (
                     <button
-                      key={size.id}
-                      onClick={() => handleSizeSelect(size)}
-                      disabled={!isAvailable}
-                      className="relative w-12 h-12 border rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed disabled:line-through hover:border-primary data-[selected=true]:bg-primary data-[selected=true]:text-white data-[selected=true]:border-primary"
-                      data-selected={selectedSize?.id === size.id}
+                      key={color.id}
+                      onClick={() => handleColorSelect(color)}
+                      className={`relative w-10 h-10 rounded-full border-2 transition-all focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${selectedColor?.id === color.id ? 'border-primary ring-2 ring-primary ring-offset-1 scale-110' : 'border-gray-200 hover:scale-105'}`}
+                      style={{ backgroundColor: color.hex }}
+                      aria-label={`Seleccionar color ${color.name}`}
                     >
-                      {size.name}
                     </button>
-                  );
-                })}
+                  ))}
+                </div>
+              </div>
+
+              {/* Box Tallas */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-semibold text-primary uppercase tracking-wider">Talla</h3>
+                  <button className="text-xs text-muted-foreground underline hover:text-primary transition-colors">Guía de tallas</button>
+                </div>
+                <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
+                  {availableSizes.map((size) => {
+                    const isAvailable = variants.some(
+                      (v) =>
+                        v.clothingSize.clothingColor.color.id === selectedColor?.id &&
+                        v.clothingSize.size.id === size.id &&
+                        v.clothingSize.quantity_available > 0
+                    );
+                    return (
+                      <button
+                        key={size.id}
+                        onClick={() => handleSizeSelect(size)}
+                        disabled={!isAvailable}
+                        className={`
+                          py-3 border text-sm font-medium transition-all duration-200 
+                          ${!isAvailable ? 'bg-secondary/50 text-muted-foreground/50 border-border/50 cursor-not-allowed line-through' : ''}
+                          ${selectedSize?.id === size.id && isAvailable ? 'bg-primary text-secondary border-primary shadow-md' : ''}
+                          ${selectedSize?.id !== size.id && isAvailable ? 'bg-white text-primary border-border hover:border-primary hover:bg-secondary/50' : ''}
+                        `}
+                      >
+                        {size.name}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
-            {/* Botón de Añadir al Carrito */}
-            <button
+            {/* Añadir al Carrito (Shadcn Button) */}
+            <Button
+              size="lg"
               onClick={handleAddToCart}
-              className="mt-10 w-full max-w-xs bg-accent text-white font-bold py-3 px-6 rounded-lg hover:bg-accent-hover transition-colors duration-300 shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="w-full py-6 text-lg uppercase tracking-wider bg-accent text-primary hover:bg-accent/90 transition-all shadow-xl hover:shadow-accent/20"
               disabled={
                 !selectedVariant ||
                 selectedVariant.clothingSize.quantity_available === 0
               }
             >
-              {selectedVariant &&
-                selectedVariant.clothingSize.quantity_available > 0
-                ? "Añadir al Carrito"
+              {selectedVariant && selectedVariant.clothingSize.quantity_available > 0
+                ? "Añadir a la Bolsa"
                 : "Agotado"}
-            </button>
+            </Button>
+
+            {/* Acordeones Shadcn para detalles extra */}
+            <div className="mt-12 text-sm">
+              <Accordion type="single" collapsible className="w-full" defaultValue="description">
+                <AccordionItem value="description">
+                  <AccordionTrigger className="text-base uppercase tracking-wider hover:no-underline hover:text-accent">
+                    Descripción
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed text-sm pt-2">
+                    {initialProduct.description}
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="details">
+                  <AccordionTrigger className="text-base uppercase tracking-wider hover:no-underline hover:text-accent">
+                    Detalles del Producto
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed text-sm pt-2">
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li>Referencia: {initialProduct.clothingSize.clothingColor.design.reference}</li>
+                      <li>Ajuste Regular</li>
+                      <li>Materiales Premium</li>
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="shipping">
+                  <AccordionTrigger className="text-base uppercase tracking-wider hover:no-underline hover:text-accent">
+                    Envíos y Devoluciones
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed text-sm pt-2">
+                    Ofrecemos cambios gratuitos en los primeros 15 días tras la compra. El envío estándar toma de 3 a 5 días hábiles a nivel nacional.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
+
           </div>
         </div>
       </div>

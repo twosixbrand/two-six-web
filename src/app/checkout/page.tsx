@@ -4,6 +4,8 @@ import { useCart } from "@/context/CartContext";
 import CheckoutForm from "@/components/CheckoutForm";
 import CheckoutSummaryItem from "@/components/CheckoutSummaryItem";
 import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 
@@ -108,48 +110,61 @@ function CheckoutContent() {
 
     if (itemCount === 0) {
         return (
-            <div className="container mx-auto px-4 py-20 text-center">
-                <h1 className="text-3xl font-bold text-primary mb-4">Tu Carrito está Vacío</h1>
-                <Link href="/" className="bg-accent text-white font-bold py-3 px-8 rounded-lg hover:bg-accent-hover transition-colors">
-                    Volver a la Tienda
-                </Link>
+            <div className="container mx-auto px-4 py-32 text-center min-h-[60vh] flex flex-col items-center justify-center">
+                <h1 className="text-4xl font-serif text-primary mb-6">Tu Bolsa está Vacía</h1>
+                <p className="text-muted-foreground text-lg mb-10 max-w-md">No puedes finalizar la compra sin artículos.</p>
+                <Button asChild size="lg" className="bg-accent text-primary hover:bg-accent/90 px-10 py-6 text-lg tracking-wider uppercase">
+                    <Link href="/">Volver a la Tienda</Link>
+                </Button>
             </div>
         );
     }
 
     return (
-        <div className="bg-secondary min-h-screen">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <h1 className="text-3xl font-bold text-primary mb-8">Finalizar Compra</h1>
+        <div className="bg-secondary/20 min-h-screen py-16">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+                <h1 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-10 tracking-tight">Finalizar Compra</h1>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                     {/* Columna Izquierda: Formulario */}
-                    <div>
+                    <div className="lg:col-span-7">
                         <CheckoutForm />
                     </div>
 
                     {/* Columna Derecha: Resumen del Pedido */}
-                    <div>
-                        <div className="bg-white p-6 rounded-lg shadow-md sticky top-24">
-                            <h2 className="text-xl font-bold text-primary border-b pb-4 mb-4">Resumen del Pedido</h2>
+                    <div className="lg:col-span-5">
+                        <div className="bg-white p-8 rounded-2xl shadow-sm border border-border sticky top-32">
+                            <h2 className="text-xl font-serif font-bold text-primary mb-6">Resumen del Pedido</h2>
 
-                            <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
+                            <div className="space-y-4 mb-6 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
                                 {cartItems.map((item) => (
-                                    <CheckoutSummaryItem
-                                        key={item.id}
-                                        item={item}
-                                        formatPrice={formatPrice}
-                                    />
+                                    <div key={item.id} className="mb-4">
+                                        <CheckoutSummaryItem
+                                            item={item}
+                                            formatPrice={formatPrice}
+                                        />
+                                    </div>
                                 ))}
                             </div>
 
-                            <div className="border-t pt-4 space-y-2">
-                                <div className="flex justify-between text-primary/80">
+                            <Separator className="my-6" />
+
+                            <div className="space-y-4 text-sm mb-6">
+                                <div className="flex justify-between items-center text-muted-foreground">
                                     <span>Subtotal</span>
-                                    <span>{formatPrice(cartTotal)}</span>
+                                    <span className="font-medium text-primary">{formatPrice(cartTotal)}</span>
                                 </div>
+                                <div className="flex justify-between items-center text-muted-foreground">
+                                    <span>Envío</span>
+                                    <span className="text-xs uppercase tracking-wider">Calculado en el siguiente paso</span>
+                                </div>
+                            </div>
 
+                            <Separator className="my-6" />
 
+                            <div className="flex justify-between items-end mb-2">
+                                <span className="text-sm font-semibold uppercase tracking-wider text-primary">Total Estimado</span>
+                                <span className="text-2xl font-bold text-accent">{formatPrice(cartTotal)}</span>
                             </div>
                         </div>
                     </div>

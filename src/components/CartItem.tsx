@@ -49,8 +49,8 @@ export default function CartItem({
             <div className="flex-grow">
                 <h2 className="font-bold text-primary">{item.name}</h2>
                 <p className="text-sm text-primary/70">
-                    Color: {item.clothingSize.clothingColor.color.name} / Talla:{" "}
-                    {item.clothingSize.size.name}
+                    Color: {item.clothingSize?.clothingColor?.color?.name ?? 'N/A'} / Talla:{" "}
+                    {item.clothingSize?.size?.name ?? 'N/A'}
                 </p>
                 <p className="text-accent font-semibold mt-1">
                     {formatPrice(item.price)}

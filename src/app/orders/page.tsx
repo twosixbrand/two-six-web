@@ -3,6 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
 
 interface Order {
     id: number;
@@ -73,98 +77,97 @@ export default function OrdersPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-4xl mx-auto">
-                <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900">Mis Pedidos</h1>
+        <div className="min-h-screen bg-secondary/20 py-16 px-4 sm:px-6 lg:px-8 font-sans">
+            <div className="max-w-5xl mx-auto space-y-8">
+
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                    <h1 className="text-3xl md:text-5xl font-serif font-bold text-primary tracking-tight">Mis Pedidos</h1>
                     <div className="flex gap-4">
-                        <Link
-                            href="/profile"
-                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 shadow-sm"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                            </svg>
-                            Mi Perfil
-                        </Link>
-                        <button
+                        <Button variant="outline" asChild className="border-border hover:bg-secondary">
+                            <Link href="/profile">Mi Perfil</Link>
+                        </Button>
+                        <Button
+                            variant="destructive"
                             onClick={handleLogout}
-                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-white border border-red-200 rounded-md hover:bg-red-50 hover:text-red-700 transition-colors duration-200 shadow-sm"
+                            className="bg-destructive/10 text-destructive hover:bg-destructive hover:text-white border border-destructive/20"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
-                            </svg>
                             Cerrar Sesión
-                        </button>
+                        </Button>
                     </div>
                 </div>
 
                 {error && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-lg text-sm mb-6">
                         {error}
                     </div>
                 )}
 
                 {orders.length === 0 ? (
-                    <div className="text-center py-12 bg-white rounded-lg shadow">
-                        <p className="text-gray-500 text-lg">No tienes pedidos registrados.</p>
-                        <Link href="/" className="mt-4 inline-block text-black underline">
-                            Ir a la tienda
-                        </Link>
+                    <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-border flex flex-col items-center justify-center min-h-[40vh]">
+                        <h2 className="text-2xl font-serif text-primary mb-4">Aún no tienes pedidos</h2>
+                        <p className="text-muted-foreground mb-8">Tus compras recientes aparecerán aquí una vez que realices tu primer pedido.</p>
+                        <Button asChild size="lg" className="bg-primary text-secondary hover:bg-primary/90 px-8 uppercase tracking-widest">
+                            <Link href="/">Descubrir Colecciones</Link>
+                        </Button>
                     </div>
                 ) : (
-                    <div className="space-y-6">
+                    <div className="space-y-8">
                         {orders.map((order) => (
-                            <div key={order.id} className="bg-white shadow overflow-hidden sm:rounded-lg">
-                                <div className="px-4 py-5 sm:px-6 flex justify-between items-center bg-gray-50">
-                                    <div>
-                                        <h3 className="text-lg leading-6 font-medium text-gray-900">
-                                            Pedido #{order.id}
-                                        </h3>
-                                        <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                                            Fecha: {new Date(order.order_date).toLocaleDateString()}
+                            <div key={order.id} className="bg-white rounded-2xl shadow-sm border border-border overflow-hidden transition-all hover:shadow-md">
+                                <div className="p-6 md:p-8 bg-secondary/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                    <div className="space-y-1">
+                                        <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Pedido #{order.id}</p>
+                                        <p className="text-lg font-serif text-primary">
+                                            Realizado el {new Date(order.order_date).toLocaleDateString()}
                                         </p>
                                     </div>
-                                    <div className="text-right">
-                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${order.status === 'Entregado' ? 'bg-green-100 text-green-800' :
-                                            order.status === 'Pagado' ? 'bg-blue-100 text-blue-800' :
-                                                'bg-yellow-100 text-yellow-800'
-                                            }`}>
+                                    <div className="flex flex-col items-start md:items-end gap-2">
+                                        <Badge
+                                            variant={
+                                                order.status === 'Entregado' ? 'default' :
+                                                    order.status === 'Pagado' ? 'secondary' : 'outline'
+                                            }
+                                            className={`text-xs uppercase tracking-wider px-3 py-1 ${order.status === 'Entregado' ? 'bg-green-100 text-green-800 hover:bg-green-100' :
+                                                order.status === 'Pagado' ? 'bg-blue-100 text-blue-800 hover:bg-blue-100' :
+                                                    'bg-yellow-100 text-yellow-800 border-yellow-200'
+                                                }`}
+                                        >
                                             {order.status}
-                                        </span>
-                                        <p className="mt-1 text-sm font-bold text-gray-900">
+                                        </Badge>
+                                        <p className="text-xl font-bold text-accent">
                                             ${order.total_payment.toLocaleString('es-CO')}
                                         </p>
                                     </div>
                                 </div>
-                                <div className="border-t border-gray-200">
-                                    <ul className="divide-y divide-gray-200">
+
+                                <Separator />
+
+                                <div className="p-0">
+                                    <ul className="divide-y divide-border">
                                         {order.orderItems.map((item) => (
-                                            <li key={item.id} className="px-4 py-4 flex items-center">
-                                                <div className="flex-shrink-0 h-16 w-16 border border-gray-200 rounded-md overflow-hidden">
+                                            <li key={item.id} className="p-6 md:p-8 flex items-center gap-6">
+                                                <div className="relative h-24 w-24 md:h-32 md:w-32 bg-secondary/20 rounded-xl overflow-hidden shrink-0 border border-border">
                                                     {item.product.clothingSize?.clothingColor?.image_url ? (
-                                                        <>
-                                                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                            <img
-                                                                src={item.product.clothingSize.clothingColor.image_url}
-                                                                alt={item.product_name}
-                                                                className="h-full w-full object-cover object-center"
-                                                            />
-                                                        </>
+                                                        <Image
+                                                            src={item.product.clothingSize.clothingColor.image_url}
+                                                            alt={item.product_name}
+                                                            fill
+                                                            className="object-cover object-center"
+                                                        />
                                                     ) : (
-                                                        <div className="h-full w-full bg-gray-200 flex items-center justify-center text-gray-400">
-                                                            No img
+                                                        <div className="h-full w-full flex items-center justify-center text-muted-foreground text-xs uppercase tracking-widest text-center p-2">
+                                                            Sin imagen
                                                         </div>
                                                     )}
                                                 </div>
-                                                <div className="ml-4 flex-1">
-                                                    <div className="flex justify-between">
-                                                        <h4 className="text-sm font-medium text-gray-900">{item.product_name}</h4>
-                                                        <p className="text-sm font-medium text-gray-900">
-                                                            ${item.unit_price.toLocaleString('es-CO')}
-                                                        </p>
+                                                <div className="flex-1 flex flex-col md:flex-row justify-between gap-4">
+                                                    <div className="space-y-1">
+                                                        <h4 className="font-semibold text-primary text-lg">{item.product_name}</h4>
+                                                        <p className="text-sm text-muted-foreground">Cantidad: {item.quantity}</p>
                                                     </div>
-                                                    <p className="text-sm text-gray-500">Cant: {item.quantity}</p>
+                                                    <p className="font-medium text-primary">
+                                                        ${item.unit_price.toLocaleString('es-CO')} c/u
+                                                    </p>
                                                 </div>
                                             </li>
                                         ))}

@@ -1,5 +1,5 @@
 import Catalog from "@/components/Catalog";
-import Banner from "@/components/Banner";
+import { SectionBanner } from "@/components/SectionBanner";
 import { getStoreDesigns } from "@/data/products";
 
 export const dynamic = 'force-dynamic';
@@ -10,9 +10,10 @@ export default async function UnisexPage() {
 
   return (
     <>
-      <Banner
-        imageUrl="https://images.unsplash.com/photo-1512412046876-f386342eddb3?w=1200&q=80"
-        title="Colección Unisex"
+      <SectionBanner
+        imageSrc="https://images.unsplash.com/photo-1492446845049-9c50cc313f00?q=80&w=1974&auto=format&fit=crop"
+        title="Unisex"
+        subtitle="Prendas estéticas sin definiciones."
       />
       <div className="container mx-auto px-6 py-12">
         <Catalog products={products} />

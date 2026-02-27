@@ -1,5 +1,5 @@
 import Catalog from "@/components/Catalog";
-import Banner from "@/components/Banner";
+import { SectionBanner } from "@/components/SectionBanner";
 import { getStoreDesigns } from "@/data/products";
 
 export const dynamic = 'force-dynamic';
@@ -9,11 +9,10 @@ export default async function OutletPage() {
   const products = await getStoreDesigns({ isOutlet: true });
   return (
     <>
-      <Banner
-        imageUrl="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=1200&q=80"
-        //src="/logo.png"
+      <SectionBanner
+        imageSrc="https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?q=80&w=2070&auto=format&fit=crop"
         title="Outlet"
-        subtitle="Grandes descuentos en tus prendas favoritas"
+        subtitle="Oportunidades únicas de piezas atemporales."
       />
       <div className="container mx-auto px-6 py-12">
         <Catalog products={products} />
