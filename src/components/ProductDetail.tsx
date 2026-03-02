@@ -56,6 +56,9 @@ export default function ProductDetail({
   };
 
   useEffect(() => {
+    // Al cargar la vista de detalle de producto, asegurar que nos posicionamos al inicio de la página.
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
     setSelectedVariant(initialProduct);
     setSelectedColor(initialProduct.clothingSize.clothingColor.color);
     setSelectedSize(initialProduct.clothingSize.size);
