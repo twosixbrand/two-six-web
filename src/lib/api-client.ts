@@ -24,7 +24,6 @@ export async function apiClient<T>(endpoint: string, options: FetchOptions = {})
 
   try {
     const response = await fetch(urlString, {
-      cache: 'no-store', // Deshabilita el caché para asegurar datos frescos durante el desarrollo/pruebas
       ...fetchOptions,
     });
 
