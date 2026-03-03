@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import * as React from "react";
 import Image from "next/image";
 import type { CartItem } from "@/context/CartContext";
 
@@ -13,18 +14,18 @@ export default function CheckoutSummaryItem({
     item,
     formatPrice,
 }: CheckoutSummaryItemProps) {
-    const getInitialImage = () => {
+    const getInitialImage = React.useCallback(() => {
         return item.image_url ||
             item.clothingSize?.clothingColor?.imageClothing?.[0]?.image_url ||
             item.clothingSize?.clothingColor?.image_url ||
             "/placeholder.png";
-    };
+    }, [item.image_url, item.clothingSize?.clothingColor?.imageClothing, item.clothingSize?.clothingColor?.image_url]);
 
     const [imgSrc, setImgSrc] = useState(getInitialImage());
 
     useEffect(() => {
         setImgSrc(getInitialImage());
-    }, [item.id, item.image_url, item.clothingSize?.clothingColor?.imageClothing?.[0]?.image_url, item.clothingSize?.clothingColor?.image_url]);
+    }, [getInitialImage]);
 
     return (
         <div className="flex items-center space-x-4">

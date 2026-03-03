@@ -1,7 +1,6 @@
 "use client"; // Este componente es interactivo y se ejecuta en el cliente
 
 import { useState, useEffect } from "react";
-import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import type { Product, Color, Size } from "@/types"; // Asumiendo que tienes un archivo de tipos
@@ -25,20 +24,16 @@ export default function ProductDetail({
   const [selectedVariant, setSelectedVariant] = useState<Product | null>(null);
   const [selectedColor, setSelectedColor] = useState<Color | null>(null);
   const [selectedSize, setSelectedSize] = useState<Size | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { addToCart } = useCart();
   const [availableColors, setAvailableColors] = useState<Color[]>([]);
   const [availableSizes, setAvailableSizes] = useState<Size[]>([]);
 
-  const [openAccordion, setOpenAccordion] = useState<string | null>(
-    "description"
-  );
+
 
   // La obtención de datos ahora se hace en el Server Component,
   // por lo que este useEffect ya no es necesario.
 
   const [currentImages, setCurrentImages] = useState<string[]>([]);
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   // Helper to extract images from a product variant
   const getImages = (p: Product) => {
@@ -65,8 +60,6 @@ export default function ProductDetail({
 
     const images = getImages(initialProduct);
     setCurrentImages(images);
-    setSelectedImageIndex(0);
-    setImageUrl(images[0]); // Mantener compatibilidad si se usa en otro lado
 
     const uniqueColors = Array.from(
       new Map(
@@ -120,8 +113,6 @@ export default function ProductDetail({
 
       const images = getImages(newVariant);
       setCurrentImages(images);
-      setSelectedImageIndex(0);
-      setImageUrl(images[0]);
     }
   };
 
