@@ -78,6 +78,15 @@ export default function ProductDetail({
         variants.map((v) => [v.clothingSize.size.id, v.clothingSize.size])
       ).values()
     );
+
+    const sizeOrder: { [key: string]: number } = { 'XS': 1, 'S': 2, 'M': 3, 'L': 4, 'XL': 5, 'XXL': 6, 'U': 7 };
+    uniqueSizes.sort((a, b) => {
+      const orderA = sizeOrder[a.name.toUpperCase()] || 99;
+      const orderB = sizeOrder[b.name.toUpperCase()] || 99;
+      if (orderA !== orderB) return orderA - orderB;
+      return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
+    });
+
     setAvailableColors(uniqueColors);
     setAvailableSizes(uniqueSizes);
   }, [initialProduct, variants]);
@@ -163,6 +172,8 @@ export default function ProductDetail({
                   fill
                   className="object-cover object-center"
                   priority
+                  unoptimized
+                  quality={100}
                 />
               </div>
 
@@ -174,6 +185,8 @@ export default function ProductDetail({
                     alt={`${initialProduct.name} - Detalle ${idx + 2}`}
                     fill
                     className="object-cover object-center transition-transform hover:scale-105 duration-700"
+                    unoptimized
+                    quality={100}
                   />
                 </div>
               ))}
