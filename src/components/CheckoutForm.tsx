@@ -270,6 +270,27 @@ export default function CheckoutForm() {
         <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-sm border border-border">
             <h2 className="text-2xl font-serif font-bold text-primary mb-8 tracking-tight">Datos de Envío</h2>
 
+            {/* Login Prompt Banner */}
+            {!localStorage.getItem('customerToken') && (
+                <div className="mb-8 p-6 bg-primary/5 border border-primary/20 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+                    <div>
+                        <h3 className="text-lg font-serif font-semibold text-primary">¿Ya tienes una cuenta?</h3>
+                        <p className="text-sm text-muted-foreground mt-1">Inicia sesión rápidamente con tu correo electrónico para autocompletar tus datos y direcciones guardadas.</p>
+                    </div>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        className="whitespace-nowrap border-primary text-primary hover:bg-primary hover:text-white transition-colors uppercase tracking-widest px-6"
+                        onClick={() => {
+                            sessionStorage.setItem('preLoginPath', '/checkout');
+                            router.push('/login');
+                        }}
+                    >
+                        Iniciar Sesión
+                    </Button>
+                </div>
+            )}
+
             {error && (
                 <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-lg mb-6 text-sm">
                     {error}

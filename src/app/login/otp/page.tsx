@@ -1,20 +1,78 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
 function OtpForm() {
-    const [otp, setOtp] = useState('');
+    const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const router = useRouter();
     const searchParams = useSearchParams();
     const email = searchParams.get('email');
     const { login } = useAuth();
+    const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+    useEffect(() => {
+        if (inputRefs.current[0]) {
+            inputRefs.current[0].focus();
+        }
+    }, [email]);
+
+    const handleChange = (index: number, value: string) => {
+        if (isNaN(Number(value))) return;
+
+        const newOtp = [...otp];
+        newOtp[index] = value;
+        setOtp(newOtp);
+
+        // Move to next input
+        if (value !== '' && index < 5) {
+            inputRefs.current[index + 1]?.focus();
+        }
+    };
+
+    const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Backspace') {
+            if (otp[index] === '' && index > 0) {
+                // Move to previous input and clear it
+                const newOtp = [...otp];
+                newOtp[index - 1] = '';
+                setOtp(newOtp);
+                inputRefs.current[index - 1]?.focus();
+            } else {
+                // Clear current input
+                const newOtp = [...otp];
+                newOtp[index] = '';
+                setOtp(newOtp);
+            }
+        }
+    };
+
+    const handlePaste = (e: React.ClipboardEvent) => {
+        e.preventDefault();
+        const pastedData = e.clipboardData.getData('text/plain').replace(/\D/g, '').slice(0, 6);
+        if (pastedData) {
+            const newOtp = [...otp];
+            for (let i = 0; i < pastedData.length; i++) {
+                newOtp[i] = pastedData[i];
+            }
+            setOtp(newOtp);
+            const focusIndex = Math.min(pastedData.length, 5);
+            inputRefs.current[focusIndex]?.focus();
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        const completeOtp = otp.join('');
+        if (completeOtp.length < 6) {
+            setError('Por favor, ingresa los 6 dígitos');
+            return;
+        }
+
         setLoading(true);
         setError('');
 
@@ -30,25 +88,32 @@ function OtpForm() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, otp }),
+                body: JSON.stringify({ email, otp: completeOtp }),
             });
 
             if (!response.ok) {
                 const data = await response.json();
-                throw new Error(data.message || 'Código incorrecto');
+                throw new Error(data.message || 'El código es incorrecto o ha expirado');
             }
 
             const data = await response.json();
             // Store token and update context
             login(data.accessToken, data.customer);
 
-            // Redirect to orders
-            router.push('/orders');
+            // Redirect to orders or checkout based on previous path (for now default to orders)
+            // If they came from checkout, we should ideally go back to checkout
+            const prevPath = sessionStorage.getItem('preLoginPath');
+            if (prevPath) {
+                sessionStorage.removeItem('preLoginPath');
+                router.push(prevPath);
+            } else {
+                router.push('/');
+            }
         } catch (err: unknown) {
             if (err instanceof Error) {
                 setError(err.message);
             } else {
-                setError('An unexpected error occurred');
+                setError('Ocurrió un error al verificar el PIN');
             }
         } finally {
             setLoading(false);
@@ -57,62 +122,99 @@ function OtpForm() {
 
     if (!email) {
         return (
-            <div className="text-center">
-                <p className="text-red-500">Falta el correo electrónico.</p>
-                <button onClick={() => router.push('/login')} className="text-blue-500 underline">Volver al inicio</button>
+            <div className="min-h-screen flex items-center justify-center bg-secondary/20 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+                <div className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-xl p-10 rounded-3xl shadow-xl border border-white/20 text-center relative z-10">
+                    <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-destructive/10">
+                        <svg className="h-6 w-6 text-destructive" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 className="text-2xl font-bold tracking-tight text-primary">Sesión Caducada</h2>
+                        <p className="mt-2 text-sm text-muted-foreground">Falta el identificador del correo electrónico.</p>
+                    </div>
+                    <button
+                        onClick={() => router.push('/login')}
+                        className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-primary bg-secondary hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
+                    >
+                        Volver a Solicitar
+                    </button>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
-                <div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <div className="min-h-screen flex items-center justify-center bg-secondary/20 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+            {/* Background Decorations */}
+            <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-xl p-10 rounded-3xl shadow-2xl border border-white/20 relative z-10 transition-all duration-500 hover:shadow-accent/10">
+                <div className="text-center">
+                    <h2 className="text-4xl font-serif font-bold tracking-tight text-primary">
                         Verificar Código
                     </h2>
-                    <p className="mt-2 text-center text-sm text-gray-600">
-                        Hemos enviado un código a <strong>{email}</strong>
+                    <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
+                        Hemos enviado un código seguro de 6 dígitos a <br />
+                        <span className="font-semibold text-primary">{email}</span>
                     </p>
                 </div>
-                <div className="mt-8 space-y-6">
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="rounded-md shadow-sm -space-y-px">
-                            <div>
-                                <label htmlFor="otp" className="sr-only">
-                                    Código de 6 dígitos
-                                </label>
+
+                <form onSubmit={handleSubmit} className="mt-10 space-y-8">
+                    <div>
+                        <label className="sr-only">Código OTP</label>
+                        <div className="flex justify-between gap-2" onPaste={handlePaste}>
+                            {otp.map((digit, index) => (
                                 <input
-                                    id="otp"
-                                    name="otp"
+                                    key={index}
+                                    ref={el => { inputRefs.current[index] = el; }}
                                     type="text"
-                                    required
-                                    className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-black focus:border-black focus:z-10 sm:text-sm text-center tracking-widest text-2xl"
-                                    placeholder="000000"
-                                    value={otp}
-                                    onChange={(e) => setOtp(e.target.value)}
-                                    maxLength={6}
+                                    inputMode="numeric"
+                                    pattern="\d*"
+                                    maxLength={1}
+                                    value={digit}
+                                    onChange={(e) => handleChange(index, e.target.value)}
+                                    onKeyDown={(e) => handleKeyDown(index, e)}
+                                    className={`w-12 h-14 text-center text-2xl font-bold rounded-xl outline-none transition-all
+                                        ${digit ? 'bg-primary text-secondary border border-primary ring-2 ring-primary/20 scale-105 shadow-md' : 'bg-white/50 text-primary border border-border focus:border-accent focus:ring-1 focus:ring-accent'}
+                                    `}
                                 />
-                            </div>
+                            ))}
                         </div>
+                    </div>
 
-                        {error && (
-                            <div className="text-red-500 text-sm text-center">
-                                {error}
-                            </div>
-                        )}
-
-                        <div>
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50"
-                            >
-                                {loading ? 'Verificando...' : 'Verificar'}
-                            </button>
+                    {error && (
+                        <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg text-center animate-in fade-in zoom-in duration-300">
+                            {error}
                         </div>
-                    </form>
-                </div>
+                    )}
+
+                    <div className="flex flex-col gap-4">
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full flex justify-center items-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold tracking-wider uppercase text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                        >
+                            {loading ? (
+                                <span className="flex items-center gap-2">
+                                    <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></div>
+                                    Verificando...
+                                </span>
+                            ) : (
+                                'Completar Registro'
+                            )}
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => router.push('/login')}
+                            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors hover:underline"
+                        >
+                            ¿No recibiste el código? Cambiar correo
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     );
@@ -120,7 +222,11 @@ function OtpForm() {
 
 export default function OtpPage() {
     return (
-        <Suspense fallback={<div>Cargando...</div>}>
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-secondary/20 py-12">
+                <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin"></div>
+            </div>
+        }>
             <OtpForm />
         </Suspense>
     );
