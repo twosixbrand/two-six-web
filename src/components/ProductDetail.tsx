@@ -154,9 +154,10 @@ export default function ProductDetail({
 
           {/* Columna Izquierda: Galería de Imágenes (7 columnas) */}
           <div className="lg:col-span-7 flex flex-col gap-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Imagen Principal en Móvil / Primera en Desktop */}
-              <div className="relative aspect-[3/4] md:col-span-2 rounded-xl overflow-hidden shadow-sm bg-white">
+            {/* Contenedor móvil: scroll horizontal, contenedor desktop: grid */}
+            <div className="flex overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-2 gap-4 pb-4 md:pb-0 hide-scrollbar">
+              {/* Imagen Principal */}
+              <div className="relative aspect-[3/4] w-full min-w-[85vw] md:min-w-0 md:col-span-2 rounded-xl overflow-hidden shadow-sm bg-white snap-center shrink-0">
                 <Image
                   src={currentImages[0] || "/placeholder.png"}
                   alt={initialProduct.name}
@@ -168,9 +169,9 @@ export default function ProductDetail({
                 />
               </div>
 
-              {/* Imágenes Secundarias flotantes estilo grid estricto */}
+              {/* Imágenes Secundarias */}
               {currentImages.slice(1).map((img, idx) => (
-                <div key={idx} className="relative aspect-[3/4] rounded-xl overflow-hidden shadow-sm bg-white hidden md:block">
+                <div key={idx} className="relative aspect-[3/4] w-full min-w-[85vw] md:min-w-0 rounded-xl overflow-hidden shadow-sm bg-white snap-center shrink-0">
                   <Image
                     src={img}
                     alt={`${initialProduct.name} - Detalle ${idx + 2}`}
@@ -182,6 +183,15 @@ export default function ProductDetail({
                 </div>
               ))}
             </div>
+
+            {/* Indicadores simples para scroll móvil (opcional/visual) */}
+            {currentImages.length > 1 && (
+              <div className="flex md:hidden justify-center space-x-2 mt-[-10px] mb-4">
+                {currentImages.map((_, i) => (
+                  <div key={i} className="h-1.5 w-1.5 rounded-full bg-primary/20"></div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Columna Derecha: Sticky Info (5 columnas) */}
