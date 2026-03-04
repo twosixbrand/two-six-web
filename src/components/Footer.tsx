@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -11,6 +12,45 @@ interface FooterProps {
 }
 
 const Footer = ({ showOutletLink }: FooterProps) => {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [message, setMessage] = useState("");
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      setMessage("Por favor ingresa tu correo");
+      setStatus('error');
+      return;
+    }
+
+    setStatus('loading');
+    setMessage("");
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/newsletter/subscribe`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStatus('success');
+        setMessage(data.message || "¡Gracias por suscribirte al Club Two Six!");
+        setEmail("");
+      } else {
+        setStatus('error');
+        setMessage(data.message || "Hubo un error al suscribirte.");
+      }
+    } catch (error) {
+      console.error("Newsletter subscription error:", error);
+      setStatus('error');
+      setMessage("Ocurrió un error inesperado, intenta de nuevo.");
+    }
+  };
+
   return (
     <footer className="bg-primary text-secondary/90 mt-16 pb-8 border-t border-accent/20">
       <div className="container mx-auto px-6 pt-16 pb-8">
@@ -72,15 +112,23 @@ const Footer = ({ showOutletLink }: FooterProps) => {
             <p className="text-sm text-secondary/70">
               Suscríbete para recibir accesos anticipados, lanzamientos exclusivos y un 10% de descuento en tu primer pedido.
             </p>
-            <form className="flex flex-col gap-3 mt-2" onSubmit={(e) => e.preventDefault()}>
+            <form className="flex flex-col gap-3 mt-2" onSubmit={handleSubscribe}>
               <Input
                 type="email"
                 placeholder="Tu correo electrónico"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={status === 'loading'}
                 className="bg-secondary/10 border-none text-secondary placeholder:text-secondary/50 focus-visible:ring-accent"
               />
-              <Button type="submit" variant="default" className="w-full bg-accent text-primary hover:bg-accent/90">
-                Suscribirme
+              <Button type="submit" variant="default" disabled={status === 'loading'} className="w-full bg-accent text-primary hover:bg-accent/90 disabled:opacity-50">
+                {status === 'loading' ? 'Suscribiendo...' : 'Suscribirme'}
               </Button>
+              {message && (
+                <p className={`text-sm mt-1 ${status === 'success' ? 'text-green-400' : 'text-red-400'}`}>
+                  {message}
+                </p>
+              )}
             </form>
           </div>
 

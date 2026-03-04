@@ -14,9 +14,11 @@ interface OrderItem {
     size: string;
     color: string;
     product: {
-        clothingSize: {
-            clothingColor: {
+        image_url?: string;
+        clothingSize?: {
+            clothingColor?: {
                 image_url?: string;
+                imageClothing?: Array<{ image_url: string }>;
             }
         };
     };
@@ -125,15 +127,22 @@ function SuccessContent() {
                             {order.orderItems.map((item) => (
                                 <div key={item.id} className="flex items-center justify-between">
                                     <div className="flex items-center space-x-4">
-                                        <div className="relative w-16 h-16 rounded overflow-hidden">
+                                        <div className="relative w-16 h-16 rounded overflow-hidden flex-shrink-0 bg-gray-100">
                                             <Image
-                                                src={item.product.clothingSize?.clothingColor?.image_url || '/placeholder.png'}
+                                                src={
+                                                    item.product?.image_url ||
+                                                    item.product?.clothingSize?.clothingColor?.imageClothing?.[0]?.image_url ||
+                                                    item.product?.clothingSize?.clothingColor?.image_url ||
+                                                    '/placeholder.png'
+                                                }
                                                 alt={item.product_name}
                                                 fill
                                                 className="object-cover"
+                                                unoptimized={true}
+                                                quality={100}
                                             />
                                         </div>
-                                        <div>
+                                        <div className="flex-1">
                                             <p className="font-medium">{item.product_name}</p>
                                             <p className="text-sm text-gray-500">
                                                 {item.size} / {item.color} x {item.quantity}
