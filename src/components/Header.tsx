@@ -283,14 +283,63 @@ const Header = ({ showOutletLink }: HeaderProps) => {
         </div>
 
         {/* Acciones para Móvil */}
-        <div className="md:hidden flex-1 flex justify-end items-center space-x-2">
+        <div className="md:hidden flex-1 flex justify-end items-center space-x-3">
+          {/* Mobile Profile/Login Icon */}
+          {isLoggedIn ? (
+            <div className="relative group flex items-center">
+              <button
+                aria-label="Menú de usuario"
+                onClick={() => setIsMenuOpen(false)} // optional, simply a link to profile can be added directly or tap to open a modal. Doing a simple link for mobile for ease.
+                className="text-primary hover:text-accent transition-colors p-1.5 focus:outline-none"
+              >
+                <Link href="/profile">
+                  <svg
+                    className="w-[22px] h-[22px]"
+                    fill="currentColor"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    ></path>
+                  </svg>
+                </Link>
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              aria-label="Iniciar Sesión"
+              className="text-primary hover:text-accent transition-colors p-1.5"
+            >
+              <svg
+                className="w-[22px] h-[22px]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                ></path>
+              </svg>
+            </Link>
+          )}
+
           <Link
             href="/cart"
             aria-label={`Carrito de compras con ${itemCount} artículos`}
-            className="relative text-primary p-2 hover:text-accent transition-colors"
+            className="relative text-primary p-1.5 hover:text-accent transition-colors"
           >
             <svg
-              className="w-6 h-6"
+              className="w-[22px] h-[22px]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -304,7 +353,7 @@ const Header = ({ showOutletLink }: HeaderProps) => {
               ></path>
             </svg>
             {itemCount > 0 && (
-              <span className="absolute top-0 right-0 block h-5 w-5 rounded-full bg-accent text-white text-xs flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 block h-4 w-4 rounded-full bg-accent text-white text-[10px] flex items-center justify-center font-bold">
                 {itemCount}
               </span>
             )}
@@ -313,10 +362,10 @@ const Header = ({ showOutletLink }: HeaderProps) => {
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Abrir menú"
-            className="text-primary focus:outline-none p-2"
+            className="text-primary focus:outline-none p-2 rounded-full border border-gray-200/60 shadow-sm bg-white hover:bg-gray-50 hover:border-accent transition-all duration-300 ml-1"
           >
             <svg
-              className="w-6 h-6"
+              className="w-5 h-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -326,14 +375,14 @@ const Header = ({ showOutletLink }: HeaderProps) => {
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth="2"
+                  strokeWidth="2.5"
                   d="M6 18L18 6M6 6l12 12"
                 />
               ) : (
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth="2"
+                  strokeWidth="2.5"
                   d="M4 6h16M4 12h16m-7 6h7"
                 />
               )}
