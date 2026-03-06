@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,9 +17,37 @@ export default function PqrPage() {
         description: "",
         acceptedPrivacy: false,
     });
+    const [images, setImages] = useState<File[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [successData, setSuccessData] = useState<{ radicado: string } | null>(null);
     const [error, setError] = useState<string | null>(null);
+
+    // Auto-fill form data for logged-in customers
+    useEffect(() => {
+        try {
+            const customerDataStore = localStorage.getItem('customerData');
+            if (customerDataStore) {
+                const customer = JSON.parse(customerDataStore);
+                setFormData(prev => ({
+                    ...prev,
+                    customer_name: customer.name || "",
+                    customer_email: customer.email || "",
+                    // Si el backend devuelve identificación/tributario bajo otras keys, usaríamos fallback. 
+                    // Por lo general el identificador en e-commerce B2B se asocia al NIT o docIdentity, 
+                    // asumiendo que está disponible como 'document' o similar. Se deja vacío si no existe.
+                    customer_id: customer.document_number || customer.nit || "",
+                }));
+            }
+        } catch (e) {
+            console.error("Error parsing user data for PQR form autofill", e);
+        }
+    }, []);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setImages(Array.from(e.target.files));
+        }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
@@ -41,17 +69,22 @@ export default function PqrPage() {
         setIsSubmitting(true);
         try {
             const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3050";
+
+            const submitData = new FormData();
+            submitData.append("customer_name", formData.customer_name);
+            submitData.append("customer_id", formData.customer_id);
+            submitData.append("customer_email", formData.customer_email);
+            submitData.append("order_number", formData.order_number);
+            submitData.append("type", formData.type);
+            submitData.append("description", formData.description);
+
+            images.forEach((file) => {
+                submitData.append("images", file);
+            });
+
             const response = await fetch(`${apiUrl}/api/pqr`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    customer_name: formData.customer_name,
-                    customer_id: formData.customer_id,
-                    customer_email: formData.customer_email,
-                    order_number: formData.order_number,
-                    type: formData.type,
-                    description: formData.description,
-                }),
+                body: submitData,
             });
 
             if (!response.ok) {
@@ -186,6 +219,22 @@ export default function PqrPage() {
                             />
                         </div>
 
+                        <div className="space-y-2">
+                            <Label htmlFor="images">Evidencia Adjunta (Opcional)</Label>
+                            <Input
+                                id="images"
+                                name="images"
+                                type="file"
+                                accept="image/png, image/jpeg, image/webp"
+                                multiple
+                                onChange={handleFileChange}
+                                className="cursor-pointer file:cursor-pointer file:bg-primary file:text-primary-foreground file:border-0 file:py-1 file:px-3 file:mr-4 file:rounded-md file:text-sm text-sm p-1.5 h-auto transition-all"
+                            />
+                            <p className="text-xs text-muted-foreground mt-1">
+                                Puedes adjuntar múltiples imágenes de máximo 5MB (JPG, PNG) como soporte.
+                            </p>
+                        </div>
+
                         <div className="flex items-start space-x-3 pt-2">
                             <div className="flex items-center h-5">
                                 <input
@@ -214,7 +263,11 @@ export default function PqrPage() {
                         )}
 
                         <div className="pt-4">
-                            <Button type="submit" className="w-full" disabled={isSubmitting}>
+                            <Button
+                                type="submit"
+                                className="w-full"
+                                disabled={isSubmitting || !formData.acceptedPrivacy}
+                            >
                                 {isSubmitting ? "Enviando solicitud..." : "Generar Radicado"}
                             </Button>
                         </div>
