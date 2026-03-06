@@ -10,7 +10,7 @@ const initialState: FormState = {
   message: "",
 };
 
-export default function ContactPage() {  
+export default function ContactPage() {
   return (
     <>
       <Banner
@@ -42,7 +42,7 @@ function ContactForm() {
             </div>
             <div className="flex items-center">
               <svg className="w-6 h-6 text-accent mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-              <a href="mailto:info@twosixbrand.com" className="hover:text-accent">info@twosixbrand.com</a>
+              <a href="mailto:twosixmarca@gmail.com" className="hover:text-accent">twosixmarca@gmail.com</a>
             </div>
           </div>
         </div>

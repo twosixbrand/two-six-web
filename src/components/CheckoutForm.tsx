@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useWompiPayment } from "@/hooks/useWompiPayment";
 import { getDepartments, getCities, Department, City } from "@/services/locationApi";
@@ -27,6 +28,7 @@ export default function CheckoutForm() {
     const [shippingCost, setShippingCost] = useState(0);
     const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
     const [selectedCity, setSelectedCity] = useState<City | null>(null);
+    const [acceptTerms, setAcceptTerms] = useState(false);
 
     // Address management
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -242,6 +244,11 @@ export default function CheckoutForm() {
         e.preventDefault();
         setError(null);
 
+        if (!acceptTerms) {
+            setError("Debes aceptar los Términos y Condiciones y la Política de Privacidad para continuar con el pago.");
+            return;
+        }
+
         const totalWithShipping = cartTotal + (shippingCost || 0);
 
         const checkoutData = {
@@ -454,6 +461,31 @@ export default function CheckoutForm() {
                 <div className="flex justify-between items-end text-2xl font-bold text-accent mb-8">
                     <span className="text-sm font-semibold uppercase tracking-wider text-primary">Total a Pagar</span>
                     <span>${(cartTotal + (shippingCost || 0)).toLocaleString()}</span>
+                </div>
+            </div>
+
+            <div className="mb-6 flex items-start gap-3">
+                <div className="flex items-center h-5 mt-1">
+                    <input
+                        id="terms-privacy"
+                        name="terms-privacy"
+                        type="checkbox"
+                        checked={acceptTerms}
+                        onChange={(e) => setAcceptTerms(e.target.checked)}
+                        className="h-4 w-4 rounded border-border/50 text-accent focus:ring-accent outline-none cursor-pointer"
+                    />
+                </div>
+                <div className="text-sm">
+                    <Label htmlFor="terms-privacy" className="text-muted-foreground font-normal leading-relaxed cursor-pointer">
+                        He leído y acepto los{' '}
+                        <Link href="/legal/terminos-y-condiciones" className="font-semibold text-primary hover:text-accent underline transition-colors" target="_blank">
+                            Términos y Condiciones
+                        </Link>{' '}
+                        y la{' '}
+                        <Link href="/politicas/privacidad" className="font-semibold text-primary hover:text-accent underline transition-colors" target="_blank">
+                            Política de Privacidad
+                        </Link>.
+                    </Label>
                 </div>
             </div>
 

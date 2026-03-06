@@ -96,14 +96,17 @@ const Footer = ({ showOutletLink }: FooterProps) => {
             )}
           </div>
 
-          {/* Columna 3: Asistencia */}
+          {/* Columna 3: Asistencia & Legal */}
           <div className="flex flex-col space-y-4">
-            <h3 className="font-serif text-lg text-secondary mb-2 tracking-wide">Asistencia</h3>
+            <h3 className="font-serif text-lg text-secondary mb-2 tracking-wide">Asistencia & Legal</h3>
             <FooterLink href="/tracking" label="Rastrear Pedido" />
-            <FooterLink href="/contact" label="Contacto / FAQ" />
-            <FooterLink href="/about" label="Sobre Nosotros" />
-            <FooterLink href="/privacy-policy" label="Política de Privacidad" />
-            <FooterLink href="/terms-of-service" label="Términos de Servicio" />
+            <FooterLink href="/pqr" label="Radicar PQR / Retracto" />
+            <FooterLink href="/contact" label="Contacto" />
+            <FooterLink href="/politicas/envios-y-entregas" label="Envíos y Entregas" />
+            <FooterLink href="/politicas/cambios-y-retracto" label="Cambios y Retracto" />
+            <FooterLink href="/politicas/privacidad" label="Política de Privacidad" />
+            <FooterLink href="/legal/terminos-y-condiciones" label="Términos y Condiciones" />
+            <FooterLink href="/politicas/cookies" label="Política de Cookies" />
           </div>
 
           {/* Columna 4: Newsletter (Shadcn UI) */}
@@ -135,11 +138,16 @@ const Footer = ({ showOutletLink }: FooterProps) => {
         </div>
 
         {/* Separator and Copyright */}
-        <div className="mt-16 pt-8 border-t border-secondary/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-secondary/50">
-          <p>© {new Date().getFullYear()} T W O - S I X. Todos los derechos reservados.</p>
-          <div className="flex gap-4">
+        <div className="mt-16 pt-8 border-t border-secondary/10 flex flex-col items-center xl:flex-row xl:justify-between gap-6 text-xs text-secondary/50">
+          <p className="text-center xl:text-left">© {new Date().getFullYear()} T W O - S I X. Todos los derechos reservados.</p>
+          <div className="flex flex-wrap justify-center gap-4 items-center">
+            <a href="https://www.sic.gov.co" target="_blank" rel="noopener noreferrer" className="hover:text-accent font-semibold transition-colors flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+              Superintendencia de Industria y Comercio (SIC)
+            </a>
+            <span className="hidden md:inline">·</span>
             <span>Envios Nacionales</span>
-            <span>·</span>
+            <span className="hidden md:inline">·</span>
             <span>Pagos Seguros</span>
           </div>
         </div>

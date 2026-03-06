@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { getDepartments, getCities, Department, City } from "@/services/locationApi";
 import { Label } from "@/components/ui/label";
 
@@ -26,6 +27,7 @@ export default function LoginPage() {
     });
     const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
     const [selectedCity, setSelectedCity] = useState<City | null>(null);
+    const [acceptPrivacy, setAcceptPrivacy] = useState(false);
 
     useEffect(() => {
         const fetchDepartments = async () => {
@@ -78,6 +80,12 @@ export default function LoginPage() {
         setError('');
 
         if (showRegistration) {
+            if (!acceptPrivacy) {
+                setError('Debes autorizar el tratamiento de datos aceptando la Política de Privacidad para continuar.');
+                setLoading(false);
+                return;
+            }
+
             // Register Flow
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/customer/register`, {
@@ -257,6 +265,27 @@ export default function LoginPage() {
                                     placeholder="Ej. Calle 123 # 45-67 Barrio X"
                                     className="w-full h-12 bg-white/50 rounded-xl border border-border focus:border-accent focus:ring-1 focus:ring-accent outline-none px-4 transition-all"
                                 />
+                            </div>
+
+                            <div className="flex items-start gap-3 pt-2">
+                                <div className="flex items-center h-5 mt-1">
+                                    <input
+                                        id="privacy-policy"
+                                        name="privacy-policy"
+                                        type="checkbox"
+                                        checked={acceptPrivacy}
+                                        onChange={(e) => setAcceptPrivacy(e.target.checked)}
+                                        className="h-4 w-4 rounded border-border/50 text-accent focus:ring-accent outline-none cursor-pointer"
+                                    />
+                                </div>
+                                <div className="text-sm">
+                                    <Label htmlFor="privacy-policy" className="text-muted-foreground font-normal leading-relaxed cursor-pointer">
+                                        Autorizo el tratamiento de mis datos personales según la{' '}
+                                        <Link href="/politicas/privacidad" className="font-semibold text-primary hover:text-accent underline transition-colors" target="_blank">
+                                            Política de Privacidad
+                                        </Link>.
+                                    </Label>
+                                </div>
                             </div>
                         </div>
                     )}
