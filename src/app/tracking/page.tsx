@@ -2,16 +2,20 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { TrackingTimeline } from "@/components/TrackingTimeline";
 
 interface TrackingHistory {
     status: string;
     location: string;
+    update_date: string;
 }
 
 interface Shipment {
     id: number;
     guide_number: string;
     status: string;
+    createdAt: string;
+    delivery_date?: string;
     shippingProvider?: {
         name: string;
     };
@@ -28,10 +32,15 @@ interface OrderItem {
     product: {
         clothingSize: {
             clothingColor: {
-                image_url?: string;
+                imageClothing?: { image_url: string }[];
             }
         };
     };
+}
+
+interface Payment {
+    transaction_date: string;
+    status: string;
 }
 
 interface Order {
@@ -41,6 +50,7 @@ interface Order {
     total_payment: number;
     shipments?: Shipment[];
     orderItems: OrderItem[];
+    payments?: Payment[];
 }
 
 export default function TrackingPage() {
@@ -137,22 +147,18 @@ export default function TrackingPage() {
 
             {order && (
                 <div className="bg-white p-8 rounded-lg shadow-md animate-fade-in">
-                    <div className="border-b pb-4 mb-4 flex justify-between items-center">
+                    <div className="border-b pb-4 mb-8 flex justify-between items-center">
                         <div>
                             <h2 className="text-xl font-bold">Orden #{order.id}</h2>
                             <p className="text-sm text-gray-500">
                                 Fecha: {new Date(order.order_date).toLocaleDateString()}
                             </p>
                         </div>
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${order.status === 'Pagado' ? 'bg-green-100 text-green-800' :
-                            order.status === 'Enviado' ? 'bg-blue-100 text-blue-800' :
-                                'bg-gray-100 text-gray-800'
-                            }`}>
-                            {order.status}
-                        </span>
                     </div>
 
-                    <div className="mb-6">
+                    <TrackingTimeline order={order} />
+
+                    <div className="mb-6 mt-8">
                         <h3 className="font-semibold mb-2">Detalles del Envío</h3>
                         {order.shipments && order.shipments.length > 0 ? (
                             order.shipments.map((shipment) => (
@@ -179,9 +185,9 @@ export default function TrackingPage() {
                             {order.orderItems.map((item) => (
                                 <div key={item.id} className="flex items-center gap-4 border-b pb-4 last:border-0">
                                     <div className="relative w-16 h-16 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
-                                        {item.product.clothingSize?.clothingColor?.image_url ? (
+                                        {item.product.clothingSize?.clothingColor?.imageClothing?.[0]?.image_url ? (
                                             <Image
-                                                src={item.product.clothingSize.clothingColor.image_url}
+                                                src={item.product.clothingSize.clothingColor.imageClothing[0].image_url}
                                                 alt={item.product_name}
                                                 fill
                                                 className="object-cover"
