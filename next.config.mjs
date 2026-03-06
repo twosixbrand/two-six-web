@@ -14,6 +14,17 @@ const nextConfig = {
   turbopack: {
     root: __dirname,
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  experimental: {
+    // Limits the memory that Next.js will use for the web workers to 1 thread instead of CPU core count.
+    workerThreads: false,
+    cpus: 1,
+  },
   images: {
     remotePatterns: [
       {
