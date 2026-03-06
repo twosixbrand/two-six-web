@@ -10,4 +10,19 @@ export async function register() {
   }
 }
 
-export const onRequestError = Sentry.captureRequestError;
+export const onRequestError: typeof Sentry.captureRequestError = (
+  error,
+  request,
+  errorContext,
+) => {
+  // Next.js throws NEXT_REDIRECT and NEXT_NOT_FOUND as internal control flow
+  // errors — they are not real application errors and should not be reported.
+  if (
+    error instanceof Error &&
+    (error.message === "NEXT_REDIRECT" || error.message === "NEXT_NOT_FOUND")
+  ) {
+    return;
+  }
+
+  Sentry.captureRequestError(error, request, errorContext);
+};
