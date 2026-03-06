@@ -12,7 +12,7 @@ export default function PrivacyPolicyPage() {
 
                     <div className="prose prose-lg max-w-none text-primary/80 prose-headings:font-serif prose-headings:text-primary prose-a:text-accent hover:prose-a:text-accent/80">
                         <p>
-                            En cumplimiento de lo dispuesto por la Ley 1581 de 2012, el Decreto Reglamentario 1377 de 2013 y demás normas concordantes relativas a la Protección de Datos Personales, <strong>Two Six</strong> (en adelante "La Empresa"), establece la presente Política de Tratamiento de la Información (PTI).
+                            En cumplimiento de lo dispuesto por la Ley 1581 de 2012, el Decreto Reglamentario 1377 de 2013 y demás normas concordantes relativas a la Protección de Datos Personales, <strong>Two Six</strong> (en adelante &quot;La Empresa&quot;), establece la presente Política de Tratamiento de la Información (PTI).
                         </p>
 
                         <h3>1. Finalidad del Tratamiento de los Datos</h3>

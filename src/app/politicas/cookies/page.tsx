@@ -33,7 +33,7 @@ export default function CookiesPolicyPage() {
                             Puedes configurar tu navegador para rechazar todas las cookies o para que te avise cuando se envíe una cookie. Sin embargo, si no aceptas las cookies, es posible que no puedas utilizar algunas partes de nuestro sitio web o que tu experiencia sea menos óptima y fluida.
                         </p>
                         <p>
-                            Para más información sobre cómo modificar la configuración de las cookies en tu navegador, por favor consulta el menú de "Ayuda" del navegador que utilizas.
+                            Para más información sobre cómo modificar la configuración de las cookies en tu navegador, por favor consulta el menú de &quot;Ayuda&quot; del navegador que utilizas.
                         </p>
 
                         <h3>4. Actualizaciones a esta Política</h3>

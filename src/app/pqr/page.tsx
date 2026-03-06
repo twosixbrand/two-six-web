@@ -60,8 +60,12 @@ export default function PqrPage() {
 
             const data = await response.json();
             setSuccessData({ radicado: data.radicado });
-        } catch (err: any) {
-            setError(err.message || "Hubo un problema de conexión. Intenta nuevamente.");
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message || "Hubo un problema de conexión. Intenta nuevamente.");
+            } else {
+                setError("Hubo un problema de conexión. Intenta nuevamente.");
+            }
         } finally {
             setIsSubmitting(false);
         }
