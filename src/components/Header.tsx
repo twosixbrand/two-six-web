@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import * as React from "react";
 import { cn } from "@/lib/utils";
@@ -54,6 +55,15 @@ const Header = ({ showOutletLink }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isLoggedIn, userName, logout } = useAuth();
   const { itemCount } = useCart();
+  const [expandedMobileMenu, setExpandedMobileMenu] = useState<string | null>(null);
+
+  const toggleMobileSubmenu = (menu: string) => {
+    if (expandedMobileMenu === menu) {
+      setExpandedMobileMenu(null);
+    } else {
+      setExpandedMobileMenu(menu);
+    }
+  };
 
   // Efecto para cerrar el menú si la pantalla se agranda
   useEffect(() => {
@@ -83,7 +93,7 @@ const Header = ({ showOutletLink }: HeaderProps) => {
         </div>
 
         {/* Menú para Escritorio (Desktop) con Shadcn Navigation-Menu */}
-        <div className="hidden md:flex flex-1 justify-center">
+        <div className="hidden lg:flex flex-1 justify-center">
           <NavigationMenu>
             <NavigationMenuList>
 
@@ -188,7 +198,7 @@ const Header = ({ showOutletLink }: HeaderProps) => {
         </div>
 
         {/* Iconos de Acción */}
-        <div className="hidden md:flex flex-1 justify-end items-center space-x-4">
+        <div className="hidden lg:flex flex-1 justify-end items-center space-x-4">
           <button
             aria-label="Buscar"
             className="text-primary hover:text-accent transition-colors p-2"
@@ -237,7 +247,7 @@ const Header = ({ showOutletLink }: HeaderProps) => {
               </button>
               {/* Dropdown Menu */}
               <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-right">
-                <div className="px-4 py-2 border-b border-gray-100 md:hidden">
+                <div className="px-4 py-2 border-b border-gray-100 lg:hidden">
                   <p className="text-sm font-medium text-gray-900">{userName}</p>
                 </div>
                 <Link
@@ -312,7 +322,7 @@ const Header = ({ showOutletLink }: HeaderProps) => {
         </div>
 
         {/* Acciones para Móvil */}
-        <div className="md:hidden flex-1 flex justify-end items-center space-x-3">
+        <div className="lg:hidden flex-1 flex justify-end items-center space-x-3">
           {/* Mobile Profile/Login Icon */}
           {isLoggedIn ? (
             <div className="relative group flex items-center">
@@ -422,33 +432,106 @@ const Header = ({ showOutletLink }: HeaderProps) => {
 
       {/* Menú Desplegable para Móvil */}
       <div
-        className={`md:hidden bg-white/95 backdrop-blur-md absolute w-full shadow-xl transition-all duration-300 ease-in-out overflow-hidden ${isMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+        className={`lg:hidden bg-white/95 backdrop-blur-md absolute w-full shadow-xl transition-all duration-300 ease-in-out overflow-hidden ${isMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
           }`}
       >
-        <ul className="flex flex-col items-center space-y-6 py-6">
-          <li>
-            <Link
-              href="/man"
-              onClick={() => setIsMenuOpen(false)}
-              className="text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
-            >
-              Hombre
-            </Link>
+        <ul className="flex flex-col items-center py-6 w-full">
+          <li className="w-full">
+            <div className="flex flex-col items-center w-full border-b border-gray-100 pb-2 mb-2">
+              <button
+                onClick={() => toggleMobileSubmenu('man')}
+                className="flex items-center justify-center gap-2 w-full px-8 py-3 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
+              >
+                <span>Hombre</span>
+                <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${expandedMobileMenu === 'man' ? 'rotate-180 text-accent' : ''}`} />
+              </button>
+
+              <div className={`flex flex-col items-center overflow-hidden transition-all duration-300 w-full ${expandedMobileMenu === 'man' ? 'max-h-96 opacity-100 py-2' : 'max-h-0 opacity-0'}`}>
+                <Link
+                  href="/man"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="py-2 text-base font-medium text-accent hover:text-primary"
+                >
+                  Ver Todo Hombre
+                </Link>
+                <Link
+                  href="/man?category=Camiseta"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="py-2 text-base text-gray-500 hover:text-accent"
+                >
+                  Camisetas
+                </Link>
+                <Link
+                  href="/man?category=Pantalon%20Largo"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="py-2 text-base text-gray-500 hover:text-accent"
+                >
+                  Pantalones Largos
+                </Link>
+                <Link
+                  href="/man?category=Accesorios"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="py-2 text-base text-gray-500 hover:text-accent"
+                >
+                  Accesorios
+                </Link>
+              </div>
+            </div>
           </li>
-          <li>
-            <Link
-              href="/woman"
-              onClick={() => setIsMenuOpen(false)}
-              className="text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
-            >
-              Mujer
-            </Link>
+          <li className="w-full">
+            <div className="flex flex-col items-center w-full border-b border-gray-100 pb-2 mb-2">
+              <button
+                onClick={() => toggleMobileSubmenu('woman')}
+                className="flex items-center justify-center gap-2 w-full px-8 py-3 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
+              >
+                <span>Mujer</span>
+                <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${expandedMobileMenu === 'woman' ? 'rotate-180 text-accent' : ''}`} />
+              </button>
+
+              <div className={`flex flex-col items-center overflow-hidden transition-all duration-300 w-full ${expandedMobileMenu === 'woman' ? 'max-h-96 opacity-100 py-2' : 'max-h-0 opacity-0'}`}>
+                <Link
+                  href="/woman"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="py-2 text-base font-medium text-accent hover:text-primary"
+                >
+                  Ver Toda Mujer
+                </Link>
+                <Link
+                  href="/woman?category=Top"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="py-2 text-base text-gray-500 hover:text-accent"
+                >
+                  Tops
+                </Link>
+                <Link
+                  href="/woman?category=Vestido"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="py-2 text-base text-gray-500 hover:text-accent"
+                >
+                  Vestidos
+                </Link>
+                <Link
+                  href="/woman?category=Camiseta"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="py-2 text-base text-gray-500 hover:text-accent"
+                >
+                  Camisetas
+                </Link>
+                <Link
+                  href="/woman?category=Falda"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="py-2 text-base text-gray-500 hover:text-accent"
+                >
+                  Faldas
+                </Link>
+              </div>
+            </div>
           </li>
-          <li>
+          <li className="w-full py-2">
             <Link
               href="/unisex"
               onClick={() => setIsMenuOpen(false)}
-              className="text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
+              className="text-lg font-medium uppercase tracking-wider text-primary hover:text-accent block text-center"
             >
               Unisex
             </Link>
@@ -457,7 +540,7 @@ const Header = ({ showOutletLink }: HeaderProps) => {
             <Link
               href="/tracking"
               onClick={() => setIsMenuOpen(false)}
-              className="text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
+              className="text-lg font-medium uppercase tracking-wider text-primary hover:text-accent block text-center"
             >
               Rastrear Pedido
             </Link>
@@ -468,7 +551,7 @@ const Header = ({ showOutletLink }: HeaderProps) => {
               <Link
                 href="/outlet"
                 onClick={() => setIsMenuOpen(false)}
-                className="text-lg font-medium uppercase tracking-wider text-red-500"
+                className="text-lg font-medium uppercase tracking-wider text-red-500 block text-center"
               >
                 Outlet
               </Link>
