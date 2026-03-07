@@ -94,7 +94,7 @@ const Header = ({ showOutletLink }: HeaderProps) => {
                     <li className="row-span-3">
                       <NavigationMenuLink asChild>
                         <Link
-                          className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                          className="flex h-full w-full select-none flex-col justify-center rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 text-center no-underline outline-none focus:shadow-md"
                           href="/man"
                         >
                           <div className="mb-2 mt-4 text-lg font-serif">Colección Hombre</div>
@@ -104,15 +104,25 @@ const Header = ({ showOutletLink }: HeaderProps) => {
                         </Link>
                       </NavigationMenuLink>
                     </li>
-                    <ListItem href="/man?category=camisas" title="Camisas">
+                    <ListItem href="/man?category=Camiseta" title="Camisetas">
                       Estilos formales y casuales.
                     </ListItem>
-                    <ListItem href="/man?category=pantalones" title="Pantalones">
+                    <ListItem href="/man?category=Pantalon%20Largo" title="Pantalones Largos">
                       Jeans, chinos y de vestir.
                     </ListItem>
-                    <ListItem href="/man?category=accesorios" title="Accesorios">
+                    <ListItem href="/man?category=Accesorios" title="Accesorios">
                       Complementos perfectos.
                     </ListItem>
+                    <li className="md:col-span-2 mt-2">
+                      <NavigationMenuLink asChild>
+                        <Link
+                          href="/man"
+                          className="block w-full rounded-md bg-accent/10 px-4 py-3 text-center text-sm font-medium text-accent transition-colors hover:bg-accent hover:text-white"
+                        >
+                          Ver Todo
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>
@@ -120,20 +130,39 @@ const Header = ({ showOutletLink }: HeaderProps) => {
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="text-sm font-medium uppercase tracking-wider text-primary bg-transparent hover:bg-transparent hover:text-accent">Mujer</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                    {/* Ejemplos de links, ajustar a categorias reales si se tienen */}
-                    <ListItem title="Vestidos" href="/woman?category=vestidos">
+                  <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                    <li className="row-span-3">
+                      <NavigationMenuLink asChild>
+                        <Link
+                          className="flex h-full w-full select-none flex-col justify-center rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                          href="/woman"
+                        >
+                          <div className="mb-2 mt-4 text-lg font-serif">Colección Mujer</div>
+                          <p className="text-sm leading-tight text-muted-foreground">
+                            Elegancia, comodidad y versatilidad para cualquier ocasión de tu vida.
+                          </p>
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                    <ListItem title="Vestidos" href="/woman?category=Vestido">
                       Elegancia natural para cada ocasión.
                     </ListItem>
-                    <ListItem title="Blusas" href="/woman?category=blusas">
+                    <ListItem title="Camisetas" href="/woman?category=Camiseta">
                       Comodidad y estilo diario.
                     </ListItem>
-                    <ListItem title="Faldas" href="/woman?category=faldas">
+                    <ListItem title="Faldas" href="/woman?category=Falda">
                       Diseños exclusivos y dinámicos.
                     </ListItem>
-                    <ListItem title="New Arrivals" href="/woman?sort=new">
-                      Lo último en la colección.
-                    </ListItem>
+                    <li className="md:col-span-2 mt-2">
+                      <NavigationMenuLink asChild>
+                        <Link
+                          href="/woman"
+                          className="block w-full rounded-md bg-accent/10 px-4 py-3 text-center text-sm font-medium text-accent transition-colors hover:bg-accent hover:text-white"
+                        >
+                          Ver Todo
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>

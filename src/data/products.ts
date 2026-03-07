@@ -81,22 +81,38 @@ export async function getProductsByDesignReference(
   }
 }
 
+export interface PaginatedStoreDesigns {
+  data: StoreDesign[];
+  meta: {
+    total: number;
+    page: number;
+    totalPages: number;
+    limit: number;
+  };
+}
+
 export const getStoreDesigns = async (options?: {
   gender?: string;
   isOutlet?: boolean;
-}): Promise<StoreDesign[]> => {
+  category?: string;
+  page?: number;
+  limit?: number;
+}): Promise<PaginatedStoreDesigns> => {
   try {
-    const params: Record<string, string | boolean> = {};
+    const params: Record<string, string | boolean | number> = {};
     if (options?.gender) params.gender = options.gender;
     if (typeof options?.isOutlet === "boolean") params.is_outlet = options.isOutlet;
+    if (options?.category) params.category = options.category;
+    if (options?.page) params.page = options.page;
+    if (options?.limit) params.limit = options.limit;
 
-    return await apiClient<StoreDesign[]>("/products/store/designs", { params });
+    return await apiClient<PaginatedStoreDesigns>("/products/store/designs", { params });
   } catch (error) {
     console.error(error);
     await logError({
       message: `Fallo en getStoreDesigns con opciones: ${JSON.stringify(options)}`,
       stack: error instanceof Error ? error.stack : String(error),
     });
-    return [];
+    return { data: [], meta: { total: 0, page: 1, totalPages: 1, limit: 12 } };
   }
 };

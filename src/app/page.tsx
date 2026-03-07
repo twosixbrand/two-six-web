@@ -7,7 +7,8 @@ import Image from "next/image";
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const products = await getStoreDesigns({});
+  const productsResponse = await getStoreDesigns({});
+  const products = productsResponse.data;
 
   return (
     <>
@@ -89,11 +90,11 @@ export default async function HomePage() {
               Novedades
             </h2>
           </div>
-          <Catalog products={products} />
+          <Catalog products={products} meta={productsResponse.meta} />
 
           <div className="flex justify-center mt-12">
             <Link
-              href="/unisex"
+              href="/catalog"
               className="inline-flex items-center justify-center px-8 py-4 text-sm font-medium uppercase tracking-widest text-primary border border-primary hover:bg-primary hover:text-white transition-colors duration-300"
             >
               Ver Todo el Catálogo
