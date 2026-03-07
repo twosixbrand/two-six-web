@@ -435,123 +435,132 @@ const Header = ({ showOutletLink }: HeaderProps) => {
         className={`lg:hidden bg-white/95 backdrop-blur-md absolute w-full shadow-xl transition-all duration-300 ease-in-out overflow-hidden ${isMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
           }`}
       >
-        <ul className="flex flex-col items-center py-6 w-full">
-          <li className="w-full">
-            <div className="flex flex-col items-center w-full border-b border-gray-100 pb-2 mb-2">
+        <ul className="flex flex-col items-center w-full px-6 py-4">
+          <li className="w-full border-b border-gray-100/50">
+            <div className="flex flex-col items-center w-full">
               <button
                 onClick={() => toggleMobileSubmenu('man')}
-                className="flex items-center justify-center gap-2 w-full px-8 py-3 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
+                className="flex items-center justify-between w-full py-5 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
               >
-                <span>Hombre</span>
-                <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${expandedMobileMenu === 'man' ? 'rotate-180 text-accent' : ''}`} />
+                <div className="flex-1"></div>
+                <span className="flex-none">Hombre</span>
+                <div className="flex-1 flex justify-end">
+                  <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${expandedMobileMenu === 'man' ? 'rotate-180 text-accent' : ''}`} />
+                </div>
               </button>
 
-              <div className={`flex flex-col items-center overflow-hidden transition-all duration-300 w-full ${expandedMobileMenu === 'man' ? 'max-h-96 opacity-100 py-2' : 'max-h-0 opacity-0'}`}>
+              <div className={`flex flex-col items-center overflow-hidden transition-all duration-300 w-full ${expandedMobileMenu === 'man' ? 'max-h-96 opacity-100 pb-5' : 'max-h-0 opacity-0'}`}>
                 <Link
                   href="/man?category=Camiseta"
                   onClick={() => setIsMenuOpen(false)}
-                  className="py-2 text-base text-gray-500 hover:text-accent"
+                  className="py-2.5 text-base text-gray-500 hover:text-accent w-full text-center"
                 >
                   Camisetas
                 </Link>
                 <Link
                   href="/man?category=Pantalon%20Largo"
                   onClick={() => setIsMenuOpen(false)}
-                  className="py-2 text-base text-gray-500 hover:text-accent"
+                  className="py-2.5 text-base text-gray-500 hover:text-accent w-full text-center"
                 >
                   Pantalones Largos
                 </Link>
                 <Link
                   href="/man?category=Accesorios"
                   onClick={() => setIsMenuOpen(false)}
-                  className="py-2 text-base text-gray-500 hover:text-accent"
+                  className="py-2.5 text-base text-gray-500 hover:text-accent w-full text-center"
                 >
                   Accesorios
                 </Link>
                 <Link
                   href="/man"
                   onClick={() => setIsMenuOpen(false)}
-                  className="py-2 text-base font-medium text-accent hover:text-primary mt-2"
+                  className="py-2.5 mt-2 text-base font-medium text-accent hover:text-primary w-full text-center"
                 >
                   Ver Todo Hombre
                 </Link>
               </div>
             </div>
           </li>
-          <li className="w-full">
-            <div className="flex flex-col items-center w-full border-b border-gray-100 pb-2 mb-2">
+
+          <li className="w-full border-b border-gray-100/50">
+            <div className="flex flex-col items-center w-full">
               <button
                 onClick={() => toggleMobileSubmenu('woman')}
-                className="flex items-center justify-center gap-2 w-full px-8 py-3 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
+                className="flex items-center justify-between w-full py-5 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
               >
-                <span>Mujer</span>
-                <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${expandedMobileMenu === 'woman' ? 'rotate-180 text-accent' : ''}`} />
+                <div className="flex-1"></div>
+                <span className="flex-none">Mujer</span>
+                <div className="flex-1 flex justify-end">
+                  <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${expandedMobileMenu === 'woman' ? 'rotate-180 text-accent' : ''}`} />
+                </div>
               </button>
 
-              <div className={`flex flex-col items-center overflow-hidden transition-all duration-300 w-full ${expandedMobileMenu === 'woman' ? 'max-h-96 opacity-100 py-2' : 'max-h-0 opacity-0'}`}>
+              <div className={`flex flex-col items-center overflow-hidden transition-all duration-300 w-full ${expandedMobileMenu === 'woman' ? 'max-h-96 opacity-100 pb-5' : 'max-h-0 opacity-0'}`}>
                 <Link
                   href="/woman?category=Top"
                   onClick={() => setIsMenuOpen(false)}
-                  className="py-2 text-base text-gray-500 hover:text-accent"
+                  className="py-2.5 text-base text-gray-500 hover:text-accent w-full text-center"
                 >
                   Tops
                 </Link>
                 <Link
                   href="/woman?category=Vestido"
                   onClick={() => setIsMenuOpen(false)}
-                  className="py-2 text-base text-gray-500 hover:text-accent"
+                  className="py-2.5 text-base text-gray-500 hover:text-accent w-full text-center"
                 >
                   Vestidos
                 </Link>
                 <Link
                   href="/woman?category=Camiseta"
                   onClick={() => setIsMenuOpen(false)}
-                  className="py-2 text-base text-gray-500 hover:text-accent"
+                  className="py-2.5 text-base text-gray-500 hover:text-accent w-full text-center"
                 >
                   Camisetas
                 </Link>
                 <Link
                   href="/woman?category=Falda"
                   onClick={() => setIsMenuOpen(false)}
-                  className="py-2 text-base text-gray-500 hover:text-accent"
+                  className="py-2.5 text-base text-gray-500 hover:text-accent w-full text-center"
                 >
                   Faldas
                 </Link>
                 <Link
                   href="/woman"
                   onClick={() => setIsMenuOpen(false)}
-                  className="py-2 text-base font-medium text-accent hover:text-primary mt-2"
+                  className="py-2.5 mt-2 text-base font-medium text-accent hover:text-primary w-full text-center"
                 >
                   Ver Toda Mujer
                 </Link>
               </div>
             </div>
           </li>
-          <li className="w-full py-2">
+
+          <li className="w-full border-b border-gray-100/50">
             <Link
               href="/unisex"
               onClick={() => setIsMenuOpen(false)}
-              className="text-lg font-medium uppercase tracking-wider text-primary hover:text-accent block text-center"
+              className="py-5 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent block text-center w-full"
             >
               Unisex
             </Link>
           </li>
-          <li>
+
+          <li className="w-full border-b border-gray-100/50">
             <Link
               href="/tracking"
               onClick={() => setIsMenuOpen(false)}
-              className="text-lg font-medium uppercase tracking-wider text-primary hover:text-accent block text-center"
+              className="py-5 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent block text-center w-full"
             >
               Rastrear Pedido
             </Link>
           </li>
-          {/* 3. Añadir el enlace al Outlet también en el menú móvil */}
+
           {showOutletLink && (
-            <li>
+            <li className="w-full mt-2">
               <Link
                 href="/outlet"
                 onClick={() => setIsMenuOpen(false)}
-                className="text-lg font-medium uppercase tracking-wider text-red-500 block text-center"
+                className="py-5 text-lg font-bold uppercase tracking-wider text-red-500 hover:text-red-600 block text-center w-full"
               >
                 Outlet
               </Link>
