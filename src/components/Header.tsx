@@ -479,7 +479,7 @@ const Header = ({ showOutletLink }: HeaderProps) => {
             </div>
           </li>
 
-          <div className="w-12 h-[2px] bg-accent/20 rounded-full my-2 mx-auto"></div>
+          <div className="w-full h-[1px] bg-gray-200"></div>
 
           <li className="w-full">
             <div className="flex flex-col items-center w-full">
@@ -531,7 +531,7 @@ const Header = ({ showOutletLink }: HeaderProps) => {
             </div>
           </li>
 
-          <div className="w-12 h-[2px] bg-accent/20 rounded-full my-2 mx-auto"></div>
+          <div className="w-full h-[1px] bg-gray-200"></div>
 
           <li className="w-full">
             <Link
@@ -543,7 +543,7 @@ const Header = ({ showOutletLink }: HeaderProps) => {
             </Link>
           </li>
 
-          <div className="w-12 h-[2px] bg-accent/20 rounded-full my-2 mx-auto"></div>
+          <div className="w-full h-[1px] bg-gray-200"></div>
 
           <li className="w-full">
             <Link
@@ -557,7 +557,7 @@ const Header = ({ showOutletLink }: HeaderProps) => {
 
           {showOutletLink && (
             <>
-              <div className="w-12 h-[2px] bg-accent/20 rounded-full my-2 mx-auto"></div>
+              <div className="w-full h-[1px] bg-gray-200"></div>
               <li className="w-full">
                 <Link
                   href="/outlet"
