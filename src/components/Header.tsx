@@ -440,10 +440,12 @@ const Header = ({ showOutletLink }: HeaderProps) => {
             <div className="flex flex-col items-center w-full">
               <button
                 onClick={() => toggleMobileSubmenu('man')}
-                className="flex items-center justify-center gap-2 w-full py-5 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
+                className="flex items-center justify-center w-full py-5 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
               >
-                <span>Hombre</span>
-                <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${expandedMobileMenu === 'man' ? 'rotate-180 text-accent' : ''}`} />
+                <span className="relative flex items-center justify-center">
+                  <span>Hombre</span>
+                  <ChevronDown className={`absolute left-full ml-2 w-5 h-5 transition-transform duration-300 ${expandedMobileMenu === 'man' ? 'rotate-180 text-accent' : ''}`} />
+                </span>
               </button>
 
               <div className={`flex flex-col items-center overflow-hidden transition-all duration-300 w-full ${expandedMobileMenu === 'man' ? 'max-h-96 opacity-100 pb-5' : 'max-h-0 opacity-0'}`}>
@@ -485,10 +487,12 @@ const Header = ({ showOutletLink }: HeaderProps) => {
             <div className="flex flex-col items-center w-full">
               <button
                 onClick={() => toggleMobileSubmenu('woman')}
-                className="flex items-center justify-center gap-2 w-full py-5 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
+                className="flex items-center justify-center w-full py-5 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
               >
-                <span>Mujer</span>
-                <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${expandedMobileMenu === 'woman' ? 'rotate-180 text-accent' : ''}`} />
+                <span className="relative flex items-center justify-center">
+                  <span>Mujer</span>
+                  <ChevronDown className={`absolute left-full ml-2 w-5 h-5 transition-transform duration-300 ${expandedMobileMenu === 'woman' ? 'rotate-180 text-accent' : ''}`} />
+                </span>
               </button>
 
               <div className={`flex flex-col items-center overflow-hidden transition-all duration-300 w-full ${expandedMobileMenu === 'woman' ? 'max-h-96 opacity-100 pb-5' : 'max-h-0 opacity-0'}`}>
