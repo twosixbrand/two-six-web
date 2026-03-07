@@ -448,13 +448,6 @@ const Header = ({ showOutletLink }: HeaderProps) => {
 
               <div className={`flex flex-col items-center overflow-hidden transition-all duration-300 w-full ${expandedMobileMenu === 'man' ? 'max-h-96 opacity-100 py-2' : 'max-h-0 opacity-0'}`}>
                 <Link
-                  href="/man"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="py-2 text-base font-medium text-accent hover:text-primary"
-                >
-                  Ver Todo Hombre
-                </Link>
-                <Link
                   href="/man?category=Camiseta"
                   onClick={() => setIsMenuOpen(false)}
                   className="py-2 text-base text-gray-500 hover:text-accent"
@@ -475,6 +468,13 @@ const Header = ({ showOutletLink }: HeaderProps) => {
                 >
                   Accesorios
                 </Link>
+                <Link
+                  href="/man"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="py-2 text-base font-medium text-accent hover:text-primary mt-2"
+                >
+                  Ver Todo Hombre
+                </Link>
               </div>
             </div>
           </li>
@@ -489,13 +489,6 @@ const Header = ({ showOutletLink }: HeaderProps) => {
               </button>
 
               <div className={`flex flex-col items-center overflow-hidden transition-all duration-300 w-full ${expandedMobileMenu === 'woman' ? 'max-h-96 opacity-100 py-2' : 'max-h-0 opacity-0'}`}>
-                <Link
-                  href="/woman"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="py-2 text-base font-medium text-accent hover:text-primary"
-                >
-                  Ver Toda Mujer
-                </Link>
                 <Link
                   href="/woman?category=Top"
                   onClick={() => setIsMenuOpen(false)}
@@ -523,6 +516,13 @@ const Header = ({ showOutletLink }: HeaderProps) => {
                   className="py-2 text-base text-gray-500 hover:text-accent"
                 >
                   Faldas
+                </Link>
+                <Link
+                  href="/woman"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="py-2 text-base font-medium text-accent hover:text-primary mt-2"
+                >
+                  Ver Toda Mujer
                 </Link>
               </div>
             </div>
