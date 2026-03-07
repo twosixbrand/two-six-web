@@ -436,17 +436,14 @@ const Header = ({ showOutletLink }: HeaderProps) => {
           }`}
       >
         <ul className="flex flex-col items-center w-full px-6 py-4">
-          <li className="w-full border-b border-gray-100/50">
+          <li className="w-full">
             <div className="flex flex-col items-center w-full">
               <button
                 onClick={() => toggleMobileSubmenu('man')}
-                className="flex items-center justify-between w-full py-5 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
+                className="flex items-center justify-center gap-2 w-full py-5 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
               >
-                <div className="flex-1"></div>
-                <span className="flex-none">Hombre</span>
-                <div className="flex-1 flex justify-end">
-                  <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${expandedMobileMenu === 'man' ? 'rotate-180 text-accent' : ''}`} />
-                </div>
+                <span>Hombre</span>
+                <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${expandedMobileMenu === 'man' ? 'rotate-180 text-accent' : ''}`} />
               </button>
 
               <div className={`flex flex-col items-center overflow-hidden transition-all duration-300 w-full ${expandedMobileMenu === 'man' ? 'max-h-96 opacity-100 pb-5' : 'max-h-0 opacity-0'}`}>
@@ -482,17 +479,16 @@ const Header = ({ showOutletLink }: HeaderProps) => {
             </div>
           </li>
 
-          <li className="w-full border-b border-gray-100/50">
+          <div className="w-12 h-[2px] bg-accent/20 rounded-full my-2 mx-auto"></div>
+
+          <li className="w-full">
             <div className="flex flex-col items-center w-full">
               <button
                 onClick={() => toggleMobileSubmenu('woman')}
-                className="flex items-center justify-between w-full py-5 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
+                className="flex items-center justify-center gap-2 w-full py-5 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
               >
-                <div className="flex-1"></div>
-                <span className="flex-none">Mujer</span>
-                <div className="flex-1 flex justify-end">
-                  <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${expandedMobileMenu === 'woman' ? 'rotate-180 text-accent' : ''}`} />
-                </div>
+                <span>Mujer</span>
+                <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${expandedMobileMenu === 'woman' ? 'rotate-180 text-accent' : ''}`} />
               </button>
 
               <div className={`flex flex-col items-center overflow-hidden transition-all duration-300 w-full ${expandedMobileMenu === 'woman' ? 'max-h-96 opacity-100 pb-5' : 'max-h-0 opacity-0'}`}>
@@ -535,7 +531,9 @@ const Header = ({ showOutletLink }: HeaderProps) => {
             </div>
           </li>
 
-          <li className="w-full border-b border-gray-100/50">
+          <div className="w-12 h-[2px] bg-accent/20 rounded-full my-2 mx-auto"></div>
+
+          <li className="w-full">
             <Link
               href="/unisex"
               onClick={() => setIsMenuOpen(false)}
@@ -545,7 +543,9 @@ const Header = ({ showOutletLink }: HeaderProps) => {
             </Link>
           </li>
 
-          <li className="w-full border-b border-gray-100/50">
+          <div className="w-12 h-[2px] bg-accent/20 rounded-full my-2 mx-auto"></div>
+
+          <li className="w-full">
             <Link
               href="/tracking"
               onClick={() => setIsMenuOpen(false)}
@@ -556,15 +556,18 @@ const Header = ({ showOutletLink }: HeaderProps) => {
           </li>
 
           {showOutletLink && (
-            <li className="w-full mt-2">
-              <Link
-                href="/outlet"
-                onClick={() => setIsMenuOpen(false)}
-                className="py-5 text-lg font-bold uppercase tracking-wider text-red-500 hover:text-red-600 block text-center w-full"
-              >
-                Outlet
-              </Link>
-            </li>
+            <>
+              <div className="w-12 h-[2px] bg-accent/20 rounded-full my-2 mx-auto"></div>
+              <li className="w-full">
+                <Link
+                  href="/outlet"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="py-5 text-lg font-bold uppercase tracking-wider text-red-500 hover:text-red-600 block text-center w-full"
+                >
+                  Outlet
+                </Link>
+              </li>
+            </>
           )}
         </ul>
       </div>
