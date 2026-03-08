@@ -4,8 +4,22 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Ruler } from "lucide-react";
+import { useState, useEffect } from "react";
+import { getSizeGuides } from "../../services/sizeGuideApi";
 
 export default function GuiaTallasCamisetasPage() {
+    const [sizes, setSizes] = useState<{ size: string, width: string, length: string }[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchSizes = async () => {
+            const data = await getSizeGuides();
+            setSizes(data);
+            setIsLoading(false);
+        };
+        fetchSizes();
+    }, []);
+
     return (
         <div className="bg-gray-50 min-h-screen">
             {/* Header / Hero */}
@@ -113,28 +127,35 @@ export default function GuiaTallasCamisetasPage() {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100">
-                                        {[
-                                            { size: 'XS', width: '48', length: '68' },
-                                            { size: 'S', width: '50', length: '70' },
-                                            { size: 'M', width: '53', length: '72' },
-                                            { size: 'L', width: '56', length: '74' },
-                                            { size: 'XL', width: '59', length: '76' },
-                                            { size: 'U (Única)', width: '55', length: '73' },
-                                        ].map((row, index) => (
-                                            <tr key={index} className="hover:bg-gray-50 transition-colors group">
-                                                <td className="px-6 py-5 whitespace-nowrap">
-                                                    <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100 text-primary font-bold group-hover:bg-accent group-hover:text-white transition-colors">
-                                                        {row.size}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-5 whitespace-nowrap text-gray-700 font-medium">
-                                                    {row.width} cm
-                                                </td>
-                                                <td className="px-6 py-5 whitespace-nowrap text-gray-700 font-medium">
-                                                    {row.length} cm
+                                        {isLoading ? (
+                                            <tr>
+                                                <td colSpan={3} className="px-6 py-5 text-center text-gray-500">
+                                                    Cargando tabla de medidas...
                                                 </td>
                                             </tr>
-                                        ))}
+                                        ) : sizes.length === 0 ? (
+                                            <tr>
+                                                <td colSpan={3} className="px-6 py-5 text-center text-gray-500">
+                                                    No hay medidas ingresadas actualmente.
+                                                </td>
+                                            </tr>
+                                        ) : (
+                                            sizes.map((row, index) => (
+                                                <tr key={index} className="hover:bg-gray-50 transition-colors group">
+                                                    <td className="px-6 py-5 whitespace-nowrap">
+                                                        <div className="inline-flex items-center justify-center min-w-[2.5rem] px-2 h-10 rounded-lg bg-gray-100 text-primary font-bold group-hover:bg-accent group-hover:text-white transition-colors">
+                                                            {row.size}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-5 whitespace-nowrap text-gray-700 font-medium">
+                                                        {row.width} cm
+                                                    </td>
+                                                    <td className="px-6 py-5 whitespace-nowrap text-gray-700 font-medium">
+                                                        {row.length} cm
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
                                     </tbody>
                                 </table>
                             </div>
