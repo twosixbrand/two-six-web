@@ -109,16 +109,16 @@ const Header = ({ showOutletLink }: HeaderProps) => {
                         >
                           <div className="mb-2 mt-4 text-lg font-serif">Colección Hombre</div>
                           <p className="text-sm leading-tight text-muted-foreground">
-                            Descubre las últimas tendencias y clásicos atemporales para el guardarropa masculino.
+                            Textiles de máxima calidad y comodidad absoluta en cada pieza, diseñadas para durar y destacar en la ciudad.
                           </p>
                         </Link>
                       </NavigationMenuLink>
                     </li>
                     <ListItem href="/man?category=Camiseta" title="Camisetas">
-                      Estilos formales y casuales.
+                      Estilo Streetwear Luxe.
                     </ListItem>
                     <ListItem href="/man?category=Pantalon%20Largo" title="Pantalones Largos">
-                      Jeans, chinos y de vestir.
+                      Joggers.
                     </ListItem>
                     <ListItem href="/man?category=Accesorios" title="Accesorios">
                       Complementos perfectos.
@@ -149,19 +149,19 @@ const Header = ({ showOutletLink }: HeaderProps) => {
                         >
                           <div className="mb-2 mt-4 text-lg font-serif">Colección Mujer</div>
                           <p className="text-sm leading-tight text-muted-foreground">
-                            Elegancia, comodidad y versatilidad para cualquier ocasión de tu vida.
+                            La esencia urbana de Two Six Premium adaptada a la mujer contemporánea.
                           </p>
                         </Link>
                       </NavigationMenuLink>
                     </li>
-                    <ListItem title="Vestidos" href="/woman?category=Vestido">
-                      Elegancia natural para cada ocasión.
-                    </ListItem>
                     <ListItem title="Camisetas" href="/woman?category=Camiseta">
                       Comodidad y estilo diario.
                     </ListItem>
-                    <ListItem title="Faldas" href="/woman?category=Falda">
+                    <ListItem title="Busos y Hoodies" href="/woman?category=Buso">
                       Diseños exclusivos y dinámicos.
+                    </ListItem>
+                    <ListItem title="Accesorios" href="/woman?category=Accesorios">
+                      Complementos perfectos.
                     </ListItem>
                     <li className="md:col-span-2 mt-2">
                       <NavigationMenuLink asChild>
