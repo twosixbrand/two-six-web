@@ -29,7 +29,7 @@ export default async function HomePage() {
           {/* Card Hombre */}
           <Link href="/man" className="group relative block overflow-hidden rounded-2xl md:col-span-1 lg:col-span-2 md:row-span-2">
             <Image
-              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2072&auto=format&fit=crop"
+              src="https://twosix-catalog-storage.atl1.cdn.digitaloceanspaces.com/twosixweb.com/home-hombre-1.png"
               alt="Colección Hombre"
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -46,7 +46,7 @@ export default async function HomePage() {
           {/* Card Mujer */}
           <Link href="/woman" className="group relative block overflow-hidden rounded-2xl h-[300px] md:h-auto">
             <Image
-              src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1920&auto=format&fit=crop"
+              src="https://twosix-catalog-storage.atl1.cdn.digitaloceanspaces.com/twosixweb.com/home-mujer-1.png"
               alt="Colección Mujer"
               fill
               className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
@@ -63,7 +63,7 @@ export default async function HomePage() {
           {/* Card Unisex / Outlet */}
           <Link href="/unisex" className="group relative block overflow-hidden rounded-2xl h-[300px] md:h-auto">
             <Image
-              src="https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?q=80&w=2165&auto=format&fit=crop"
+              src="https://twosix-catalog-storage.atl1.cdn.digitaloceanspaces.com/twosixweb.com/home-uisex-1.png"
               alt="Colección Unisex"
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-105"
