@@ -16,15 +16,15 @@ import Link from "next/link";
 const heroSlides = [
     {
         id: 1,
-        image: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=2070&auto=format&fit=crop",
-        title: "Nueva Colección",
+        image: "https://twosix-catalog-storage.atl1.cdn.digitaloceanspaces.com/twosixweb.com/banner1.png",
+        title: "Nueva Colección1",
         subtitle: "Define tu propio estándar.",
         cta: "Explorar Novedades",
         link: "/woman?sort=new"
     },
     {
         id: 2,
-        image: "https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=1974&auto=format&fit=crop",
+        image: "https://twosix-catalog-storage.atl1.cdn.digitaloceanspaces.com/twosixweb.com/banner2.png",
         title: "Essentials Hombre",
         subtitle: "Clásicos reinventados para el día a día.",
         cta: "Ver Colección",
@@ -32,7 +32,7 @@ const heroSlides = [
     },
     {
         id: 3,
-        image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2074&auto=format&fit=crop",
+        image: "https://twosix-catalog-storage.atl1.cdn.digitaloceanspaces.com/twosixweb.com/banner3.png",
         title: "Edición Limitada",
         subtitle: "Piezas exclusivas. Tiempo limitado.",
         cta: "Descubrir",

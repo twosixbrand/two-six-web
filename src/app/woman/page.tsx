@@ -28,7 +28,7 @@ export default async function WomanPage({
   return (
     <>
       <SectionBanner
-        imageSrc="https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=2071&auto=format&fit=crop"
+        imageSrc="https://twosix-catalog-storage.atl1.cdn.digitaloceanspaces.com/twosixweb.com/banner-mujer-1.png"
         title="Mujer"
         subtitle="Elegancia, comodidad y versatilidad."
       />

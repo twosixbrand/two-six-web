@@ -15,7 +15,7 @@ export default async function OutletPage() {
         subtitle="Oportunidades únicas de piezas atemporales."
       />
       <div className="container mx-auto px-6 py-12">
-        <Catalog products={products} />
+        <Catalog products={products.data} meta={products.meta} />
       </div>
     </>
   );

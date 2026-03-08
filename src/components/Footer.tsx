@@ -99,6 +99,7 @@ const Footer = ({ showOutletLink }: FooterProps) => {
           {/* Columna 3: Asistencia & Legal */}
           <div className="flex flex-col space-y-4">
             <h3 className="font-serif text-lg text-secondary mb-2 tracking-wide">Asistencia & Legal</h3>
+            <FooterLink href="/guia-tallas-camisetas" label="Guía de Tallas (Camisetas)" />
             <FooterLink href="/tracking" label="Rastrear Pedido" />
             <FooterLink href="/pqr" label="Radicar PQR / Retracto" />
             <FooterLink href="/contact" label="Contacto" />

@@ -28,7 +28,7 @@ export default async function UnisexPage({
   return (
     <>
       <SectionBanner
-        imageSrc="https://images.unsplash.com/photo-1492446845049-9c50cc313f00?q=80&w=1974&auto=format&fit=crop"
+        imageSrc="https://twosix-catalog-storage.atl1.cdn.digitaloceanspaces.com/twosixweb.com/banner-unisex.png"
         title="Unisex"
         subtitle="Prendas estéticas sin definiciones."
       />

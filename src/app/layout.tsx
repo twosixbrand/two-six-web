@@ -8,6 +8,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getProducts } from "@/data/products";
+import CookieConsent from "@/components/CookieConsent";
 
 const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: '--font-playfair' });
@@ -37,6 +38,7 @@ export default async function RootLayout({
             <main className="flex-grow">{children}</main>
             <WhatsAppButton />
             <Footer showOutletLink={showOutletLink} />
+            <CookieConsent />
           </AuthProvider>
         </CartProvider>
       </body>

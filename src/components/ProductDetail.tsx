@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import type { Product, Color, Size } from "@/types"; // Asumiendo que tienes un archivo de tipos
 import {
@@ -239,7 +240,9 @@ export default function ProductDetail({
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-semibold text-primary uppercase tracking-wider">Talla</h3>
-                  <button className="text-xs text-muted-foreground underline hover:text-primary transition-colors">Guía de tallas</button>
+                  <Link href="/guia-tallas-camisetas" className="text-xs text-muted-foreground underline hover:text-primary transition-colors">
+                    Guía de tallas
+                  </Link>
                 </div>
                 <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
                   {availableSizes.map((size) => {
