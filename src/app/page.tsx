@@ -27,7 +27,7 @@ export default async function HomePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-auto md:h-[600px]">
           {/* Card Hombre */}
-          <Link href="/man" className="group relative block overflow-hidden rounded-2xl md:col-span-1 lg:col-span-2 md:row-span-2">
+          <Link href="/man" className="group relative block overflow-hidden rounded-2xl h-[300px] md:h-auto md:col-span-1 lg:col-span-2 md:row-span-2">
             <Image
               src="https://twosix-catalog-storage.atl1.cdn.digitaloceanspaces.com/twosixweb.com/home-hombre-1.png"
               alt="Colección Hombre"

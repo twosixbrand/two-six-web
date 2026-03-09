@@ -308,6 +308,7 @@ export default function ProductDetail({
                       <li>Referencia: {initialProduct.clothingSize.clothingColor.design.reference}</li>
                       <li>Ajuste Regular</li>
                       <li>Materiales Premium</li>
+                      <li>Diseñado y confeccionado con orgullo en Medellín, Colombia.</li>
                     </ul>
                   </AccordionContent>
                 </AccordionItem>
@@ -318,6 +319,60 @@ export default function ProductDetail({
                   </AccordionTrigger>
                   <AccordionContent className="text-muted-foreground leading-relaxed text-sm pt-2">
                     Ofrecemos cambios gratuitos en los primeros 15 días tras la compra. El envío estándar toma de 3 a 5 días hábiles a nivel nacional.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="care">
+                  <AccordionTrigger className="text-base uppercase tracking-wider hover:no-underline hover:text-accent">
+                    Instrucciones de Cuidado
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed text-sm pt-2">
+                    <ul className="space-y-2 mb-4">
+                      <li><strong className="text-primary font-medium">Lavado:</strong> Lave a mano para proteger las fibras y el color.</li>
+                      <li><strong className="text-primary font-medium">Jabón:</strong> Use jabón suave; evite detergentes agresivos o blanqueadores.</li>
+                      <li><strong className="text-primary font-medium">Tratamiento:</strong> No retuerza la prenda para escurrirla, ya que esto puede deformar el tejido.</li>
+                      <li><strong className="text-primary font-medium">Remojo:</strong> No deje la prenda en remojo por tiempos prolongados.</li>
+                      <li><strong className="text-primary font-medium">Secado:</strong> Seque a la sombra. La exposición directa al sol puede desgastar los tonos oscuros.</li>
+                    </ul>
+
+                    {/* Iconos Universales de Lavado */}
+                    <div className="flex items-center gap-5 mt-5 text-primary border-t border-border pt-5">
+                      {/* 1. Lave a mano (Tina con mano) */}
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <title>Lavado manual</title>
+                        <path d="M3 9l1.5 9h15l1.5-9" />
+                        <path d="M3 9h18" />
+                        <path d="M15.5 5.5A2.5 2.5 0 0 0 13 8v3" />
+                        <path d="M12 9V4a2 2 0 0 0-4 0v5" />
+                        <path d="M10 6.5a2 2 0 0 0-4 0v3" />
+                      </svg>
+                      {/* 2. No usar blanqueador (Triángulo tachado) */}
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <title>No usar blanqueador</title>
+                        <path d="M12 3l9 15H3z" />
+                        <path d="M4 4l16 16" />
+                      </svg>
+                      {/* 3. No usar secadora (Cuadrado con círculo tachado) */}
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <title>No usar secadora</title>
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <circle cx="12" cy="12" r="5" />
+                        <path d="M4 4l16 16" />
+                      </svg>
+                      {/* 4. Plancha tibia/suave (Plancha con un punto) */}
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <title>Plancha tibia/suave</title>
+                        <path d="M5 16h14a2 2 0 0 0 2-2v-2a6 6 0 0 0-6-6H7a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2z" />
+                        <path d="M5 16v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2" />
+                        <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+                      </svg>
+                      {/* 5. No lavar en seco (Círculo tachado) */}
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <title>No lavar en seco</title>
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M5.5 5.5l13 13" />
+                      </svg>
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>

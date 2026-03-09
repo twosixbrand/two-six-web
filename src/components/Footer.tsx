@@ -85,7 +85,10 @@ const Footer = ({ showOutletLink }: FooterProps) => {
 
           {/* Columna 2: Colecciones */}
           <div className="flex flex-col space-y-4">
-            <h3 className="font-serif text-lg text-secondary mb-2 tracking-wide">Colecciones</h3>
+            <h3 className="font-serif text-lg text-secondary mb-2 tracking-wide">La Marca</h3>
+            <FooterLink href="/sobre-nosotros" label="Nuestra Identidad" />
+
+            <h3 className="font-serif text-lg text-secondary mt-4 mb-2 tracking-wide">Colecciones</h3>
             <FooterLink href="/man" label="Hombre" />
             <FooterLink href="/woman" label="Mujer" />
             <FooterLink href="/unisex" label="Unisex" />
