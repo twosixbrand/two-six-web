@@ -30,6 +30,12 @@ export default function CheckoutForm() {
     const [selectedCity, setSelectedCity] = useState<City | null>(null);
     const [acceptTerms, setAcceptTerms] = useState(false);
 
+    // Discount Code
+    const [discountCode, setDiscountCode] = useState("");
+    const [appliedDiscount, setAppliedDiscount] = useState<{ code: string; percentage: number } | null>(null);
+    const [discountError, setDiscountError] = useState<string | null>(null);
+    const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
+
     // Address management
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
@@ -240,6 +246,39 @@ export default function CheckoutForm() {
         }
     };
 
+    const handleApplyDiscount = async () => {
+        setDiscountError(null);
+        if (!discountCode.trim()) {
+            setDiscountError("Ingresa un código");
+            return;
+        }
+        if (!formData.email) {
+            setDiscountError("Ingresa tu correo antes de aplicar el descuento");
+            return;
+        }
+
+        setIsApplyingDiscount(true);
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/order/validate-discount`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code: discountCode, email: formData.email }),
+            });
+            const data = await response.json();
+
+            if (!response.ok) {
+                setDiscountError(data.message || "Código inválido");
+                setAppliedDiscount(null);
+            } else {
+                setAppliedDiscount({ code: data.code, percentage: data.percentage });
+            }
+        } catch (error) {
+            setDiscountError("Error al verificar el código");
+        } finally {
+            setIsApplyingDiscount(false);
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
@@ -249,7 +288,9 @@ export default function CheckoutForm() {
             return;
         }
 
-        const totalWithShipping = cartTotal + (shippingCost || 0);
+        const discountAmount = appliedDiscount ? cartTotal * (appliedDiscount.percentage / 100) : 0;
+        const finalCartTotal = cartTotal - discountAmount;
+        const totalWithShipping = finalCartTotal + (shippingCost || 0);
 
         const checkoutData = {
             customer: formData,
@@ -263,7 +304,8 @@ export default function CheckoutForm() {
                 image: item.clothingSize?.clothingColor?.image_url || "https://example.com/placeholder.png",
             })),
             total: totalWithShipping,
-            shippingCost: shippingCost || 0, // Send shipping cost to backend
+            shippingCost: shippingCost || 0,
+            discountCode: appliedDiscount?.code,
         };
 
         await startPaymentFlow(checkoutData);
@@ -449,18 +491,59 @@ export default function CheckoutForm() {
                 </div>
             </div>
 
-            <div className="mt-10 border-t pt-8">
+            {/* Discount Code Section */}
+            <div className="mt-8 border-t pt-8">
+                <Label htmlFor="discountCode" className="block mb-2 font-medium">¿Tienes un código de descuento?</Label>
+                <div className="flex gap-3">
+                    <Input
+                        type="text"
+                        id="discountCode"
+                        placeholder="Ingresa tu código"
+                        value={discountCode}
+                        onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                        className="h-12 uppercase bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
+                        disabled={!!appliedDiscount || isApplyingDiscount}
+                    />
+                    <Button
+                        type="button"
+                        variant={appliedDiscount ? "outline" : "default"}
+                        onClick={appliedDiscount ? () => { setAppliedDiscount(null); setDiscountCode(""); } : handleApplyDiscount}
+                        disabled={isApplyingDiscount}
+                        className={`h-12 px-6 ${appliedDiscount ? 'border-primary text-primary hover:bg-red-50 hover:text-red-600 hover:border-red-200' : 'bg-primary text-secondary hover:bg-primary/90'}`}
+                    >
+                        {isApplyingDiscount ? "Validando..." : appliedDiscount ? "Quitar" : "Aplicar"}
+                    </Button>
+                </div>
+                {discountError && <p className="text-sm text-destructive mt-2">{discountError}</p>}
+                {appliedDiscount && <p className="text-sm text-green-600 mt-2 font-medium">¡Código {appliedDiscount.code} aplicado! (-{appliedDiscount.percentage}%)</p>}
+            </div>
+
+            <div className="mt-8 border-t pt-8">
                 <div className="flex justify-between items-center text-muted-foreground mb-3 text-sm">
                     <span>Subtotal de productos:</span>
-                    <span>${cartTotal.toLocaleString()}</span>
+                    <span className={appliedDiscount ? "line-through text-gray-400" : ""}>${cartTotal.toLocaleString()}</span>
                 </div>
+                {appliedDiscount && (() => {
+                    const discountAmount = cartTotal * (appliedDiscount.percentage / 100);
+                    return (
+                        <div className="flex justify-between items-center text-green-600 mb-3 text-sm font-medium">
+                            <span>Descuento ({appliedDiscount.percentage}%):</span>
+                            <span>-${discountAmount.toLocaleString()}</span>
+                        </div>
+                    );
+                })()}
                 <div className="flex justify-between items-center text-muted-foreground mb-6 text-sm">
                     <span>Costo de envío estimado:</span>
                     <span>${(shippingCost || 0).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-end text-2xl font-bold text-accent mb-8">
                     <span className="text-sm font-semibold uppercase tracking-wider text-primary">Total a Pagar</span>
-                    <span>${(cartTotal + (shippingCost || 0)).toLocaleString()}</span>
+                    {(() => {
+                        const discountAmount = appliedDiscount ? cartTotal * (appliedDiscount.percentage / 100) : 0;
+                        const finalCartTotal = cartTotal - discountAmount;
+                        const totalWithShipping = finalCartTotal + (shippingCost || 0);
+                        return <span>${totalWithShipping.toLocaleString()}</span>;
+                    })()}
                 </div>
             </div>
 
