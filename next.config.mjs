@@ -25,6 +25,11 @@ const nextConfig = {
     workerThreads: false,
     cpus: 1,
   },
+  webpack: (config, { isServer }) => {
+    // Limitamos el paralelismo de Webpack al mínimo para ahorrar memoria
+    config.parallelism = 1;
+    return config;
+  },
   images: {
     remotePatterns: [
       {
