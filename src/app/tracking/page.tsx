@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { TrackingTimeline } from "@/components/TrackingTimeline";
 
@@ -54,15 +54,30 @@ interface Order {
     payments?: Payment[];
 }
 
-export default function TrackingPage() {
-    const [orderReference, setOrderReference] = useState("");
-    const [email, setEmail] = useState("");
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+
+function TrackingContent() {
+    const searchParams = useSearchParams();
+    const initialRef = searchParams?.get("ref") || "";
+    const initialEmail = searchParams?.get("email") || "";
+
+    const [orderReference, setOrderReference] = useState(initialRef);
+    const [email, setEmail] = useState(initialEmail);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [order, setOrder] = useState<Order | null>(null);
+    const [autoFetched, setAutoFetched] = useState(false);
 
-    const handleTrack = async (e: React.FormEvent) => {
-        e.preventDefault();
+    // Auto-fetch if both params are present on load
+    useEffect(() => {
+        if (initialRef && initialEmail && !autoFetched) {
+            setAutoFetched(true);
+            fetchOrderData(initialRef, initialEmail);
+        }
+    }, [initialRef, initialEmail, autoFetched]);
+
+    const fetchOrderData = async (ref: string, userEmail: string) => {
         setLoading(true);
         setError("");
         setOrder(null);
@@ -71,7 +86,7 @@ export default function TrackingPage() {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/order/track`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ orderReference, email }),
+                body: JSON.stringify({ orderReference: ref, email: userEmail }),
             });
 
             if (!res.ok) {
@@ -90,6 +105,11 @@ export default function TrackingPage() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleTrack = async (e: React.FormEvent) => {
+        e.preventDefault();
+        await fetchOrderData(orderReference, email);
     };
 
     return (
@@ -220,5 +240,13 @@ export default function TrackingPage() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function TrackingPage() {
+    return (
+        <Suspense fallback={<div className="container mx-auto px-4 py-12 max-w-2xl text-center">Cargando...</div>}>
+            <TrackingContent />
+        </Suspense>
     );
 }

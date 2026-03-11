@@ -7,21 +7,51 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
+import { TrackingTimeline } from "@/components/TrackingTimeline";
+
+interface Shipment {
+    id: number;
+    guide_number: string;
+    status: string;
+    shippingProvider?: {
+        name: string;
+    };
+    trackingHistory?: Array<{
+        status: string;
+        location: string;
+        update_date?: string;
+    }>;
+    createdAt?: string;
+    delivery_date?: string;
+}
+
+interface Payment {
+    transaction_date: string;
+    status: string;
+}
 
 interface Order {
     id: number;
+    order_reference?: string;
     order_date: string;
     status: string;
     total_payment: number;
+    customer: {
+        name: string;
+        email: string;
+        current_phone_number: string;
+    };
+    shipments?: Shipment[];
+    payments?: Payment[];
     orderItems: Array<{
         id: number;
         product_name: string;
         quantity: number;
         unit_price: number;
         product: {
-            clothingSize: {
-                clothingColor: {
-                    image_url?: string;
+            clothingSize?: {
+                clothingColor?: {
+                    imageClothing?: Array<{ image_url: string }>;
                 }
             };
         };
@@ -32,6 +62,8 @@ export default function OrdersPage() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
+    const [visibleCount, setVisibleCount] = useState(5);
     const router = useRouter();
 
     useEffect(() => {
@@ -112,16 +144,18 @@ export default function OrdersPage() {
                     </div>
                 ) : (
                     <div className="space-y-8">
-                        {orders.map((order) => (
+                        {orders.slice(0, visibleCount).map((order) => (
                             <div key={order.id} className="bg-white rounded-2xl shadow-sm border border-border overflow-hidden transition-all hover:shadow-md">
                                 <div className="p-6 md:p-8 bg-secondary/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                                     <div className="space-y-1">
-                                        <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Pedido #{order.id}</p>
+                                        <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                                            Orden {order.order_reference || `#${order.id}`}
+                                        </p>
                                         <p className="text-lg font-serif text-primary">
                                             Realizado el {new Date(order.order_date).toLocaleDateString()}
                                         </p>
                                     </div>
-                                    <div className="flex flex-col items-start md:items-end gap-2">
+                                    <div className="flex flex-col items-start md:items-end gap-3">
                                         <Badge
                                             variant={
                                                 order.status === 'Entregado' ? 'default' :
@@ -147,9 +181,9 @@ export default function OrdersPage() {
                                         {order.orderItems.map((item) => (
                                             <li key={item.id} className="p-6 md:p-8 flex items-center gap-6">
                                                 <div className="relative h-24 w-24 md:h-32 md:w-32 bg-secondary/20 rounded-xl overflow-hidden shrink-0 border border-border">
-                                                    {item.product.clothingSize?.clothingColor?.image_url ? (
+                                                    {item.product.clothingSize?.clothingColor?.imageClothing?.[0]?.image_url ? (
                                                         <Image
-                                                            src={item.product.clothingSize.clothingColor.image_url}
+                                                            src={item.product.clothingSize.clothingColor.imageClothing[0].image_url}
                                                             alt={item.product_name}
                                                             fill
                                                             className="object-cover object-center"
@@ -173,8 +207,58 @@ export default function OrdersPage() {
                                         ))}
                                     </ul>
                                 </div>
+
+                                {order.shipments && order.shipments.length > 0 && (
+                                    <div className="p-6 md:p-8 bg-secondary/5 border-t border-border">
+                                        <h4 className="font-semibold text-primary mb-4 text-sm uppercase tracking-wider">Información de Envío</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {order.shipments.map(shipment => (
+                                                <div key={shipment.id} className="bg-white p-4 rounded-lg border border-border">
+                                                    <p className="text-sm font-medium">Transportadora: <span className="text-muted-foreground">{shipment.shippingProvider?.name || 'Asignando...'}</span></p>
+                                                    <p className="text-sm font-medium mt-1">Guía: <span className="text-muted-foreground">{shipment.guide_number}</span></p>
+                                                    {shipment.trackingHistory && shipment.trackingHistory.length > 0 && (
+                                                        <p className="text-sm font-medium mt-1">
+                                                            Último estado: <span className="text-accent">{shipment.trackingHistory[0].status}</span>
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="p-4 bg-white flex justify-center border-t border-border">
+                                    <Button
+                                        variant={expandedOrderId === order.id ? "default" : "outline"}
+                                        onClick={() => setExpandedOrderId(expandedOrderId === order.id ? null : order.id)}
+                                        className={`w-full max-w-sm ${expandedOrderId === order.id ? 'bg-accent hover:bg-accent/90' : 'border-accent text-accent hover:bg-accent hover:text-white'}`}
+                                    >
+                                        <span className="uppercase tracking-wider font-bold">
+                                            {expandedOrderId === order.id ? 'Ocultar Rastreo' : 'Rastrear Pedido'}
+                                        </span>
+                                    </Button>
+                                </div>
+
+                                {expandedOrderId === order.id && (
+                                    <div className="p-6 md:p-8 bg-white border-t border-border animate-fade-in">
+                                        <TrackingTimeline order={order as any} />
+                                    </div>
+                                )}
                             </div>
                         ))}
+
+                        {visibleCount < orders.length && (
+                            <div className="flex justify-center pt-8 pb-4">
+                                <Button
+                                    variant="outline"
+                                    size="lg"
+                                    onClick={() => setVisibleCount((prev) => prev + 5)}
+                                    className="px-8 border-border text-primary hover:bg-secondary bg-white rounded-full font-semibold uppercase tracking-widest text-sm shadow-sm hover:shadow transition-all"
+                                >
+                                    Cargar más pedidos
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

@@ -131,22 +131,6 @@ export const TrackingTimeline: React.FC<TrackingTimelineProps> = ({ order }) => 
             </h3>
 
             <div className="relative flex flex-col sm:flex-row justify-between w-full">
-                {/* Línea conectora de fondo (mobile: vertical, desktop: horizontal) */}
-                <div className="absolute left-[19px] sm:left-0 top-[24px] sm:top-[20px] bottom-0 sm:bottom-auto sm:right-0 w-[2px] sm:w-full sm:h-[2px] bg-gray-200 z-0" />
-
-                {/* Línea conectora activa */}
-                {!isErrorState && (
-                    <div
-                        className="absolute left-[19px] sm:left-0 top-[24px] sm:top-[20px] w-[2px] sm:h-[2px] bg-accent z-0 transition-all duration-1000 ease-in-out"
-                        style={{
-                            height: 'auto', // CSS lo manejará dependiendo de media queries o se deja por defecto para desktop
-                            bottom: 'auto',
-                            // En Desktop el width depende del step. En móvil el height. Usamos utilidades de Tailwind para esto
-                        }}
-                    >
-                        {/* Truco: Aplicamos el progreso con width en desktop y height en mobile vía inline-style o clases calculadas en el JSX inferior */}
-                    </div>
-                )}
 
                 {steps.map((step, index) => {
                     const isActive = currentStepIndex === index && !isErrorState;
@@ -159,24 +143,33 @@ export const TrackingTimeline: React.FC<TrackingTimelineProps> = ({ order }) => 
                     const progressWidth = isErrorState ? '0%' : `${(currentStepIndex / (steps.length - 1)) * 100}%`;
 
                     return (
-                        <div key={index} className="relative z-10 flex sm:flex-col items-start sm:items-center gap-4 sm:gap-3 mb-8 sm:mb-0 group flex-1">
-                            {/* Primer paso fija el inicio de la línea de progreso horizontal global */}
-                            {index === 0 && !isErrorState && (
-                                <style dangerouslySetInnerHTML={{
-                                    __html: `
-                                    @media (min-width: 640px) {
-                                        .progress-line-active { width: ${progressWidth}; height: 2px; }
-                                    }
-                                    @media (max-width: 639px) {
-                                        .progress-line-active { height: ${progressWidth}; width: 2px; }
-                                    }
-                                `}} />
+                        <div key={index} className="relative z-0 flex sm:flex-col items-start sm:items-center gap-4 sm:gap-3 mb-8 sm:mb-0 group flex-1">
+                            {/* Líneas conectoras individuales por cada segmento */}
+                            {index < steps.length - 1 && (
+                                <div className="absolute left-[19px] sm:left-[50%] top-[38px] sm:top-[19px] bottom-[-32px] sm:bottom-auto w-[2px] sm:w-full h-auto sm:h-[2px] bg-gray-200 -z-10">
+                                    <div
+                                        className="absolute top-0 left-0 w-full h-full bg-accent transition-all duration-700 ease-in-out"
+                                        style={{
+                                            transformOrigin: 'top left',
+                                            transform: currentStepIndex > index
+                                                ? 'scale3d(1, 1, 1)'
+                                                : 'scale3d(0, 0, 1)' // CSS handle scaleX for desktop, scaleY for mobile (we can do it via CSS classes easily)
+                                        }}
+                                    >
+                                        <style dangerouslySetInnerHTML={{
+                                            __html: `
+                                            @media (min-width: 640px) {
+                                                .progress-segment-${index} { transform: ${currentStepIndex > index ? 'scaleX(1)' : 'scaleX(0)'}; transform-origin: left; }
+                                            }
+                                            @media (max-width: 639px) {
+                                                .progress-segment-${index} { transform: ${currentStepIndex > index ? 'scaleY(1)' : 'scaleY(0)'}; transform-origin: top; }
+                                            }
+                                        `}} />
+                                    </div>
+                                    {/* Linea activa simplificada con las clases de arriba */}
+                                    <div className={`progress-segment-${index} absolute top-0 left-0 w-full h-full bg-accent transition-transform duration-700 ease-out`} />
+                                </div>
                             )}
-                            {/* Usamos un div fantasma renderizado solo 1 vez para la barra real de progreso combinada */}
-                            {index === 0 && !isErrorState && (
-                                <div className="progress-line-active absolute left-[19px] sm:left-0 top-[24px] sm:top-[20px] bg-accent z-0 transition-all duration-1000 ease-in-out" />
-                            )}
-
 
                             {/* Círculo Icono */}
                             <div

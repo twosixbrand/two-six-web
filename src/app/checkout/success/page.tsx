@@ -28,6 +28,7 @@ interface Order {
     id: number;
     order_reference?: string;
     total_payment: number;
+    shipping_cost: number;
     shipping_address: string;
     customer: {
         name: string;
@@ -40,8 +41,8 @@ interface Order {
 function SuccessContent() {
     const searchParams = useSearchParams();
     const { clearCart } = useCart();
-    const orderId = searchParams.get("orderId");
-    const transactionId = searchParams.get("id") || searchParams.get("transactionId");
+    const orderId = searchParams?.get("orderId");
+    const transactionId = searchParams?.get("id") || searchParams?.get("transactionId");
 
     const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
     const [message, setMessage] = useState('Verificando información...');
@@ -50,7 +51,12 @@ function SuccessContent() {
     useEffect(() => {
         const fetchOrder = async (id: string) => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/order/${id}`);
+                const isReference = id.startsWith('TS-');
+                const endpoint = isReference
+                    ? `${process.env.NEXT_PUBLIC_API_URL}/api/order/by-reference/${id}`
+                    : `${process.env.NEXT_PUBLIC_API_URL}/api/order/${id}`;
+
+                const response = await fetch(endpoint);
                 if (!response.ok) throw new Error('Error al obtener la orden');
                 const data = await response.json();
                 setOrder(data);
@@ -154,6 +160,31 @@ function SuccessContent() {
                                 </div>
                             ))}
                         </div>
+
+                        {(() => {
+                            const subtotal = order.orderItems.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0);
+                            const shipping = order.shipping_cost || 0;
+                            const discount = Math.round((subtotal + shipping) - order.total_payment);
+
+                            return (
+                                <div className="mt-6 pt-4 border-t border-gray-200 space-y-2">
+                                    <div className="flex justify-between items-center text-gray-600">
+                                        <span>Subtotal</span>
+                                        <span className={discount > 1 ? "line-through text-gray-400" : ""}>{formatPrice(subtotal)}</span>
+                                    </div>
+                                    {discount > 1 && (
+                                        <div className="flex justify-between items-center text-green-600 font-medium">
+                                            <span>Descuento aplicado</span>
+                                            <span>-{formatPrice(discount)}</span>
+                                        </div>
+                                    )}
+                                    <div className="flex justify-between items-center text-gray-600">
+                                        <span>Costo de envío</span>
+                                        <span>{formatPrice(shipping)}</span>
+                                    </div>
+                                </div>
+                            );
+                        })()}
                     </div>
 
                     <div className="flex justify-between items-center text-xl font-bold mb-8">
@@ -170,12 +201,12 @@ function SuccessContent() {
                     </div>
 
                     <div className="text-center">
-                        <Link
+                        <a
                             href="/"
                             className="inline-block bg-accent text-white font-bold py-3 px-8 rounded-lg hover:bg-accent-hover transition-colors duration-300"
                         >
                             Volver a la Tienda
-                        </Link>
+                        </a>
                     </div>
                 </div>
             )}
@@ -189,12 +220,12 @@ function SuccessContent() {
                     </div>
                     <h1 className="text-2xl font-bold text-gray-800 mb-2">Algo salió mal</h1>
                     <p className="text-gray-600 mb-6">{message}</p>
-                    <Link
+                    <a
                         href="/"
                         className="inline-block bg-accent text-white font-bold py-3 px-6 rounded-lg hover:bg-accent-hover transition-colors duration-300"
                     >
                         Volver a la tienda
-                    </Link>
+                    </a>
                 </div>
             )}
         </div>

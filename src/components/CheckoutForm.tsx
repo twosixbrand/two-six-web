@@ -9,6 +9,8 @@ import { getDepartments, getCities, Department, City } from "@/services/location
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import CheckoutSummaryItem from "@/components/CheckoutSummaryItem";
+import { Separator } from "@/components/ui/separator";
 
 interface WompiTransaction {
     id: string;
@@ -51,6 +53,15 @@ export default function CheckoutForm() {
         city: "",
         department: "",
     });
+
+    const formatPrice = (price: number) => {
+        return new Intl.NumberFormat("es-CO", {
+            style: "currency",
+            currency: "COP",
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+        }).format(price);
+    };
 
     useEffect(() => {
         const fetchDepartments = async () => {
@@ -316,272 +327,333 @@ export default function CheckoutForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-sm border border-border">
-            <h2 className="text-2xl font-serif font-bold text-primary mb-8 tracking-tight">Datos de Envío</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            {/* Columna Izquierda: Formulario */}
+            <div className="lg:col-span-7">
+                <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-sm border border-border">
+                    <h2 className="text-2xl font-serif font-bold text-primary mb-8 tracking-tight">Datos de Envío</h2>
 
-            {/* Login Prompt Banner */}
-            {!localStorage.getItem('customerToken') && (
-                <div className="mb-8 p-6 bg-primary/5 border border-primary/20 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
-                    <div>
-                        <h3 className="text-lg font-serif font-semibold text-primary">¿Ya tienes una cuenta?</h3>
-                        <p className="text-sm text-muted-foreground mt-1">Inicia sesión rápidamente con tu correo electrónico para autocompletar tus datos y direcciones guardadas.</p>
-                    </div>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        className="whitespace-nowrap border-primary text-primary hover:bg-primary hover:text-white transition-colors uppercase tracking-widest px-6"
-                        onClick={() => {
-                            sessionStorage.setItem('preLoginPath', '/checkout');
-                            router.push('/login');
-                        }}
-                    >
-                        Iniciar Sesión
-                    </Button>
-                </div>
-            )}
-
-            {error && (
-                <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-lg mb-6 text-sm">
-                    {error}
-                </div>
-            )}
-
-            {savedAddresses.length > 0 && (
-                <div className="mb-8 p-4 bg-secondary/30 rounded-xl border border-border">
-                    <Label className="text-primary font-semibold mb-3">Mis Direcciones Guardadas</Label>
-                    <select
-                        value={selectedAddressId}
-                        onChange={handleAddressSelection}
-                        className="w-full bg-white rounded-lg border-gray-200 focus:border-primary focus:ring-primary text-sm p-3 border outline-none transition-colors"
-                    >
-                        <option value="new">Usar una nueva dirección</option>
-                        {savedAddresses.map(addr => (
-                            <option key={addr.id} value={addr.id}>
-                                {addr.address} - {addr.city} {addr.is_default ? '(Predeterminada)' : ''}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-            )}
-
-            <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                        <Label htmlFor="name">Nombre Completo</Label>
-                        <Input
-                            type="text"
-                            id="name"
-                            name="name"
-                            required
-                            value={formData.name}
-                            onChange={handleChange}
-                            className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="phone">Teléfono</Label>
-                        <Input
-                            type="tel"
-                            id="phone"
-                            name="phone"
-                            required
-                            value={formData.phone}
-                            onChange={handleChange}
-                            className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
-                        />
-                    </div>
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="email">Correo Electrónico</Label>
-                    <Input
-                        type="email"
-                        id="email"
-                        name="email"
-                        required
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
-                    />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-border mt-6">
-                    <div className="space-y-2">
-                        <Label htmlFor="department">Departamento</Label>
-                        <select
-                            id="department"
-                            name="department"
-                            required
-                            value={selectedDepartment ? selectedDepartment.id : ""}
-                            onChange={handleDepartmentChange}
-                            className="w-full h-12 bg-secondary/10 rounded-lg border-gray-200 focus:border-primary focus:ring-primary text-sm px-3 border outline-none transition-colors"
-                            disabled={loadingLocations}
-                        >
-                            <option value="">Seleccione un departamento...</option>
-                            {departments.map((dept) => (
-                                <option key={dept.id} value={dept.id}>
-                                    {dept.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="city">Ciudad / Municipio</Label>
-                        <select
-                            id="city"
-                            name="city"
-                            required
-                            value={selectedCity ? selectedCity.id : ""}
-                            onChange={handleCityChange}
-                            className="w-full h-12 bg-secondary/10 rounded-lg border-gray-200 focus:border-primary focus:ring-primary text-sm px-3 border outline-none transition-colors disabled:opacity-50"
-                            disabled={!selectedDepartment}
-                        >
-                            <option value="">Seleccione una ciudad...</option>
-                            {cities.map((city) => (
-                                <option key={city.id} value={city.id}>
-                                    {city.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="address">Dirección de Envío</Label>
-                    <Input
-                        type="text"
-                        id="address"
-                        name="address"
-                        required
-                        value={formData.address}
-                        onChange={handleChange}
-                        placeholder="Ej. Calle 123 # 45-67"
-                        className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
-                    />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                        <Label htmlFor="detail">Detalle (Opcional)</Label>
-                        <Input
-                            type="text"
-                            id="detail"
-                            name="detail"
-                            value={formData.detail}
-                            onChange={handleChange}
-                            placeholder="Apto, Unidad, Bloque, etc."
-                            className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="instructions">Indicaciones (Opcional)</Label>
-                        <Input
-                            type="text"
-                            id="instructions"
-                            name="instructions"
-                            value={formData.instructions}
-                            onChange={handleChange}
-                            placeholder="Dejar en portería, esquina azul..."
-                            className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
-                        />
-                    </div>
-                </div>
-            </div>
-
-            {/* Discount Code Section */}
-            <div className="mt-8 border-t pt-8">
-                <Label htmlFor="discountCode" className="block mb-2 font-medium">¿Tienes un código de descuento?</Label>
-                <div className="flex gap-3">
-                    <Input
-                        type="text"
-                        id="discountCode"
-                        placeholder="Ingresa tu código"
-                        value={discountCode}
-                        onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
-                        className="h-12 uppercase bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
-                        disabled={!!appliedDiscount || isApplyingDiscount}
-                    />
-                    <Button
-                        type="button"
-                        variant={appliedDiscount ? "outline" : "default"}
-                        onClick={appliedDiscount ? () => { setAppliedDiscount(null); setDiscountCode(""); } : handleApplyDiscount}
-                        disabled={isApplyingDiscount}
-                        className={`h-12 px-6 ${appliedDiscount ? 'border-primary text-primary hover:bg-red-50 hover:text-red-600 hover:border-red-200' : 'bg-primary text-secondary hover:bg-primary/90'}`}
-                    >
-                        {isApplyingDiscount ? "Validando..." : appliedDiscount ? "Quitar" : "Aplicar"}
-                    </Button>
-                </div>
-                {discountError && <p className="text-sm text-destructive mt-2">{discountError}</p>}
-                {appliedDiscount && <p className="text-sm text-green-600 mt-2 font-medium">¡Código {appliedDiscount.code} aplicado! (-{appliedDiscount.percentage}%)</p>}
-            </div>
-
-            <div className="mt-8 border-t pt-8">
-                <div className="flex justify-between items-center text-muted-foreground mb-3 text-sm">
-                    <span>Subtotal de productos:</span>
-                    <span className={appliedDiscount ? "line-through text-gray-400" : ""}>${cartTotal.toLocaleString()}</span>
-                </div>
-                {appliedDiscount && (() => {
-                    const discountAmount = cartTotal * (appliedDiscount.percentage / 100);
-                    return (
-                        <div className="flex justify-between items-center text-green-600 mb-3 text-sm font-medium">
-                            <span>Descuento ({appliedDiscount.percentage}%):</span>
-                            <span>-${discountAmount.toLocaleString()}</span>
+                    {/* Login Prompt Banner */}
+                    {!localStorage.getItem('customerToken') && (
+                        <div className="mb-8 p-6 bg-primary/5 border border-primary/20 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+                            <div>
+                                <h3 className="text-lg font-serif font-semibold text-primary">¿Ya tienes una cuenta?</h3>
+                                <p className="text-sm text-muted-foreground mt-1">Inicia sesión rápidamente con tu correo electrónico para autocompletar tus datos y direcciones guardadas.</p>
+                            </div>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="whitespace-nowrap border-primary text-primary hover:bg-primary hover:text-white transition-colors uppercase tracking-widest px-6"
+                                onClick={() => {
+                                    sessionStorage.setItem('preLoginPath', '/checkout');
+                                    router.push('/login');
+                                }}
+                            >
+                                Iniciar Sesión
+                            </Button>
                         </div>
-                    );
-                })()}
-                <div className="flex justify-between items-center text-muted-foreground mb-6 text-sm">
-                    <span>Costo de envío estimado:</span>
-                    <span>${(shippingCost || 0).toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between items-end text-2xl font-bold text-accent mb-8">
-                    <span className="text-sm font-semibold uppercase tracking-wider text-primary">Total a Pagar</span>
-                    {(() => {
-                        const discountAmount = appliedDiscount ? cartTotal * (appliedDiscount.percentage / 100) : 0;
-                        const finalCartTotal = cartTotal - discountAmount;
-                        const totalWithShipping = finalCartTotal + (shippingCost || 0);
-                        return <span>${totalWithShipping.toLocaleString()}</span>;
-                    })()}
-                </div>
+                    )}
+
+                    {error && (
+                        <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-lg mb-6 text-sm">
+                            {error}
+                        </div>
+                    )}
+
+                    {savedAddresses.length > 0 && (
+                        <div className="mb-8 p-4 bg-secondary/30 rounded-xl border border-border">
+                            <Label className="text-primary font-semibold mb-3">Mis Direcciones Guardadas</Label>
+                            <select
+                                value={selectedAddressId}
+                                onChange={handleAddressSelection}
+                                className="w-full bg-white rounded-lg border-gray-200 focus:border-primary focus:ring-primary text-sm p-3 border outline-none transition-colors"
+                            >
+                                <option value="new">Usar una nueva dirección</option>
+                                {savedAddresses.map(addr => (
+                                    <option key={addr.id} value={addr.id}>
+                                        {addr.address} - {addr.city} {addr.is_default ? '(Predeterminada)' : ''}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="name">Nombre Completo</Label>
+                                <Input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    required
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="phone">Teléfono</Label>
+                                <Input
+                                    type="tel"
+                                    id="phone"
+                                    name="phone"
+                                    required
+                                    value={formData.phone}
+                                    onChange={handleChange}
+                                    className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="email">Correo Electrónico</Label>
+                            <Input
+                                type="email"
+                                id="email"
+                                name="email"
+                                required
+                                value={formData.email}
+                                onChange={handleChange}
+                                className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-border mt-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="department">Departamento</Label>
+                                <select
+                                    id="department"
+                                    name="department"
+                                    required
+                                    value={selectedDepartment ? selectedDepartment.id : ""}
+                                    onChange={handleDepartmentChange}
+                                    className="w-full h-12 bg-secondary/10 rounded-lg border-gray-200 focus:border-primary focus:ring-primary text-sm px-3 border outline-none transition-colors"
+                                    disabled={loadingLocations}
+                                >
+                                    <option value="">Seleccione un departamento...</option>
+                                    {departments.map((dept) => (
+                                        <option key={dept.id} value={dept.id}>
+                                            {dept.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="city">Ciudad / Municipio</Label>
+                                <select
+                                    id="city"
+                                    name="city"
+                                    required
+                                    value={selectedCity ? selectedCity.id : ""}
+                                    onChange={handleCityChange}
+                                    className="w-full h-12 bg-secondary/10 rounded-lg border-gray-200 focus:border-primary focus:ring-primary text-sm px-3 border outline-none transition-colors disabled:opacity-50"
+                                    disabled={!selectedDepartment}
+                                >
+                                    <option value="">Seleccione una ciudad...</option>
+                                    {cities.map((city) => (
+                                        <option key={city.id} value={city.id}>
+                                            {city.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="address">Dirección de Envío</Label>
+                            <Input
+                                type="text"
+                                id="address"
+                                name="address"
+                                required
+                                value={formData.address}
+                                onChange={handleChange}
+                                placeholder="Ej. Calle 123 # 45-67"
+                                className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="detail">Detalle (Opcional)</Label>
+                                <Input
+                                    type="text"
+                                    id="detail"
+                                    name="detail"
+                                    value={formData.detail}
+                                    onChange={handleChange}
+                                    placeholder="Apto, Unidad, Bloque, etc."
+                                    className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="instructions">Indicaciones (Opcional)</Label>
+                                <Input
+                                    type="text"
+                                    id="instructions"
+                                    name="instructions"
+                                    value={formData.instructions}
+                                    onChange={handleChange}
+                                    placeholder="Dejar en portería, esquina azul..."
+                                    className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Discount Code Section */}
+                    <div className="mt-8 border-t pt-8">
+                        <Label htmlFor="discountCode" className="block mb-2 font-medium">¿Tienes un código de descuento?</Label>
+                        <div className="flex gap-3">
+                            <Input
+                                type="text"
+                                id="discountCode"
+                                placeholder="Ingresa tu código"
+                                value={discountCode}
+                                onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                                className="h-12 uppercase bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
+                                disabled={!!appliedDiscount || isApplyingDiscount}
+                            />
+                            <Button
+                                type="button"
+                                variant={appliedDiscount ? "outline" : "default"}
+                                onClick={appliedDiscount ? () => { setAppliedDiscount(null); setDiscountCode(""); } : handleApplyDiscount}
+                                disabled={isApplyingDiscount}
+                                className={`h-12 px-6 ${appliedDiscount ? 'border-primary text-primary hover:bg-red-50 hover:text-red-600 hover:border-red-200' : 'bg-primary text-secondary hover:bg-primary/90'}`}
+                            >
+                                {isApplyingDiscount ? "Validando..." : appliedDiscount ? "Quitar" : "Aplicar"}
+                            </Button>
+                        </div>
+                        {discountError && <p className="text-sm text-destructive mt-2">{discountError}</p>}
+                        {appliedDiscount && <p className="text-sm text-green-600 mt-2 font-medium">¡Código {appliedDiscount.code} aplicado! (-{appliedDiscount.percentage}%)</p>}
+                    </div>
+
+                    <div className="mt-8 border-t pt-8">
+                        <div className="flex justify-between items-center text-muted-foreground mb-3 text-sm">
+                            <span>Subtotal de productos:</span>
+                            <span className={appliedDiscount ? "line-through text-gray-400" : ""}>${cartTotal.toLocaleString()}</span>
+                        </div>
+                        {appliedDiscount && (() => {
+                            const discountAmount = cartTotal * (appliedDiscount.percentage / 100);
+                            return (
+                                <div className="flex justify-between items-center text-green-600 mb-3 text-sm font-medium">
+                                    <span>Descuento ({appliedDiscount.percentage}%):</span>
+                                    <span>-${discountAmount.toLocaleString()}</span>
+                                </div>
+                            );
+                        })()}
+                        <div className="flex justify-between items-center text-muted-foreground mb-6 text-sm">
+                            <span>Costo de envío estimado:</span>
+                            <span>${(shippingCost || 0).toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between items-end text-2xl font-bold text-accent mb-8">
+                            <span className="text-sm font-semibold uppercase tracking-wider text-primary">Total a Pagar</span>
+                            {(() => {
+                                const discountAmount = appliedDiscount ? cartTotal * (appliedDiscount.percentage / 100) : 0;
+                                const finalCartTotal = cartTotal - discountAmount;
+                                const totalWithShipping = finalCartTotal + (shippingCost || 0);
+                                return <span>${totalWithShipping.toLocaleString()}</span>;
+                            })()}
+                        </div>
+                    </div>
+
+                    <div className="mb-6 flex items-start gap-3">
+                        <div className="flex items-center h-5 mt-1">
+                            <input
+                                id="terms-privacy"
+                                name="terms-privacy"
+                                type="checkbox"
+                                checked={acceptTerms}
+                                onChange={(e) => setAcceptTerms(e.target.checked)}
+                                className="h-4 w-4 rounded border-border/50 text-accent focus:ring-accent outline-none cursor-pointer"
+                            />
+                        </div>
+                        <div className="text-sm">
+                            <Label htmlFor="terms-privacy" className="text-muted-foreground font-normal leading-relaxed cursor-pointer">
+                                He leído y acepto los{' '}
+                                <Link href="/legal/terminos-y-condiciones" className="font-semibold text-primary hover:text-accent underline transition-colors" target="_blank">
+                                    Términos y Condiciones
+                                </Link>{' '}
+                                y la{' '}
+                                <Link href="/politicas/privacidad" className="font-semibold text-primary hover:text-accent underline transition-colors" target="_blank">
+                                    Política de Privacidad
+                                </Link>.
+                            </Label>
+                        </div>
+                    </div>
+
+                    <Button
+                        type="submit"
+                        size="lg"
+                        disabled={loadingPayment}
+                        className="w-full py-7 text-lg uppercase tracking-widest bg-primary text-secondary hover:bg-primary/90 transition-all shadow-xl"
+                    >
+                        {loadingPayment ? "Procesando de forma segura..." : "Realizar Pago"}
+                    </Button>
+                    <p className="text-xs text-center text-muted-foreground mt-4">Tus datos están protegidos y encriptados de forma segura.</p>
+                </form>
             </div>
 
-            <div className="mb-6 flex items-start gap-3">
-                <div className="flex items-center h-5 mt-1">
-                    <input
-                        id="terms-privacy"
-                        name="terms-privacy"
-                        type="checkbox"
-                        checked={acceptTerms}
-                        onChange={(e) => setAcceptTerms(e.target.checked)}
-                        className="h-4 w-4 rounded border-border/50 text-accent focus:ring-accent outline-none cursor-pointer"
-                    />
-                </div>
-                <div className="text-sm">
-                    <Label htmlFor="terms-privacy" className="text-muted-foreground font-normal leading-relaxed cursor-pointer">
-                        He leído y acepto los{' '}
-                        <Link href="/legal/terminos-y-condiciones" className="font-semibold text-primary hover:text-accent underline transition-colors" target="_blank">
-                            Términos y Condiciones
-                        </Link>{' '}
-                        y la{' '}
-                        <Link href="/politicas/privacidad" className="font-semibold text-primary hover:text-accent underline transition-colors" target="_blank">
-                            Política de Privacidad
-                        </Link>.
-                    </Label>
+            {/* Columna Derecha: Resumen del Pedido */}
+            <div className="lg:col-span-5">
+                <div className="bg-white p-8 rounded-2xl shadow-sm border border-border sticky top-32">
+                    <h2 className="text-xl font-serif font-bold text-primary mb-6">Resumen del Pedido</h2>
+
+                    <div className="space-y-4 mb-6 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
+                        {cartItems.map((item) => (
+                            <div key={item.id} className="mb-4">
+                                <CheckoutSummaryItem
+                                    item={item}
+                                    formatPrice={formatPrice}
+                                />
+                            </div>
+                        ))}
+                    </div>
+
+                    <Separator className="my-6" />
+
+                    <div className="space-y-4 text-sm mb-6">
+                        <div className="flex justify-between items-center text-muted-foreground">
+                            <span>Subtotal</span>
+                            <span className={appliedDiscount ? "line-through text-gray-400 font-medium" : "font-medium text-primary"}>{formatPrice(cartTotal)}</span>
+                        </div>
+
+                        {appliedDiscount && (() => {
+                            const discountAmount = cartTotal * (appliedDiscount.percentage / 100);
+                            return (
+                                <div className="flex justify-between items-center text-green-600 font-medium">
+                                    <span>Descuento ({appliedDiscount.percentage}%):</span>
+                                    <span>-{formatPrice(discountAmount)}</span>
+                                </div>
+                            );
+                        })()}
+
+                        <div className="flex justify-between items-center text-muted-foreground">
+                            <span>Envío</span>
+                            <span className="font-medium text-primary">{shippingCost > 0 ? formatPrice(shippingCost) : <span className="text-xs uppercase tracking-wider">Calculado en el siguiente paso</span>}</span>
+                        </div>
+                    </div>
+
+                    <Separator className="my-6" />
+
+                    <div className="flex justify-between items-end mb-2">
+                        <span className="text-sm font-semibold uppercase tracking-wider text-primary">Total Estimado</span>
+                        <span className="text-2xl font-bold text-accent">
+                            {(() => {
+                                const discountAmount = appliedDiscount ? cartTotal * (appliedDiscount.percentage / 100) : 0;
+                                const finalCartTotal = cartTotal - discountAmount;
+                                const totalWithShipping = finalCartTotal + (shippingCost || 0);
+                                return formatPrice(totalWithShipping);
+                            })()}
+                        </span>
+                    </div>
                 </div>
             </div>
-
-            <Button
-                type="submit"
-                size="lg"
-                disabled={loadingPayment}
-                className="w-full py-7 text-lg uppercase tracking-widest bg-primary text-secondary hover:bg-primary/90 transition-all shadow-xl"
-            >
-                {loadingPayment ? "Procesando de forma segura..." : "Realizar Pago"}
-            </Button>
-            <p className="text-xs text-center text-muted-foreground mt-4">Tus datos están protegidos y encriptados de forma segura.</p>
-        </form>
+        </div>
     );
 }
 
