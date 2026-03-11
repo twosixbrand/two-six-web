@@ -45,6 +45,7 @@ interface Payment {
 
 interface Order {
     id: number;
+    order_reference: string;
     order_date: string;
     status: string;
     total_payment: number;
@@ -54,7 +55,7 @@ interface Order {
 }
 
 export default function TrackingPage() {
-    const [orderId, setOrderId] = useState("");
+    const [orderReference, setOrderReference] = useState("");
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -70,7 +71,7 @@ export default function TrackingPage() {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/order/track`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ orderId: Number(orderId), email }),
+                body: JSON.stringify({ orderReference, email }),
             });
 
             if (!res.ok) {
@@ -99,16 +100,16 @@ export default function TrackingPage() {
                 <div className="space-y-4">
                     <form onSubmit={handleTrack} className="space-y-4">
                         <div>
-                            <label htmlFor="orderId" className="block text-sm font-medium text-gray-700 mb-1">
-                                Número de Orden
+                            <label htmlFor="orderReference" className="block text-sm font-medium text-gray-700 mb-1">
+                                Referencia del Pedido
                             </label>
                             <input
-                                type="number"
-                                id="orderId"
-                                value={orderId}
-                                onChange={(e) => setOrderId(e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-accent focus:border-accent"
-                                placeholder="Ej: 123"
+                                type="text"
+                                id="orderReference"
+                                value={orderReference}
+                                onChange={(e) => setOrderReference(e.target.value.toUpperCase())}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-accent focus:border-accent uppercase"
+                                placeholder="Ej: TS-260310-4821"
                                 required
                             />
                         </div>
@@ -149,7 +150,7 @@ export default function TrackingPage() {
                 <div className="bg-white p-8 rounded-lg shadow-md animate-fade-in">
                     <div className="border-b pb-4 mb-8 flex justify-between items-center">
                         <div>
-                            <h2 className="text-xl font-bold">Orden #{order.id}</h2>
+                            <h2 className="text-xl font-bold">Orden {order.order_reference || `#${order.id}`}</h2>
                             <p className="text-sm text-gray-500">
                                 Fecha: {new Date(order.order_date).toLocaleDateString()}
                             </p>

@@ -26,6 +26,7 @@ interface OrderItem {
 
 interface Order {
     id: number;
+    order_reference?: string;
     total_payment: number;
     shipping_address: string;
     customer: {
@@ -118,7 +119,7 @@ function SuccessContent() {
                             </svg>
                         </div>
                         <h1 className="text-3xl font-bold text-gray-800 mb-2">¡Gracias por tu compra!</h1>
-                        <p className="text-gray-600">Tu pedido #{order.id} ha sido confirmado.</p>
+                        <p className="text-gray-600">Tu pedido {order.order_reference || `#${order.id}`} ha sido confirmado.</p>
                     </div>
 
                     <div className="border-t border-b py-4 mb-6">
