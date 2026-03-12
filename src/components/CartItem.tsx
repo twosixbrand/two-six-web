@@ -42,7 +42,7 @@ export default function CartItem({
                         src={imgSrc}
                         alt={item.name}
                         fill
-                        className="object-cover"
+                        className="object-contain bg-gray-50"
                         onError={() => setImgSrc("/placeholder.png")}
                     />
                 </div>

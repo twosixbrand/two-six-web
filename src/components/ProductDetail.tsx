@@ -163,7 +163,7 @@ export default function ProductDetail({
                   src={currentImages[0] || "/placeholder.png"}
                   alt={initialProduct.name}
                   fill
-                  className="object-cover object-center"
+                  className="object-contain object-center bg-gray-50/50"
                   priority
                   unoptimized
                   quality={100}
@@ -177,7 +177,7 @@ export default function ProductDetail({
                     src={img}
                     alt={`${initialProduct.name} - Detalle ${idx + 2}`}
                     fill
-                    className="object-cover object-center transition-transform hover:scale-105 duration-700"
+                    className="object-contain object-center transition-transform hover:scale-105 duration-700 bg-gray-50/50"
                     unoptimized
                     quality={100}
                   />

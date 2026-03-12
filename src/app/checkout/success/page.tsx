@@ -29,6 +29,8 @@ interface Order {
     order_reference?: string;
     total_payment: number;
     shipping_cost: number;
+    payment_method?: string;
+    cod_amount?: number;
     shipping_address: string;
     customer: {
         name: string;
@@ -187,10 +189,23 @@ function SuccessContent() {
                         })()}
                     </div>
 
-                    <div className="flex justify-between items-center text-xl font-bold mb-8">
-                        <span>Total Pagado</span>
-                        <span>{formatPrice(order.total_payment)}</span>
-                    </div>
+                    {order.payment_method === 'WOMPI_COD' ? (
+                        <>
+                            <div className="flex justify-between items-center text-lg font-bold mb-2">
+                                <span>Valor Pagado Hoy (Envío)</span>
+                                <span>{formatPrice(order.shipping_cost || 0)}</span>
+                            </div>
+                            <div className="flex justify-between font-bold text-lg text-amber-700 mt-4 border-t pt-2">
+                                <span>A Pagar Contra Entrega (PCE):</span>
+                                <span>${(order.cod_amount || 0).toLocaleString()}</span>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="flex justify-between items-center text-xl font-bold mb-8">
+                            <span>Total Pagado</span>
+                            <span>{formatPrice(order.total_payment)}</span>
+                        </div>
+                    )}
 
                     <div className="bg-gray-50 p-4 rounded-lg mb-8">
                         <h3 className="font-semibold mb-2">Datos de Envío</h3>

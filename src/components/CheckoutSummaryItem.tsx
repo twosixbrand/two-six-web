@@ -34,7 +34,7 @@ export default function CheckoutSummaryItem({
                     src={imgSrc}
                     alt={item.name}
                     fill
-                    className="object-cover"
+                    className="object-contain bg-gray-50"
                     onError={() => setImgSrc("/placeholder.png")}
                 />
             </div>

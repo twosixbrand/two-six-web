@@ -43,6 +43,9 @@ export default function CheckoutForm() {
     const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
     const [selectedAddressId, setSelectedAddressId] = useState<string>("");
 
+    // Payment Method
+    const [paymentMethod, setPaymentMethod] = useState<"WOMPI_FULL" | "WOMPI_COD">("WOMPI_FULL");
+
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -317,6 +320,7 @@ export default function CheckoutForm() {
             total: totalWithShipping,
             shippingCost: shippingCost || 0,
             discountCode: appliedDiscount?.code,
+            paymentMethod: paymentMethod,
         };
 
         await startPaymentFlow(checkoutData);
@@ -533,10 +537,67 @@ export default function CheckoutForm() {
                     </div>
 
                     <div className="mt-8 border-t pt-8">
+                        <Label className="block mb-4 font-serif font-bold text-primary text-xl">Método de Pago</Label>
+                        <div className="space-y-4">
+                            {/* Standard Online Payment */}
+                            <label className={`relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none ${paymentMethod === 'WOMPI_FULL' ? 'border-primary ring-1 ring-primary' : 'border-gray-300'}`}>
+                                <input 
+                                    type="radio" 
+                                    name="payment_method" 
+                                    value="WOMPI_FULL" 
+                                    className="sr-only" 
+                                    checked={paymentMethod === 'WOMPI_FULL'}
+                                    onChange={() => setPaymentMethod('WOMPI_FULL')}
+                                />
+                                <span className="flex flex-1">
+                                    <span className="flex flex-col">
+                                        <span className="block text-sm font-medium text-gray-900">Pago en Línea Completo</span>
+                                        <span className="mt-1 flex items-center text-sm text-gray-500">Paga el total del pedido de forma segura a través de Wompi.</span>
+                                    </span>
+                                </span>
+                                <div className={`mt-2 h-5 w-5 rounded-full border flex items-center justify-center ${paymentMethod === 'WOMPI_FULL' ? 'border-primary bg-primary text-white' : 'border-gray-300 bg-white'}`}>
+                                    {paymentMethod === 'WOMPI_FULL' && (
+                                        <svg className="h-3 w-3 fill-current" viewBox="0 0 12 12"><path d="M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z" /></svg>
+                                    )}
+                                </div>
+                            </label>
+
+                            {/* Cash on Delivery */}
+                            <label className={`relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none ${paymentMethod === 'WOMPI_COD' ? 'border-amber-500 ring-1 ring-amber-500 bg-amber-50/50' : 'border-gray-300'}`}>
+                                <input 
+                                    type="radio" 
+                                    name="payment_method" 
+                                    value="WOMPI_COD" 
+                                    className="sr-only" 
+                                    checked={paymentMethod === 'WOMPI_COD'}
+                                    onChange={() => setPaymentMethod('WOMPI_COD')}
+                                />
+                                <span className="flex flex-1">
+                                    <span className="flex flex-col">
+                                        <span className="block text-sm font-medium text-amber-900">Pago Contra Entrega (Solo Envío Web)</span>
+                                        <span className="mt-1 flex items-center text-sm text-amber-700">Pagas solo el envío hoy, y el valor de las prendas en efectivo a la transportadora.</span>
+                                    </span>
+                                </span>
+                                <div className={`mt-2 h-5 w-5 rounded-full border flex items-center justify-center ${paymentMethod === 'WOMPI_COD' ? 'border-amber-500 bg-amber-500 text-white' : 'border-gray-300 bg-white'}`}>
+                                    {paymentMethod === 'WOMPI_COD' && (
+                                        <svg className="h-3 w-3 fill-current" viewBox="0 0 12 12"><path d="M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z" /></svg>
+                                    )}
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div className="mt-8 border-t pt-8">
                         <div className="flex justify-between items-center text-muted-foreground mb-3 text-sm">
                             <span>Subtotal de productos:</span>
                             <span className={appliedDiscount ? "line-through text-gray-400" : ""}>${cartTotal.toLocaleString()}</span>
                         </div>
+                        {paymentMethod === 'WOMPI_COD' && (
+                            <div className="flex justify-between items-center text-amber-600 mb-3 text-sm font-medium">
+                                <span>A Pagar Contra Entrega (PCE):</span>
+                                <span>${cartTotal.toLocaleString()}</span>
+                            </div>
+                        )}
                         {appliedDiscount && (() => {
                             const discountAmount = cartTotal * (appliedDiscount.percentage / 100);
                             return (
@@ -551,11 +612,11 @@ export default function CheckoutForm() {
                             <span>${(shippingCost || 0).toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between items-end text-2xl font-bold text-accent mb-8">
-                            <span className="text-sm font-semibold uppercase tracking-wider text-primary">Total a Pagar</span>
+                            <span className="text-sm font-semibold uppercase tracking-wider text-primary">Total a Pagar Hoy</span>
                             {(() => {
                                 const discountAmount = appliedDiscount ? cartTotal * (appliedDiscount.percentage / 100) : 0;
                                 const finalCartTotal = cartTotal - discountAmount;
-                                const totalWithShipping = finalCartTotal + (shippingCost || 0);
+                                const totalWithShipping = paymentMethod === 'WOMPI_COD' ? (shippingCost || 0) : finalCartTotal + (shippingCost || 0);
                                 return <span>${totalWithShipping.toLocaleString()}</span>;
                             })()}
                         </div>
@@ -636,17 +697,24 @@ export default function CheckoutForm() {
                             <span>Envío</span>
                             <span className="font-medium text-primary">{shippingCost > 0 ? formatPrice(shippingCost) : <span className="text-xs uppercase tracking-wider">Calculado en el siguiente paso</span>}</span>
                         </div>
+                        
+                        {paymentMethod === 'WOMPI_COD' && (
+                            <div className="flex justify-between items-center text-amber-600 font-medium">
+                                <span>A Pagar Contra Entrega (PCE)</span>
+                                <span>{formatPrice(cartTotal)}</span>
+                            </div>
+                        )}
                     </div>
 
                     <Separator className="my-6" />
 
                     <div className="flex justify-between items-end mb-2">
-                        <span className="text-sm font-semibold uppercase tracking-wider text-primary">Total Estimado</span>
+                        <span className="text-sm font-semibold uppercase tracking-wider text-primary">Total a Pagar Hoy</span>
                         <span className="text-2xl font-bold text-accent">
                             {(() => {
                                 const discountAmount = appliedDiscount ? cartTotal * (appliedDiscount.percentage / 100) : 0;
                                 const finalCartTotal = cartTotal - discountAmount;
-                                const totalWithShipping = finalCartTotal + (shippingCost || 0);
+                                const totalWithShipping = paymentMethod === 'WOMPI_COD' ? (shippingCost || 0) : finalCartTotal + (shippingCost || 0);
                                 return formatPrice(totalWithShipping);
                             })()}
                         </span>

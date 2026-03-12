@@ -233,9 +233,25 @@ function TrackingContent() {
                         </div>
                     </div>
 
-                    <div className="mt-6 pt-4 border-t flex justify-between items-center font-bold text-lg">
-                        <span>Total</span>
-                        <span>${order.total_payment.toLocaleString()}</span>
+                    <div className="mt-6 pt-4 border-t space-y-3">
+                        <div className="flex justify-between items-center text-sm text-gray-600">
+                            <span>Subtotal de productos</span>
+                            <span>${(order.total_payment - (order.shipping_cost || 0)).toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm text-gray-600">
+                            <span>Costo de envío</span>
+                            <span>${(order.shipping_cost || 0).toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between items-center font-bold text-lg pt-3 border-t">
+                            <span>Total General</span>
+                            <span>${order.total_payment.toLocaleString()}</span>
+                        </div>
+                        {(order.payment_method === 'WOMPI_COD' || order.status === 'Aprobado PCE') && (
+                            <div className="flex justify-between items-center font-bold text-lg text-amber-600 pt-3 border-t">
+                                <span>A Pagar Contra Entrega (PCE)</span>
+                                <span>${(order.cod_amount || (order.total_payment - (order.shipping_cost || 0))).toLocaleString()}</span>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
