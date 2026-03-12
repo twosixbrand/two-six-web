@@ -158,12 +158,12 @@ export default function ProductDetail({
             {/* Contenedor móvil: scroll horizontal, contenedor desktop: grid */}
             <div className="flex overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-2 gap-4 pb-4 md:pb-0 hide-scrollbar">
               {/* Imagen Principal */}
-              <div className="relative aspect-[3/4] w-full min-w-[85vw] md:min-w-0 md:col-span-2 rounded-xl overflow-hidden shadow-sm bg-white snap-center shrink-0">
+              <div className="relative aspect-square w-full min-w-[85vw] md:min-w-0 md:col-span-2 rounded-xl overflow-hidden shadow-sm bg-white snap-center shrink-0">
                 <Image
                   src={currentImages[0] || "/placeholder.png"}
                   alt={initialProduct.name}
                   fill
-                  className="object-contain object-center bg-gray-50/50"
+                  className="object-contain object-center"
                   priority
                   unoptimized
                   quality={100}
@@ -172,12 +172,12 @@ export default function ProductDetail({
 
               {/* Imágenes Secundarias */}
               {currentImages.slice(1).map((img, idx) => (
-                <div key={idx} className="relative aspect-[3/4] w-full min-w-[85vw] md:min-w-0 rounded-xl overflow-hidden shadow-sm bg-white snap-center shrink-0">
+                <div key={idx} className="relative aspect-square w-full min-w-[85vw] md:min-w-0 rounded-xl overflow-hidden shadow-sm bg-white snap-center shrink-0">
                   <Image
                     src={img}
                     alt={`${initialProduct.name} - Detalle ${idx + 2}`}
                     fill
-                    className="object-contain object-center transition-transform hover:scale-105 duration-700 bg-gray-50/50"
+                    className="object-contain object-center transition-transform hover:scale-105 duration-700"
                     unoptimized
                     quality={100}
                   />
