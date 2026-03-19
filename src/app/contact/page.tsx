@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { sendContactEmail, type FormState } from "./actions";
 import { SubmitButton } from "@/components/SubmitButton";
 import Banner from "@/components/Banner";
@@ -25,6 +25,12 @@ export default function ContactPage() {
 
 function ContactForm() {
   const [state, formAction] = useActionState(sendContactEmail, initialState);
+  const timestampRef = useRef<string>(Date.now().toString());
+
+  // Actualizar timestamp al montar el componente (capa Time Trap)
+  useEffect(() => {
+    timestampRef.current = Date.now().toString();
+  }, []);
 
   return (
     <section className="container mx-auto px-6 py-16 md:py-24">
@@ -50,6 +56,33 @@ function ContactForm() {
         {/* Columna del Formulario */}
         <div className="bg-white p-8 rounded-lg shadow-lg">
           <form action={formAction} className="space-y-6">
+            {/* ═══ Capa 1: Honeypot — campo invisible para bots ═══ */}
+            <div
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                left: "-9999px",
+                top: "-9999px",
+                opacity: 0,
+                height: 0,
+                width: 0,
+                overflow: "hidden",
+                tabIndex: -1,
+              }}
+            >
+              <label htmlFor="website">No llenes este campo</label>
+              <input
+                type="text"
+                id="website"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </div>
+
+            {/* ═══ Capa 2: Time Trap — timestamp oculto ═══ */}
+            <input type="hidden" name="_ts" value={timestampRef.current} />
+
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-primary">
                 Nombre Completo
@@ -59,6 +92,7 @@ function ContactForm() {
                 id="name"
                 name="name"
                 required
+                maxLength={100}
                 className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-accent focus:border-accent"
               />
             </div>
@@ -71,6 +105,7 @@ function ContactForm() {
                 id="email"
                 name="email"
                 required
+                maxLength={254}
                 className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-accent focus:border-accent"
               />
             </div>
@@ -83,6 +118,7 @@ function ContactForm() {
                 name="message"
                 rows={5}
                 required
+                maxLength={5000}
                 className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-accent focus:border-accent"
               ></textarea>
             </div>
