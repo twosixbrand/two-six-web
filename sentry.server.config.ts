@@ -26,15 +26,27 @@ Sentry.init({
       return null;
     }
 
-    // Errors from POST requests to routes without server actions (bots/crawlers
-    // sending malformed requests). The root "/" has no POST handler, so any
-    // SyntaxError, TypeError, etc. from POST / is guaranteed to be bot noise.
-    if (
-      event.request?.method === "POST" &&
-      (event.request?.url === "/" ||
-        event.request?.url?.endsWith("twosixweb.com/"))
-    ) {
-      return null;
+    // Errors from POST requests sent by bots/crawlers to routes that don't
+    // accept POST (malformed bodies, non-existent paths, etc.).
+    const url = event.request?.url || "";
+    if (event.request?.method === "POST") {
+      // POST to root, /_not-found, or /_next/data/ paths — always bot noise
+      if (
+        url === "/" ||
+        url.endsWith("twosixweb.com/") ||
+        url.includes("/_not-found") ||
+        url.includes("/_next/data/")
+      ) {
+        return null;
+      }
+
+      // SyntaxError from JSON.parse on any POST — malformed bot payload
+      if (
+        message.includes("Unexpected") &&
+        message.includes("JSON")
+      ) {
+        return null;
+      }
     }
 
     return event;
