@@ -24,6 +24,14 @@ interface OrderItem {
     };
 }
 
+interface DianInvoice {
+    id: number;
+    document_number: string;
+    cufe_code: string;
+    qr_code: string;
+    status: string;
+}
+
 interface Order {
     id: number;
     order_reference?: string;
@@ -40,6 +48,7 @@ interface Order {
         current_phone_number: string;
     };
     orderItems: OrderItem[];
+    dianEInvoicing?: DianInvoice[];
 }
 
 function SuccessContent() {
@@ -288,6 +297,32 @@ function SuccessContent() {
                             <p className="text-gray-600">{order.shipping_address}</p>
                             <p className="text-gray-600">{order.customer.current_phone_number}</p>
                             <p className="text-gray-600">{order.customer.email}</p>
+                        </div>
+                    )}
+
+                    {order.dianEInvoicing && order.dianEInvoicing.length > 0 && (
+                        <div className="bg-green-50 border border-green-200 p-4 rounded-lg mb-8">
+                            <h3 className="font-semibold mb-2 text-green-800 flex items-center gap-2">
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Factura Electrónica DIAN
+                            </h3>
+                            <p className="text-sm text-gray-600 mb-1">
+                                <span className="font-medium">Factura:</span> {order.dianEInvoicing[0].document_number}
+                            </p>
+                            <p className="text-xs text-gray-500 break-all mb-3">
+                                <span className="font-medium">CUFE:</span> {order.dianEInvoicing[0].cufe_code}
+                            </p>
+                            {order.dianEInvoicing[0].qr_code && (
+                                <div className="flex justify-center mb-2">
+                                    <img src={order.dianEInvoicing[0].qr_code} alt="QR Factura DIAN" className="w-28 h-28" />
+                                </div>
+                            )}
+                            <p className="text-xs text-gray-500 text-center">
+                                Hemos enviado la factura electrónica a tu correo.
+                                Consulta en: catalogo-vpfe.dian.gov.co
+                            </p>
                         </div>
                     )}
 
