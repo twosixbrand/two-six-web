@@ -29,6 +29,8 @@ interface Order {
     id: number;
     order_date: string;
     status: string;
+    delivery_method?: string;
+    pickup_status?: string;
     shipments?: Shipment[];
     payments?: Payment[];
 }
@@ -51,14 +53,22 @@ export const TrackingTimeline: React.FC<TrackingTimelineProps> = ({ order }) => 
     // Determinar el paso actual basado en el estado
     let currentStepIndex = statusMap[order.status as keyof typeof statusMap] ?? 0;
 
-    // Fallback: si el estado no está en el mapa pero hay envíos
-    if (!statusMap.hasOwnProperty(order.status) && !isErrorState) {
-        if (order.shipments && order.shipments.length > 0) {
-            currentStepIndex = 2; // Enviado
-        } else if (order.payments && order.payments.length > 0) {
-            currentStepIndex = 1; // Pagado
+    // Fallback: si el estado no está en el mapa pero hay envíos o es pickup
+    if (!statusMap.hasOwnProperty(order.status as string) && !isErrorState) {
+        if (order.delivery_method === 'PICKUP') {
+            if (order.pickup_status === 'COLLECTED') currentStepIndex = 3;
+            else if (order.pickup_status === 'READY') currentStepIndex = 2;
+            else if (order.payments && order.payments.length > 0) currentStepIndex = 1;
+        } else {
+            if (order.shipments && order.shipments.length > 0) {
+                currentStepIndex = 2; // Enviado
+            } else if (order.payments && order.payments.length > 0) {
+                currentStepIndex = 1; // Pagado
+            }
         }
     }
+
+    const isPickup = order.delivery_method === 'PICKUP';
 
     const steps = [
         {
@@ -77,16 +87,16 @@ export const TrackingTimeline: React.FC<TrackingTimelineProps> = ({ order }) => 
             isError: isErrorState && currentStepIndex < 1,
         },
         {
-            title: 'Enviado',
-            description: 'Paquete en tránsito',
-            icon: Truck,
-            date: order.shipments?.[0]?.createdAt,
+            title: isPickup ? 'Listo' : 'Enviado',
+            description: isPickup ? 'Te esperamos en el punto físico' : 'Paquete en tránsito',
+            icon: isPickup ? Package : Truck,
+            date: order.shipments?.[0]?.createdAt, // In a real app we'd track the exact date it was marked 'READY', for now we might leave it undefined or map a specific date if available
             isCompleted: currentStepIndex >= 2,
         },
         {
-            title: 'Entregado',
-            description: 'En tus manos',
-            icon: Package,
+            title: isPickup ? 'Recogido' : 'Entregado',
+            description: isPickup ? 'Entregado en tienda' : 'En tus manos',
+            icon: Check,
             // Priorizamos la fecha de entrega real, si no, la última actualización de tracking
             date: order.shipments?.[0]?.delivery_date || order.shipments?.[0]?.trackingHistory?.[0]?.update_date,
             isCompleted: currentStepIndex >= 3,

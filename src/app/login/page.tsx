@@ -7,7 +7,7 @@ import { getDepartments, getCities, Department, City } from "@/services/location
 import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
-    const [email, setEmail] = useState('');
+    const [document_number, setDocumentNumber] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const router = useRouter();
@@ -19,6 +19,7 @@ export default function LoginPage() {
     const [loadingLocations, setLoadingLocations] = useState(true);
 
     const [formData, setFormData] = useState({
+        email: "",
         name: "",
         phone: "",
         address: "",
@@ -91,7 +92,7 @@ export default function LoginPage() {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/customer/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, ...formData }),
+                    body: JSON.stringify({ document_number, ...formData }),
                 });
 
                 if (!response.ok) {
@@ -99,7 +100,7 @@ export default function LoginPage() {
                     throw new Error(data.message || 'Error al registrar tu cuenta');
                 }
 
-                router.push(`/login/otp?email=${encodeURIComponent(email)}`);
+                router.push(`/login/otp?document_number=${encodeURIComponent(document_number)}`);
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (err: any) {
                 setError(err.message || 'Ocurrió un error inesperado al registrar.');
@@ -112,7 +113,7 @@ export default function LoginPage() {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/customer/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email }),
+                    body: JSON.stringify({ document_number }),
                 });
 
                 if (!response.ok) {
@@ -127,7 +128,7 @@ export default function LoginPage() {
                     throw new Error(data.message || 'Error al iniciar sesión');
                 }
 
-                router.push(`/login/otp?email=${encodeURIComponent(email)}`);
+                router.push(`/login/otp?document_number=${encodeURIComponent(document_number)}`);
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (err: any) {
                 setError(err.message || 'Ocurrió un error inesperado al iniciar sesión.');
@@ -151,31 +152,30 @@ export default function LoginPage() {
                     <p className="mt-3 text-sm text-muted-foreground">
                         {showRegistration
                             ? 'Déjanos tus datos de envío principales para agilizar futuras compras.'
-                            : 'Ingresa tu correo para recibir un código de acceso único y seguro.'}
+                            : 'Ingresa tu número de documento para recibir un código de acceso al correo registrado.'}
                     </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="mt-10 space-y-6">
                     <div>
-                        <label htmlFor="email-address" className="sr-only">
-                            Correo Electrónico
+                        <label htmlFor="document-number" className="sr-only">
+                            Número de Documento
                         </label>
                         <div className="relative">
                             <input
-                                id="email-address"
-                                name="email"
-                                type="email"
-                                autoComplete="email"
+                                id="document-number"
+                                name="document_number"
+                                type="text"
                                 required
                                 disabled={showRegistration}
                                 className={`block w-full h-14 pl-5 pr-12 rounded-xl bg-white/50 border border-border focus:border-accent focus:ring-1 focus:ring-accent transition-all text-primary placeholder:text-muted-foreground outline-none ${showRegistration ? 'opacity-60 cursor-not-allowed bg-secondary/20' : ''}`}
-                                placeholder="tu@correo.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Tu Número de Documento"
+                                value={document_number}
+                                onChange={(e) => setDocumentNumber(e.target.value)}
                             />
                             <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-muted-foreground">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
                                 </svg>
                             </div>
                         </div>
@@ -184,6 +184,18 @@ export default function LoginPage() {
                     {showRegistration && (
                         <div className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-500 pt-4 border-t border-border">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2 col-span-1 md:col-span-2">
+                                    <Label htmlFor="email" className="text-sm font-semibold text-primary">Correo Electrónico</Label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        required
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        className="w-full h-12 bg-white/50 rounded-xl border border-border focus:border-accent focus:ring-1 focus:ring-accent outline-none px-4 transition-all"
+                                    />
+                                </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="name" className="text-sm font-semibold text-primary">Nombre Completo</Label>
                                     <input

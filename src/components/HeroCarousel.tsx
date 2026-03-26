@@ -17,7 +17,7 @@ const heroSlides = [
     {
         id: 1,
         image: "https://twosix-catalog-storage.atl1.cdn.digitaloceanspaces.com/twosixweb.com/banner1.png",
-        title: "Nueva Colección1",
+        title: "Nueva Colección",
         subtitle: "Define tu propio estándar.",
         cta: "Explorar Novedades",
         link: "/woman?sort=new"
