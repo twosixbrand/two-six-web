@@ -10,7 +10,7 @@ function OtpForm() {
     const [error, setError] = useState('');
     const router = useRouter();
     const searchParams = useSearchParams();
-    const document_number = searchParams?.get('document_number') || null;
+    const email = searchParams?.get('email') || null;
     const { login } = useAuth();
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -18,7 +18,7 @@ function OtpForm() {
         if (inputRefs.current[0]) {
             inputRefs.current[0].focus();
         }
-    }, [document_number]);
+    }, [email]);
 
     const handleChange = (index: number, value: string) => {
         if (isNaN(Number(value))) return;
@@ -76,8 +76,8 @@ function OtpForm() {
         setLoading(true);
         setError('');
 
-        if (!document_number) {
-            setError('Documento no encontrado. Vuelve a iniciar sesión.');
+        if (!email) {
+            setError('Correo no encontrado. Vuelve a iniciar sesión.');
             setLoading(false);
             return;
         }
@@ -88,7 +88,7 @@ function OtpForm() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ document_number, otp: completeOtp }),
+                body: JSON.stringify({ email, otp: completeOtp }),
             });
 
             if (!response.ok) {
@@ -120,7 +120,7 @@ function OtpForm() {
         }
     };
 
-    if (!document_number) {
+    if (!email) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-secondary/20 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
                 <div className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-xl p-10 rounded-3xl shadow-xl border border-white/20 text-center relative z-10">
@@ -131,7 +131,7 @@ function OtpForm() {
                     </div>
                     <div>
                         <h2 className="text-2xl font-bold tracking-tight text-primary">Sesión Caducada</h2>
-                        <p className="mt-2 text-sm text-muted-foreground">Falta el identificador del documento.</p>
+                        <p className="mt-2 text-sm text-muted-foreground">Falta el correo electrónico.</p>
                     </div>
                     <button
                         onClick={() => router.push('/login')}
@@ -156,8 +156,8 @@ function OtpForm() {
                         Verificar Código
                     </h2>
                     <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
-                        Hemos enviado un código seguro de 6 dígitos al correo asociado a tu documento <br />
-                        <span className="font-semibold text-primary">{document_number}</span>
+                        Hemos enviado un código seguro de 6 dígitos a tu correo <br />
+                        <span className="font-semibold text-primary">{email}</span>
                     </p>
                 </div>
 
@@ -211,7 +211,7 @@ function OtpForm() {
                             onClick={() => router.push('/login')}
                             className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors hover:underline"
                         >
-                            ¿No recibiste el código? Cambiar documento
+                            ¿No recibiste el código? Intentar de nuevo
                         </button>
                     </div>
                 </form>

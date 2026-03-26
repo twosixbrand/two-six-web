@@ -6,8 +6,16 @@ import Link from 'next/link';
 import { getDepartments, getCities, Department, City } from "@/services/locationApi";
 import { Label } from "@/components/ui/label";
 
+const ID_TYPES = [
+    { id: 1, name: 'Cédula de Ciudadanía', code: 'CC' },
+    { id: 3, name: 'Cédula de Extranjería', code: 'CE' },
+    { id: 4, name: 'Pasaporte', code: 'PAS' },
+    { id: 2, name: 'NIT', code: 'NIT' },
+    { id: 5, name: 'Tarjeta de Identidad', code: 'TI' },
+];
+
 export default function LoginPage() {
-    const [document_number, setDocumentNumber] = useState('');
+    const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const router = useRouter();
@@ -19,7 +27,8 @@ export default function LoginPage() {
     const [loadingLocations, setLoadingLocations] = useState(true);
 
     const [formData, setFormData] = useState({
-        email: "",
+        document_number: "",
+        id_identification_type: 1,
         name: "",
         phone: "",
         address: "",
@@ -87,12 +96,26 @@ export default function LoginPage() {
                 return;
             }
 
-            // Register Flow
+            if (!formData.document_number.trim()) {
+                setError('El número de documento es obligatorio.');
+                setLoading(false);
+                return;
+            }
+
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/customer/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ document_number, ...formData }),
+                    body: JSON.stringify({
+                        email: email.trim(),
+                        document_number: formData.document_number.trim(),
+                        id_identification_type: Number(formData.id_identification_type),
+                        name: formData.name.trim(),
+                        phone: formData.phone.trim(),
+                        address: formData.address.trim(),
+                        department: formData.department,
+                        city: formData.city,
+                    }),
                 });
 
                 if (!response.ok) {
@@ -100,36 +123,34 @@ export default function LoginPage() {
                     throw new Error(data.message || 'Error al registrar tu cuenta');
                 }
 
-                router.push(`/login/otp?document_number=${encodeURIComponent(document_number)}`);
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                router.push(`/login/otp?email=${encodeURIComponent(email.trim())}`);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (err: any) {
                 setError(err.message || 'Ocurrió un error inesperado al registrar.');
             } finally {
                 setLoading(false);
             }
         } else {
-            // Login Flow
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/customer/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ document_number }),
+                    body: JSON.stringify({ email: email.trim() }),
                 });
 
                 if (!response.ok) {
                     const data = await response.json();
-                    if (response.status === 404 || (data.message && data.message.includes('no encontrado'))) {
-                        // User not found, switch to registration mode!
+                    if (response.status === 404 || (data.message && data.message.includes('no encontramos'))) {
                         setShowRegistration(true);
-                        setError('No tienes una cuenta aún. Completa tus datos para registrarte rápidamente.');
+                        setError('No tienes una cuenta aún. Completa tus datos para registrarte.');
                         setLoading(false);
                         return;
                     }
                     throw new Error(data.message || 'Error al iniciar sesión');
                 }
 
-                router.push(`/login/otp?document_number=${encodeURIComponent(document_number)}`);
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                router.push(`/login/otp?email=${encodeURIComponent(email.trim())}`);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (err: any) {
                 setError(err.message || 'Ocurrió un error inesperado al iniciar sesión.');
             } finally {
@@ -140,7 +161,6 @@ export default function LoginPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-secondary/20 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-            {/* Background Decorations */}
             <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
             <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -151,31 +171,29 @@ export default function LoginPage() {
                     </h2>
                     <p className="mt-3 text-sm text-muted-foreground">
                         {showRegistration
-                            ? 'Déjanos tus datos de envío principales para agilizar futuras compras.'
-                            : 'Ingresa tu número de documento para recibir un código de acceso al correo registrado.'}
+                            ? 'Necesitamos tus datos para la facturación electrónica y envíos.'
+                            : 'Ingresa tu correo electrónico para recibir un código de acceso.'}
                     </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="mt-10 space-y-6">
                     <div>
-                        <label htmlFor="document-number" className="sr-only">
-                            Número de Documento
-                        </label>
+                        <label htmlFor="email" className="sr-only">Correo Electrónico</label>
                         <div className="relative">
                             <input
-                                id="document-number"
-                                name="document_number"
-                                type="text"
+                                id="email"
+                                name="email"
+                                type="email"
                                 required
                                 disabled={showRegistration}
                                 className={`block w-full h-14 pl-5 pr-12 rounded-xl bg-white/50 border border-border focus:border-accent focus:ring-1 focus:ring-accent transition-all text-primary placeholder:text-muted-foreground outline-none ${showRegistration ? 'opacity-60 cursor-not-allowed bg-secondary/20' : ''}`}
-                                placeholder="Tu Número de Documento"
-                                value={document_number}
-                                onChange={(e) => setDocumentNumber(e.target.value)}
+                                placeholder="Tu Correo Electrónico"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                             />
                             <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-muted-foreground">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
                             </div>
                         </div>
@@ -185,19 +203,7 @@ export default function LoginPage() {
                         <div className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-500 pt-4 border-t border-border">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2 col-span-1 md:col-span-2">
-                                    <Label htmlFor="email" className="text-sm font-semibold text-primary">Correo Electrónico</Label>
-                                    <input
-                                        type="email"
-                                        id="email"
-                                        name="email"
-                                        required
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                        className="w-full h-12 bg-white/50 rounded-xl border border-border focus:border-accent focus:ring-1 focus:ring-accent outline-none px-4 transition-all"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="name" className="text-sm font-semibold text-primary">Nombre Completo</Label>
+                                    <Label htmlFor="name" className="text-sm font-semibold text-primary">Nombre Completo *</Label>
                                     <input
                                         type="text"
                                         id="name"
@@ -205,12 +211,45 @@ export default function LoginPage() {
                                         required
                                         value={formData.name}
                                         onChange={handleChange}
+                                        placeholder="Nombre y Apellido"
                                         className="w-full h-12 bg-white/50 rounded-xl border border-border focus:border-accent focus:ring-1 focus:ring-accent outline-none px-4 transition-all"
                                     />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="phone" className="text-sm font-semibold text-primary">Teléfono</Label>
+                                    <Label htmlFor="id_identification_type" className="text-sm font-semibold text-primary">Tipo de Documento *</Label>
+                                    <select
+                                        id="id_identification_type"
+                                        name="id_identification_type"
+                                        required
+                                        value={formData.id_identification_type}
+                                        onChange={handleChange}
+                                        className="w-full h-12 bg-white/50 rounded-xl border border-border focus:border-accent focus:ring-1 focus:ring-accent outline-none px-4 transition-all text-sm"
+                                    >
+                                        {ID_TYPES.map((type) => (
+                                            <option key={type.id} value={type.id}>
+                                                {type.code} - {type.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="document_number" className="text-sm font-semibold text-primary">Número de Documento *</Label>
+                                    <input
+                                        type="text"
+                                        id="document_number"
+                                        name="document_number"
+                                        required
+                                        value={formData.document_number}
+                                        onChange={handleChange}
+                                        placeholder="Sin puntos ni guiones"
+                                        className="w-full h-12 bg-white/50 rounded-xl border border-border focus:border-accent focus:ring-1 focus:ring-accent outline-none px-4 transition-all"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="phone" className="text-sm font-semibold text-primary">Teléfono *</Label>
                                     <input
                                         type="tel"
                                         id="phone"
@@ -218,6 +257,7 @@ export default function LoginPage() {
                                         required
                                         value={formData.phone}
                                         onChange={handleChange}
+                                        placeholder="Ej. 3101234567"
                                         className="w-full h-12 bg-white/50 rounded-xl border border-border focus:border-accent focus:ring-1 focus:ring-accent outline-none px-4 transition-all"
                                     />
                                 </div>
@@ -229,7 +269,6 @@ export default function LoginPage() {
                                     <select
                                         id="department"
                                         name="department"
-                                        required
                                         value={selectedDepartment ? selectedDepartment.id : ""}
                                         onChange={handleDepartmentChange}
                                         className="w-full h-12 bg-white/50 rounded-xl border border-border focus:border-accent focus:ring-1 focus:ring-accent outline-none px-4 transition-all text-sm"
@@ -237,9 +276,7 @@ export default function LoginPage() {
                                     >
                                         <option value="">Seleccione un departamento...</option>
                                         {departments.map((dept) => (
-                                            <option key={dept.id} value={dept.id}>
-                                                {dept.name}
-                                            </option>
+                                            <option key={dept.id} value={dept.id}>{dept.name}</option>
                                         ))}
                                     </select>
                                 </div>
@@ -249,7 +286,6 @@ export default function LoginPage() {
                                     <select
                                         id="city"
                                         name="city"
-                                        required
                                         value={selectedCity ? selectedCity.id : ""}
                                         onChange={handleCityChange}
                                         className="w-full h-12 bg-white/50 rounded-xl border border-border focus:border-accent focus:ring-1 focus:ring-accent outline-none px-4 transition-all text-sm disabled:opacity-50"
@@ -257,9 +293,7 @@ export default function LoginPage() {
                                     >
                                         <option value="">Seleccione una ciudad...</option>
                                         {cities.map((city) => (
-                                            <option key={city.id} value={city.id}>
-                                                {city.name}
-                                            </option>
+                                            <option key={city.id} value={city.id}>{city.name}</option>
                                         ))}
                                     </select>
                                 </div>
@@ -271,7 +305,6 @@ export default function LoginPage() {
                                     type="text"
                                     id="address"
                                     name="address"
-                                    required
                                     value={formData.address}
                                     onChange={handleChange}
                                     placeholder="Ej. Calle 123 # 45-67 Barrio X"
@@ -320,16 +353,28 @@ export default function LoginPage() {
                                     Procesando...
                                 </span>
                             ) : (
-                                showRegistration ? 'Crear Cuenta y Enviar OTP' : 'Enviar Código OTP'
+                                showRegistration ? 'Crear Cuenta y Enviar Código' : 'Enviar Código de Acceso'
                             )}
                         </button>
                     </div>
                 </form>
 
+                {showRegistration && (
+                    <div className="text-center">
+                        <button
+                            type="button"
+                            onClick={() => { setShowRegistration(false); setError(''); }}
+                            className="text-sm text-muted-foreground hover:text-primary transition-colors underline"
+                        >
+                            ← Volver al inicio de sesión
+                        </button>
+                    </div>
+                )}
+
                 {!showRegistration && (
                     <div className="mt-8 text-center">
                         <p className="text-xs text-muted-foreground">
-                            No necesitas contraseñas. Evaluaremos tu correo y te enviaremos un PIN de un solo uso.
+                            Sin contraseñas. Te enviaremos un código de un solo uso a tu correo.
                         </p>
                     </div>
                 )}

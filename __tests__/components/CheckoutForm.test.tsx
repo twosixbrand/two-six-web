@@ -12,6 +12,11 @@ jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),
 }));
 
+jest.mock('next/link', () => ({
+    __esModule: true,
+    default: ({ children, href, ...rest }: any) => <a href={href} {...rest}>{children}</a>,
+}));
+
 jest.mock('../../src/context/CartContext', () => ({
     useCart: jest.fn(),
 }));
@@ -23,6 +28,11 @@ jest.mock('../../src/hooks/useWompiPayment', () => ({
 jest.mock('../../src/services/locationApi', () => ({
     getDepartments: jest.fn(),
     getCities: jest.fn(),
+}));
+
+// Mock the shadcn Label component
+jest.mock('@/components/ui/label', () => ({
+    Label: ({ children, ...props }: any) => <label {...props}>{children}</label>,
 }));
 
 // --- Global Setup ---
@@ -90,7 +100,8 @@ describe('CheckoutForm component', () => {
     it('renders form and loads departments on mount', async () => {
         render(<CheckoutForm />);
 
-        expect(screen.getByText('Datos de Envío')).toBeInTheDocument();
+        // Title changed from "Datos de Envío" to "Datos de Contacto"
+        expect(screen.getByText('Datos de Contacto')).toBeInTheDocument();
         expect(screen.getByLabelText('Nombre Completo')).toBeInTheDocument();
 
         // Wait for departments to load
@@ -159,19 +170,18 @@ describe('CheckoutForm component', () => {
         await user.type(phoneInput, '3001234567');
         await user.type(addressInput, 'Calle 123');
 
-        // Note: Not selecting city to test base total (100000), since city is required we hack it 
-        // with fireEvent to bypass HTML required validation for quick testing if needed, 
-        // OR we fill them properly to be fully accurate:
-
         const deptSelect = screen.getByLabelText('Departamento');
         await user.selectOptions(deptSelect, '1');
 
         await waitFor(() => expect(getCities).toHaveBeenCalledWith(1));
         const citySelect = screen.getByLabelText('Ciudad / Municipio');
 
-        // Assuming city select Populates
         await waitFor(() => expect(citySelect).not.toBeDisabled());
         await user.selectOptions(citySelect, '10'); // Medellin
+
+        // Accept terms checkbox (required for form submission)
+        const termsCheckbox = screen.getByLabelText(/He leído y acepto/i);
+        fireEvent.click(termsCheckbox);
 
         const form = screen.getByRole('button', { name: 'Realizar Pago' }).closest('form');
 

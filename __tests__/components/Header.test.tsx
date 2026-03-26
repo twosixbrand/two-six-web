@@ -39,7 +39,6 @@ const renderWithProviders = (ui: React.ReactElement, initialAuthState = { isLogg
 
     return render(
         <AuthProvider>
-            {/* The test using populated state will mock useCart, others will use the real provider indirectly or we could just use real CartProvider everywhere but spy/mock the hook specifically for that test */}
             <CartContextModule.CartProvider>
                 {ui}
             </CartContextModule.CartProvider>
@@ -90,14 +89,18 @@ describe('Header component', () => {
 
     it('shows login icon when user is not authenticated', () => {
         renderWithProviders(<Header showOutletLink={false} />);
-        expect(screen.getByRole('link', { name: "Iniciar Sesión" })).toBeInTheDocument();
+        // There are two "Iniciar Sesión" links (desktop + mobile), so use getAllByRole
+        const loginLinks = screen.getAllByRole('link', { name: "Iniciar Sesión" });
+        expect(loginLinks.length).toBeGreaterThanOrEqual(1);
     });
 
     it('shows user menu and name when user is authenticated', () => {
         renderWithProviders(<Header showOutletLink={false} />, { isLoggedIn: true, userName: 'John Doe' });
 
         expect(screen.getByText('Hola, John')).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: "Menú de usuario" })).toBeInTheDocument();
+        // There may be multiple "Menú de usuario" buttons (desktop + mobile)
+        const menuBtns = screen.getAllByRole('button', { name: "Menú de usuario" });
+        expect(menuBtns.length).toBeGreaterThanOrEqual(1);
 
         // User menu links should be in the document (hidden by CSS until hover, but present in DOM)
         expect(screen.getByText('Mi Perfil')).toBeInTheDocument();
@@ -116,10 +119,6 @@ describe('Header component', () => {
     });
 
     it('shows cart item count when items exist', async () => {
-        // Since spying the context directly fails due to ESM/TypeScript exports, 
-        // we'll revert to the `localStorage` loading path but handle updates asynchronously appropriately inside an `act` block 
-        // to avoid `Maximum update depth exceeded`.
-
         // Reset storage first
         window.localStorage.clear();
 
@@ -136,14 +135,15 @@ describe('Header component', () => {
             </AuthProvider>
         );
 
-        // 3. To simulate what happens in the app when storage changes, we manually dispatch an event 
-        // since `CartProvider` uses a `useEffect`
+        // 3. Dispatch storage event to trigger re-read
         await act(async () => {
             window.dispatchEvent(new Event('storage'));
         });
 
-        // 4. Assert with a short timeout. FindByText automatically waits and retries.
-        expect(await screen.findByText('3')).toBeInTheDocument();
+        // 4. Check that the cart count appears somewhere in the DOM
+        // The count "3" appears in aria-label text and in the badge span
+        const cartButtons = screen.getAllByLabelText(/Carrito de compras con 3 artículos/);
+        expect(cartButtons.length).toBeGreaterThanOrEqual(1);
 
         // 5. Cleanup
         window.localStorage.clear();
@@ -162,7 +162,7 @@ describe('Header component', () => {
         // We test the button click changes state
         fireEvent.click(menuBtn);
 
-        // After click, the mobile menu links should be visible 
+        // After click, the mobile menu links should be visible
         // We can just verify the click happened without errors, testing exact tailwind classes is brittle
         expect(menuBtn).toBeInTheDocument();
 

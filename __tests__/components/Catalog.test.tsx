@@ -30,10 +30,10 @@ describe('Catalog component', () => {
         expect(links.length).toBeGreaterThanOrEqual(2);
     });
 
-    it('renders empty grid when no products', () => {
-        const { container } = render(<Catalog products={[]} />);
-        const grid = container.querySelector('.grid');
-        expect(grid).toBeInTheDocument();
-        expect(grid?.children.length).toBe(0);
+    it('renders empty state message when no products', () => {
+        render(<Catalog products={[]} />);
+        // Catalog now shows an empty state with a message instead of an empty grid
+        expect(screen.getByText('Estamos preparando nuevas prendas')).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: /Ir Al Inicio/i })).toBeInTheDocument();
     });
 });

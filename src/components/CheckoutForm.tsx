@@ -50,6 +50,9 @@ export default function CheckoutForm() {
     // Delivery Method
     const [deliveryMethod, setDeliveryMethod] = useState<"SHIPPING" | "PICKUP">("SHIPPING");
 
+    // Si el usuario está logueado, bloquear campos de identidad
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
     // Reset COD if pickup selected
     useEffect(() => {
         if (deliveryMethod === "PICKUP" && paymentMethod === "WOMPI_COD") {
@@ -89,6 +92,7 @@ export default function CheckoutForm() {
                 const customerData = localStorage.getItem('customerData');
                 if (customerData) {
                     const customer = JSON.parse(customerData);
+                    setIsLoggedIn(true);
 
                     // Fetch saved addresses
                     try {
@@ -523,7 +527,8 @@ export default function CheckoutForm() {
                                     required
                                     value={formData.document_type}
                                     onChange={handleChange}
-                                    className="w-full h-12 bg-secondary/10 rounded-lg border-gray-200 focus:border-primary focus:ring-primary text-sm px-3 border outline-none transition-colors"
+                                    disabled={isLoggedIn}
+                                    className={`w-full h-12 bg-secondary/10 rounded-lg border-gray-200 focus:border-primary focus:ring-primary text-sm px-3 border outline-none transition-colors ${isLoggedIn ? 'opacity-60 cursor-not-allowed' : ''}`}
                                 >
                                     <option value="13">Cédula de Ciudadanía (CC)</option>
                                     <option value="22">Cédula de Extranjería (CE)</option>
@@ -544,7 +549,8 @@ export default function CheckoutForm() {
                                     required
                                     value={formData.document_number}
                                     onChange={handleChange}
-                                    className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
+                                    disabled={isLoggedIn}
+                                    className={`h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary ${isLoggedIn ? 'opacity-60 cursor-not-allowed' : ''}`}
                                     placeholder="Sin puntos ni espacios"
                                 />
                                 <p className="text-xs text-muted-foreground mt-1.5 flex items-start gap-1.5 line-height-relaxed">
@@ -593,7 +599,8 @@ export default function CheckoutForm() {
                                 required
                                 value={formData.email}
                                 onChange={handleChange}
-                                className="h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary"
+                                disabled={isLoggedIn}
+                                className={`h-12 bg-secondary/10 border-gray-200 focus:border-primary focus:ring-primary ${isLoggedIn ? 'opacity-60 cursor-not-allowed' : ''}`}
                             />
                         </div>
 

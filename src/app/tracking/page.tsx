@@ -50,6 +50,7 @@ interface Order {
     status: string;
     delivery_method?: string;
     pickup_status?: string;
+    pickup_pin?: string;
     total_payment: number;
     shipping_cost?: number;
     payment_method?: string;
@@ -201,6 +202,13 @@ function TrackingContent() {
                                             <span className="px-2 py-1 bg-amber-100 text-amber-700 rounded-md font-medium text-xs">🟡 En preparación</span>
                                         )}
                                     </p>
+                                    {order.pickup_pin && (
+                                        <div className="mt-3 bg-amber-50 border border-amber-200 p-3 rounded-md text-center">
+                                            <p className="text-sm font-medium text-amber-800 mb-1">🔐 Tu PIN de Retiro</p>
+                                            <p className="text-2xl font-bold tracking-[0.3em] font-mono text-black">{order.pickup_pin}</p>
+                                            <p className="text-xs text-amber-700 mt-1">Presenta este código al recoger tu pedido</p>
+                                        </div>
+                                    )}
                                 </div>
                             </>
                         ) : (
