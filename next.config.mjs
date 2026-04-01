@@ -6,6 +6,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "standalone",
   // La opción `turbopack.root` se usa para configurar el directorio raíz para Turbopack.
   // Esto es útil cuando Next.js infiere incorrectamente la raíz del proyecto, por ejemplo,
   // cuando hay múltiples archivos de bloqueo en los directorios padres.
