@@ -19,6 +19,10 @@ COPY . .
 # Deshabilita telemetría para acelerar build y ahorrar memoria
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Inyectamos la variable desde GitHub Actions en tiempo de Build
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
 RUN npm run build
 
 # Fase 3: Imagen Final de Producción (Minimalista)

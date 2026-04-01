@@ -28,7 +28,7 @@ jobs:
         run: doctl registry login --expiry-seconds 600
 
       - name: 4. Construir la Imagen (Docker Build) usando la RAM de GitHub
-        run: docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
+        run: docker build --build-arg NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }} -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
 
       - name: 5. Subir imagen tag específica
         run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
