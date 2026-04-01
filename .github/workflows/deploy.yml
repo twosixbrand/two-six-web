@@ -1,0 +1,39 @@
+name: Construir y Subir Imagen Docker a DigitalOcean
+
+on:
+  push:
+    branches:
+      - main # O la rama que uses para producción
+
+env:
+  # REEMPLAZA 'twosix-registry' CON EL NOMBRE DE TU REGISTRY EN DIGITALOCEAN
+  REGISTRY: registry.digitalocean.com/twosix-registry
+  IMAGE_NAME: two-six-web
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 1. Checkout del código
+        uses: actions/checkout@v4
+
+      - name: 2. Instalar doctl (DigitalOcean CLI)
+        uses: digitalocean/action-doctl@v2
+        with:
+          # TOKEN CREADO EN DIGITAL OCEAN Y GUARDADO EN GITHUB SECRETS
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: 3. Autenticarse en el Container Registry de DO
+        run: doctl registry login --expiry-seconds 600
+
+      - name: 4. Construir la Imagen (Docker Build) usando la RAM de GitHub
+        run: docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
+
+      - name: 5. Subir imagen tag específica
+        run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: 6. Etiquetar y Subir como 'latest'
+        run: |
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
