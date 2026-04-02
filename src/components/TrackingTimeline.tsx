@@ -41,67 +41,121 @@ interface TrackingTimelineProps {
 
 const statusMap = {
     'Pendiente': 0,
+    'Aprobado PCE': 1,
     'Pagado': 1,
     'Enviado': 2,
     'Entregado': 3,
+    'Entregado y Pagado': 3,
 };
 
 export const TrackingTimeline: React.FC<TrackingTimelineProps> = ({ order }) => {
     // Determinar si la orden está cancelada o rechazada
     const isErrorState = order.status === 'Cancelado' || order.status === 'Rechazado';
 
-    // Determinar el paso actual basado en el estado
-    let currentStepIndex = statusMap[order.status as keyof typeof statusMap] ?? 0;
+    const isPCE = order.payment_method === 'WOMPI_COD';
 
-    // Fallback: si el estado no está en el mapa pero hay envíos o es pickup
-    if (!statusMap.hasOwnProperty(order.status as string) && !isErrorState) {
-        if (order.delivery_method === 'PICKUP') {
-            if (order.pickup_status === 'COLLECTED') currentStepIndex = 3;
-            else if (order.pickup_status === 'READY') currentStepIndex = 2;
-            else if (order.payments && order.payments.length > 0) currentStepIndex = 1;
-        } else {
-            if (order.shipments && order.shipments.length > 0) {
-                currentStepIndex = 2; // Enviado
-            } else if (order.payments && order.payments.length > 0) {
-                currentStepIndex = 1; // Pagado
-            }
+    // LOGICA PARA ENVIOS (SHIPPING)
+    let shippingCurrentStepIndex = statusMap[order.status as keyof typeof statusMap] ?? 0;
+    if (order.status === 'Devuelto y No pagado') {
+        shippingCurrentStepIndex = 3;
+    } else if (!statusMap.hasOwnProperty(order.status as string) && !isErrorState) {
+        if (order.shipments && order.shipments.length > 0) {
+            shippingCurrentStepIndex = 2; // Enviado
+        } else if (order.payments && order.payments.length > 0) {
+            shippingCurrentStepIndex = 1; // Pagado
         }
     }
 
-    const isPickup = order.delivery_method === 'PICKUP';
+    const isDevueltoPCE = order.status === 'Devuelto y No pagado';
 
-    const steps = [
+    const shippingSteps = [
         {
             title: 'Pedido Registrado',
             description: 'Recibimos tu solicitud',
             icon: Clock,
             date: order.order_date,
-            isCompleted: currentStepIndex >= 0 || isErrorState,
+            isCompleted: shippingCurrentStepIndex >= 0 || isErrorState,
+        },
+        {
+            title: isPCE ? 'Aprobado PCE' : 'Pago Confirmado',
+            description: isPCE ? 'Contra Entrega' : 'Transacción exitosa',
+            icon: Check,
+            date: order.payments?.[0]?.transaction_date || (isPCE ? order.order_date : undefined),
+            isCompleted: shippingCurrentStepIndex >= 1,
+            isError: isErrorState && shippingCurrentStepIndex < 1,
+        },
+        {
+            title: 'Enviado',
+            description: 'Paquete en tránsito',
+            icon: Truck,
+            date: order.shipments?.[0]?.createdAt,
+            isCompleted: shippingCurrentStepIndex >= 2,
+        },
+        {
+            title: isDevueltoPCE ? 'Devuelto y No pagado' : (isPCE && shippingCurrentStepIndex >= 3 ? 'Entregado y Pagado' : 'Entregado'),
+            description: isDevueltoPCE ? 'Reembolso / Retorno' : (isPCE ? 'PCE completado' : 'En tus manos'),
+            icon: isDevueltoPCE ? XCircle : Check,
+            date: order.shipments?.[0]?.delivery_date || order.shipments?.[0]?.trackingHistory?.[0]?.update_date,
+            isCompleted: shippingCurrentStepIndex >= 3,
+            isError: isDevueltoPCE,
+        },
+    ];
+
+    // LOGICA PARA RECOGER (PICKUP)
+    let pickupCurrentStepIndex = isErrorState ? 0 : 0;
+    if (!isErrorState) {
+        if (order.pickup_status === 'UNCLAIMED' || order.status === 'No Reclamado') {
+            pickupCurrentStepIndex = 4;
+        } else if (order.pickup_status === 'COLLECTED' || order.status === 'Entregado') pickupCurrentStepIndex = 4;
+        else if (order.pickup_status === 'READY') pickupCurrentStepIndex = 3;
+        else if (order.pickup_status === 'PREPARING' || order.status === 'Preparando Pedido') pickupCurrentStepIndex = 2;
+        else if (order.payments && order.payments.length > 0) pickupCurrentStepIndex = 1;
+        else if (statusMap[order.status as keyof typeof statusMap] >= 1) pickupCurrentStepIndex = 1; 
+    }
+
+    const pickupSteps = [
+        {
+            title: 'Pedido Registrado',
+            description: 'Recibimos tu solicitud',
+            icon: Clock,
+            date: order.order_date,
+            isCompleted: pickupCurrentStepIndex >= 0 || isErrorState,
         },
         {
             title: 'Pago Confirmado',
             description: 'Transacción exitosa',
             icon: Check,
             date: order.payments?.[0]?.transaction_date,
-            isCompleted: currentStepIndex >= 1,
-            isError: isErrorState && currentStepIndex < 1,
+            isCompleted: pickupCurrentStepIndex >= 1,
+            isError: isErrorState && pickupCurrentStepIndex < 1,
         },
         {
-            title: isPickup ? 'Listo' : 'Enviado',
-            description: isPickup ? 'Te esperamos en el punto físico' : 'Paquete en tránsito',
-            icon: isPickup ? Package : Truck,
-            date: order.shipments?.[0]?.createdAt, // In a real app we'd track the exact date it was marked 'READY', for now we might leave it undefined or map a specific date if available
-            isCompleted: currentStepIndex >= 2,
+            title: 'Preparando',
+            description: 'Alistando tu pedido',
+            icon: Package,
+            date: undefined,
+            isCompleted: pickupCurrentStepIndex >= 2,
         },
         {
-            title: isPickup ? 'Recogido' : 'Entregado',
-            description: isPickup ? 'Entregado en tienda' : 'En tus manos',
+            title: 'Listo',
+            description: 'Te esperamos en tienda',
             icon: Check,
-            // Priorizamos la fecha de entrega real, si no, la última actualización de tracking
-            date: order.shipments?.[0]?.delivery_date || order.shipments?.[0]?.trackingHistory?.[0]?.update_date,
-            isCompleted: currentStepIndex >= 3,
+            date: undefined, 
+            isCompleted: pickupCurrentStepIndex >= 3,
+        },
+        {
+            title: order.pickup_status === 'UNCLAIMED' ? 'No Reclamado' : 'Recogido',
+            description: order.pickup_status === 'UNCLAIMED' ? 'Tiempo expirado' : 'Entregado en tienda',
+            icon: order.pickup_status === 'UNCLAIMED' ? XCircle : Check,
+            date: undefined,
+            isCompleted: pickupCurrentStepIndex >= 4,
+            isError: order.pickup_status === 'UNCLAIMED',
         },
     ];
+
+    const isPickup = order.delivery_method === 'PICKUP';
+    const steps = isPickup ? pickupSteps : shippingSteps;
+    const currentStepIndex = isPickup ? pickupCurrentStepIndex : shippingCurrentStepIndex;
 
     if (isErrorState) {
         steps[1] = {
@@ -113,7 +167,7 @@ export const TrackingTimeline: React.FC<TrackingTimelineProps> = ({ order }) => 
             isError: true,
         };
         // Ocultar pasos posteriores si hay error en el pago
-        steps.splice(2, 2);
+        steps.splice(2, steps.length - 2);
     }
 
     const formatDate = (dateString?: string) => {
@@ -137,7 +191,7 @@ export const TrackingTimeline: React.FC<TrackingTimelineProps> = ({ order }) => 
             <h3 className="text-xl font-bold mb-8 text-gray-900 tracking-tight flex items-center gap-2">
                 Estado de tu Pedido
                 {isErrorState && <span className="text-sm font-normal px-2 py-1 bg-red-100 text-red-700 rounded-full ml-auto">{order.status}</span>}
-                {!isErrorState && currentStepIndex === 3 && <span className="text-sm font-normal px-2 py-1 bg-green-100 text-green-700 rounded-full ml-auto">¡Completado!</span>}
+                {!isErrorState && currentStepIndex === steps.length - 1 && <span className="text-sm font-normal px-2 py-1 bg-green-100 text-green-700 rounded-full ml-auto">¡Completado!</span>}
             </h3>
 
             <div className="relative flex flex-col sm:flex-row justify-between w-full">
