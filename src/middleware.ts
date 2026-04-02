@@ -3,7 +3,8 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
   // Verifica si el modo de mantenimiento está activo
-  const isMaintenanceMode = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true';
+  // IMPORTANTE: Se lee dinámicamente en runtime (sin NEXT_PUBLIC)
+  const isMaintenanceMode = process.env.MAINTENANCE_MODE === 'true';
   const url = request.nextUrl.clone();
   
   // Excluir recursos estáticos, la API del framework y la página misma de mantenimiento
