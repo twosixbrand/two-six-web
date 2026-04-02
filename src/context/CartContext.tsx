@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import type { Product } from '@/types';
 
 export interface CartItem extends Product {
@@ -70,9 +70,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setCartItems([]);
-  };
+  }, []);
 
   // Contar el número total de artículos en el carrito
   const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);

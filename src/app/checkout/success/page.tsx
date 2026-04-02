@@ -72,10 +72,8 @@ function SuccessContent() {
             }
         };
 
-        if (orderId) {
-            fetchOrder(orderId);
-        } else if (transactionId) {
-            // Si llegamos aquí solo con transactionId, intentamos verificar primero
+        if (transactionId) {
+            // Siempre que haya transactionId, intentamos verificar primero
             fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/order/verify-payment`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -83,8 +81,8 @@ function SuccessContent() {
             })
                 .then(res => res.json())
                 .then(data => {
-                    if (data.status === 'APPROVED' && data.orderId) {
-                        fetchOrder(data.orderId);
+                    if (data.status === 'APPROVED') {
+                        fetchOrder(orderId || data.orderId.toString());
                     } else {
                         setStatus('error');
                         setMessage(`El pago no fue aprobado. Estado: ${data.status}`);
@@ -94,6 +92,8 @@ function SuccessContent() {
                     setStatus('error');
                     setMessage('Error verificando el pago.');
                 });
+        } else if (orderId) {
+            fetchOrder(orderId);
         } else {
             setStatus('error');
             setMessage('No se encontró información de la orden.');
