@@ -11,11 +11,11 @@ export default function MaintenancePage() {
         <div className="relative group">
           <div className="absolute -inset-6 bg-gradient-to-r from-[#b8962e] to-[#ecc95a] opacity-10 blur-xl transition duration-1000 -z-10 rounded-full animate-pulse"></div>
           <Image
-            src="/logo-white.png"
+            src="/logo.png"
             alt="Two Six Logo"
             width={240}
             height={90}
-            className="object-contain"
+            className="object-contain drop-shadow-2xl"
             priority
           />
         </div>
