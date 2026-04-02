@@ -1,6 +1,20 @@
+"use client";
+
 import Image from 'next/image';
+import { useEffect } from 'react';
 
 export default function MaintenancePage() {
+  useEffect(() => {
+    // Polling silencioso: El navegador intentará refrescar la página subyacente cada 30 segundos.
+    // Tan pronto como la variable de DigitalOcean sea `false`, el Middleware dejará pasar 
+    // la petición y el usuario verá la tienda nuevamente de forma automática.
+    const interval = setInterval(() => {
+      window.location.reload();
+    }, 30000); // 30 segundos
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center p-6 text-center relative overflow-hidden">
       {/* Background ambient lighting */}
