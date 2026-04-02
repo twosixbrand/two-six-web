@@ -34,20 +34,24 @@ describe('Unisex Category Page', () => {
     });
 
     it('renders the banner and catalog with fetched products', async () => {
-        // Mock the resolved data from getStoreDesigns
         const mockProducts = [
             { id: 1, name: 'Gorra Unisex 1' },
             { id: 2, name: 'Sudadera Unisex 1' }
         ];
 
-        (getStoreDesigns as jest.Mock).mockResolvedValueOnce(mockProducts);
+        (getStoreDesigns as jest.Mock).mockResolvedValue({
+            data: mockProducts,
+            meta: { total: 2, page: 1, totalPages: 1, limit: 12 }
+        });
 
-        // Await the SSR component
-        const ResolvedPage = await UnisexPage();
+        // Pass searchParams as a Promise
+        const ResolvedPage = await UnisexPage({ searchParams: Promise.resolve({}) });
         render(ResolvedPage);
 
         // Verify the data fetching was called with correct arguments
-        expect(getStoreDesigns).toHaveBeenCalledWith({ gender: 'UNISEX', isOutlet: false });
+        expect(getStoreDesigns).toHaveBeenCalledWith(
+            expect.objectContaining({ gender: 'UNISEX', isOutlet: false })
+        );
 
         // Verify banner
         const banner = screen.getByTestId('mock-section-banner');
@@ -61,9 +65,12 @@ describe('Unisex Category Page', () => {
     });
 
     it('handles empty products gracefully', async () => {
-        (getStoreDesigns as jest.Mock).mockResolvedValueOnce([]);
+        (getStoreDesigns as jest.Mock).mockResolvedValue({
+            data: [],
+            meta: { total: 0, page: 1, totalPages: 1, limit: 12 }
+        });
 
-        const ResolvedPage = await UnisexPage();
+        const ResolvedPage = await UnisexPage({ searchParams: Promise.resolve({}) });
         render(ResolvedPage);
 
         const catalog = screen.getByTestId('mock-catalog');

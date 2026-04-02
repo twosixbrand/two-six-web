@@ -37,13 +37,13 @@ describe('Footer component', () => {
         expect(screen.getByRole('link', { name: 'Mujer' })).toHaveAttribute('href', '/woman');
         expect(screen.getByRole('link', { name: 'Unisex' })).toHaveAttribute('href', '/unisex');
 
-        // Assistance
-        expect(screen.getByText('Asistencia')).toBeInTheDocument();
+        // Assistance & Legal
+        expect(screen.getByText('Asistencia & Legal')).toBeInTheDocument();
         expect(screen.getByRole('link', { name: 'Rastrear Pedido' })).toHaveAttribute('href', '/tracking');
-        expect(screen.getByRole('link', { name: 'Contacto / FAQ' })).toHaveAttribute('href', '/contact');
-        expect(screen.getByRole('link', { name: 'Sobre Nosotros' })).toHaveAttribute('href', '/about');
-        expect(screen.getByRole('link', { name: 'Política de Privacidad' })).toHaveAttribute('href', '/privacy-policy');
-        expect(screen.getByRole('link', { name: 'Términos de Servicio' })).toHaveAttribute('href', '/terms-of-service');
+        expect(screen.getByRole('link', { name: 'Contacto' })).toHaveAttribute('href', '/contact');
+        expect(screen.getByRole('link', { name: 'Nuestra Identidad' })).toHaveAttribute('href', '/sobre-nosotros');
+        expect(screen.getByRole('link', { name: 'Política de Privacidad' })).toHaveAttribute('href', '/politicas/privacidad');
+        expect(screen.getByRole('link', { name: 'Términos y Condiciones' })).toHaveAttribute('href', '/legal/terminos-y-condiciones');
     });
 
     it('renders outlet link when showOutletLink is true', () => {
@@ -64,7 +64,7 @@ describe('Footer component', () => {
         expect(emailInput).toBeInTheDocument();
         expect(submitBtn).toBeInTheDocument();
 
-        // In JSDOM with Radix UI, the easiest way to ensure the button doesn't trigger 
+        // In JSDOM with Radix UI, the easiest way to ensure the button doesn't trigger
         // unexpected reloads is ensuring it's tied to the form or type="submit".
         expect(submitBtn).toHaveAttribute('type', 'submit');
         expect(emailInput.closest('form')).toBeInTheDocument();

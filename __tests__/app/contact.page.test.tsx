@@ -53,7 +53,7 @@ describe('ContactPage', () => {
     it('renders contact info', () => {
         render(<ContactPage />);
         expect(screen.getByText('Medellín, Colombia')).toBeInTheDocument();
-        expect(screen.getByText('info@twosixbrand.com')).toBeInTheDocument();
+        expect(screen.getByText('twosixmarca@gmail.com')).toBeInTheDocument();
     });
 
     it('shows state message when present', () => {

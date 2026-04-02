@@ -48,7 +48,13 @@ interface Order {
     order_reference: string;
     order_date: string;
     status: string;
+    delivery_method?: string;
+    pickup_status?: string;
+    pickup_pin?: string;
     total_payment: number;
+    shipping_cost?: number;
+    payment_method?: string;
+    cod_amount?: number;
     shipments?: Shipment[];
     orderItems: OrderItem[];
     payments?: Payment[];
@@ -180,23 +186,52 @@ function TrackingContent() {
                     <TrackingTimeline order={order} />
 
                     <div className="mb-6 mt-8">
-                        <h3 className="font-semibold mb-2">Detalles del Envío</h3>
-                        {order.shipments && order.shipments.length > 0 ? (
-                            order.shipments.map((shipment) => (
-                                <div key={shipment.id} className="bg-gray-50 p-4 rounded-md mb-2">
-                                    <p><span className="font-medium">Transportadora:</span> {shipment.shippingProvider?.name || 'N/A'}</p>
-                                    <p><span className="font-medium">Guía:</span> {shipment.guide_number}</p>
-                                    <p><span className="font-medium">Estado:</span> {shipment.status}</p>
-                                    {shipment.trackingHistory && shipment.trackingHistory.length > 0 && (
-                                        <div className="mt-2 text-sm text-gray-600">
-                                            <p className="font-medium">Última actualización:</p>
-                                            <p>{shipment.trackingHistory[0].status} - {shipment.trackingHistory[0].location}</p>
+                        {order.delivery_method === 'PICKUP' ? (
+                            <>
+                                <h3 className="font-semibold mb-2">Información de Recogida</h3>
+                                <div className="bg-blue-50 border border-blue-100 p-4 rounded-md mb-2">
+                                    <p className="font-medium text-blue-900 mb-1">Punto de Retiro Two Six</p>
+                                    <p className="text-blue-800 text-sm mb-2">CL 36D SUR #27D-39, APTO 1001<br/>URB Guadalcanal Apartamentos<br/>Envigado, Antioquia</p>
+                                    <p className="text-sm flex items-center gap-2">
+                                        <span className="font-medium">Estado actual:</span>
+                                        {order.pickup_status === 'READY' ? (
+                                            <span className="px-2 py-1 bg-green-100 text-green-700 rounded-md font-medium text-xs">🟢 Listo para Recoger</span>
+                                        ) : order.pickup_status === 'COLLECTED' ? (
+                                            <span className="px-2 py-1 bg-gray-200 text-gray-700 rounded-md font-medium text-xs">🔵 Entregado en Tienda</span>
+                                        ) : (
+                                            <span className="px-2 py-1 bg-amber-100 text-amber-700 rounded-md font-medium text-xs">🟡 En preparación</span>
+                                        )}
+                                    </p>
+                                    {order.pickup_pin && (
+                                        <div className="mt-3 bg-amber-50 border border-amber-200 p-3 rounded-md text-center">
+                                            <p className="text-sm font-medium text-amber-800 mb-1">🔐 Tu PIN de Retiro</p>
+                                            <p className="text-2xl font-bold tracking-[0.3em] font-mono text-black">{order.pickup_pin}</p>
+                                            <p className="text-xs text-amber-700 mt-1">Presenta este código al recoger tu pedido</p>
                                         </div>
                                     )}
                                 </div>
-                            ))
+                            </>
                         ) : (
-                            <p className="text-gray-500 italic">Aún no hay información de envío disponible.</p>
+                            <>
+                                <h3 className="font-semibold mb-2">Detalles del Envío</h3>
+                                {order.shipments && order.shipments.length > 0 ? (
+                                    order.shipments.map((shipment) => (
+                                        <div key={shipment.id} className="bg-gray-50 p-4 rounded-md mb-2">
+                                            <p><span className="font-medium">Transportadora:</span> {shipment.shippingProvider?.name || 'N/A'}</p>
+                                            <p><span className="font-medium">Guía:</span> {shipment.guide_number}</p>
+                                            <p><span className="font-medium">Estado:</span> {shipment.status}</p>
+                                            {shipment.trackingHistory && shipment.trackingHistory.length > 0 && (
+                                                <div className="mt-2 text-sm text-gray-600">
+                                                    <p className="font-medium">Última actualización:</p>
+                                                    <p>{shipment.trackingHistory[0].status} - {shipment.trackingHistory[0].location}</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-gray-500 italic">Aún no hay información de envío disponible.</p>
+                                )}
+                            </>
                         )}
                     </div>
 

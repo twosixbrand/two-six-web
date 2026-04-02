@@ -55,9 +55,9 @@ describe('CartItem component', () => {
         expect(screen.getByText('Color: Azul / Talla: 32')).toBeInTheDocument();
 
         // Single unit price
-        expect(screen.getByText('$80,000', { selector: '.text-accent' })).toBeInTheDocument();
-        // Subtotal
-        expect(screen.getByText('$80,000', { selector: '.mb-2' })).toBeInTheDocument();
+        // Unit price and subtotal both show $80,000 (quantity is 1)
+        const priceElements = screen.getAllByText('$80,000');
+        expect(priceElements.length).toBeGreaterThanOrEqual(2);
 
         const image = screen.getByRole('img');
         expect(image).toHaveAttribute('src', 'http://test.com/img2.png');

@@ -23,6 +23,15 @@ describe('OtpPage', () => {
         jest.clearAllMocks();
         // Reset search params
         mockSearchParams.delete('email');
+        // Mock sessionStorage
+        Object.defineProperty(window, 'sessionStorage', {
+            value: {
+                getItem: jest.fn().mockReturnValue(null),
+                setItem: jest.fn(),
+                removeItem: jest.fn(),
+            },
+            writable: true,
+        });
     });
 
     it('renders the OTP form when email is present', () => {
@@ -37,11 +46,15 @@ describe('OtpPage', () => {
         expect(screen.getByText('Falta el correo electrónico.')).toBeInTheDocument();
     });
 
-    it('renders OTP input field', () => {
+    it('renders 6 individual OTP digit inputs', () => {
         mockSearchParams.set('email', 'test@example.com');
         render(<OtpPage />);
-        const input = screen.getByPlaceholderText('000000');
-        expect(input).toBeInTheDocument();
+        // The OTP form now has 6 individual text inputs
+        const inputs = screen.getAllByRole('textbox');
+        expect(inputs).toHaveLength(6);
+        inputs.forEach((input) => {
+            expect(input).toHaveAttribute('maxLength', '1');
+        });
     });
 
     it('calls API on form submit', async () => {
@@ -53,11 +66,16 @@ describe('OtpPage', () => {
 
         render(<OtpPage />);
 
-        const input = screen.getByPlaceholderText('000000');
-        fireEvent.change(input, { target: { value: '123456' } });
+        // Type each digit into the 6 inputs
+        const inputs = screen.getAllByRole('textbox');
+        fireEvent.change(inputs[0], { target: { value: '1' } });
+        fireEvent.change(inputs[1], { target: { value: '2' } });
+        fireEvent.change(inputs[2], { target: { value: '3' } });
+        fireEvent.change(inputs[3], { target: { value: '4' } });
+        fireEvent.change(inputs[4], { target: { value: '5' } });
+        fireEvent.change(inputs[5], { target: { value: '6' } });
 
-        const submitBtn = screen.getByText('Verificar');
-        fireEvent.click(submitBtn);
+        fireEvent.click(screen.getByRole('button', { name: /Completar Registro/i }));
 
         await waitFor(() => {
             expect(global.fetch).toHaveBeenCalledTimes(1);
@@ -73,9 +91,11 @@ describe('OtpPage', () => {
 
         render(<OtpPage />);
 
-        const input = screen.getByPlaceholderText('000000');
-        fireEvent.change(input, { target: { value: '000000' } });
-        fireEvent.click(screen.getByText('Verificar'));
+        const inputs = screen.getAllByRole('textbox');
+        for (let i = 0; i < 6; i++) {
+            fireEvent.change(inputs[i], { target: { value: '0' } });
+        }
+        fireEvent.click(screen.getByRole('button', { name: /Completar Registro/i }));
 
         await waitFor(() => {
             expect(screen.getByText('Código inválido')).toBeInTheDocument();
@@ -88,8 +108,11 @@ describe('OtpPage', () => {
 
         render(<OtpPage />);
 
-        fireEvent.change(screen.getByPlaceholderText('000000'), { target: { value: '111111' } });
-        fireEvent.click(screen.getByText('Verificar'));
+        const inputs = screen.getAllByRole('textbox');
+        for (let i = 0; i < 6; i++) {
+            fireEvent.change(inputs[i], { target: { value: '1' } });
+        }
+        fireEvent.click(screen.getByRole('button', { name: /Completar Registro/i }));
 
         await waitFor(() => {
             expect(screen.getByText('Network error')).toBeInTheDocument();

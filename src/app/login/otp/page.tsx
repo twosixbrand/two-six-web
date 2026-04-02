@@ -10,7 +10,7 @@ function OtpForm() {
     const [error, setError] = useState('');
     const router = useRouter();
     const searchParams = useSearchParams();
-    const email = searchParams.get('email');
+    const email = searchParams?.get('email') || null;
     const { login } = useAuth();
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -77,7 +77,7 @@ function OtpForm() {
         setError('');
 
         if (!email) {
-            setError('Email no encontrado. Vuelve a iniciar sesión.');
+            setError('Correo no encontrado. Vuelve a iniciar sesión.');
             setLoading(false);
             return;
         }
@@ -131,7 +131,7 @@ function OtpForm() {
                     </div>
                     <div>
                         <h2 className="text-2xl font-bold tracking-tight text-primary">Sesión Caducada</h2>
-                        <p className="mt-2 text-sm text-muted-foreground">Falta el identificador del correo electrónico.</p>
+                        <p className="mt-2 text-sm text-muted-foreground">Falta el correo electrónico.</p>
                     </div>
                     <button
                         onClick={() => router.push('/login')}
@@ -156,7 +156,7 @@ function OtpForm() {
                         Verificar Código
                     </h2>
                     <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
-                        Hemos enviado un código seguro de 6 dígitos a <br />
+                        Hemos enviado un código seguro de 6 dígitos a tu correo <br />
                         <span className="font-semibold text-primary">{email}</span>
                     </p>
                 </div>
@@ -211,7 +211,7 @@ function OtpForm() {
                             onClick={() => router.push('/login')}
                             className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors hover:underline"
                         >
-                            ¿No recibiste el código? Cambiar correo
+                            ¿No recibiste el código? Intentar de nuevo
                         </button>
                     </div>
                 </form>

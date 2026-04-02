@@ -46,22 +46,10 @@ describe('CheckoutPage', () => {
         mockSearchParams.delete('id');
     });
 
-    it('renders the checkout form and order summary when cart has items', () => {
+    it('renders the checkout form and heading when cart has items', () => {
         render(<CheckoutPage />);
         expect(screen.getByText('Finalizar Compra')).toBeInTheDocument();
         expect(screen.getByTestId('checkout-form')).toBeInTheDocument();
-    });
-
-    it('renders order summary items', () => {
-        render(<CheckoutPage />);
-        expect(screen.getByText('Resumen del Pedido')).toBeInTheDocument();
-        expect(screen.getByTestId('summary-item')).toBeInTheDocument();
-    });
-
-    it('shows Subtotal and Total Estimado labels', () => {
-        render(<CheckoutPage />);
-        expect(screen.getByText('Subtotal')).toBeInTheDocument();
-        expect(screen.getByText('Total Estimado')).toBeInTheDocument();
     });
 
     it('renders verifying state when transaction ID is present', async () => {

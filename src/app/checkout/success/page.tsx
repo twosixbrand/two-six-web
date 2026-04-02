@@ -32,6 +32,8 @@ interface Order {
     payment_method?: string;
     cod_amount?: number;
     shipping_address: string;
+    delivery_method?: string;
+    pickup_pin?: string;
     customer: {
         name: string;
         email: string;
@@ -128,6 +130,12 @@ function SuccessContent() {
                         </div>
                         <h1 className="text-3xl font-bold text-gray-800 mb-2">¡Gracias por tu compra!</h1>
                         <p className="text-gray-600">Tu pedido {order.order_reference || `#${order.id}`} ha sido confirmado.</p>
+                        <div className="mt-5 inline-flex flex-col sm:flex-row items-center gap-2 bg-blue-50 text-blue-800 px-5 py-3 rounded-full text-sm font-medium border border-blue-100 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            En los próximos minutos recibirás tu Factura Electrónica de la DIAN en tu correo.
+                        </div>
                     </div>
 
                     <div className="border-t border-b py-4 mb-6">
@@ -207,13 +215,59 @@ function SuccessContent() {
                         </div>
                     )}
 
-                    <div className="bg-gray-50 p-4 rounded-lg mb-8">
-                        <h3 className="font-semibold mb-2">Datos de Envío</h3>
-                        <p className="text-gray-600">{order.customer.name}</p>
-                        <p className="text-gray-600">{order.shipping_address}</p>
-                        <p className="text-gray-600">{order.customer.current_phone_number}</p>
-                        <p className="text-gray-600">{order.customer.email}</p>
-                    </div>
+                    {order.delivery_method === 'PICKUP' ? (
+                        <div className="bg-neutral-50 p-6 rounded-2xl mb-8 border border-neutral-200 shadow-sm relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-1.5 h-full bg-primary/80"></div>
+                            <div className="flex items-start gap-4">
+                                <div className="bg-white p-2.5 rounded-xl shadow-sm border border-neutral-100 mt-1 shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </div>
+                                <div className="w-full">
+                                    <h3 className="font-bold text-gray-900 mb-1 text-lg tracking-tight">Punto de Retiro Seleccionado</h3>
+                                    <p className="text-gray-800 font-medium mb-3">{order.customer.name}</p>
+                                    
+                                    <div className="bg-white p-3 rounded-lg border border-neutral-100 mb-4">
+                                        <p className="text-gray-600 leading-relaxed font-medium">
+                                            CL 36D SUR #27D-39, APTO 1001<br/>
+                                            URB Guadalcanal Apartamentos<br/>
+                                            Envigado, Antioquia
+                                        </p>
+                                    </div>
+                                    
+                                    {order.pickup_pin && (
+                                        <div className="bg-amber-50/80 border-l-4 border-amber-500 p-4 rounded-r-lg mb-4">
+                                            <p className="text-sm text-amber-800 font-semibold uppercase tracking-wider mb-1">PIN de Seguridad Obligatorio</p>
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-3xl font-black text-gray-900 tracking-[0.2em]">{order.pickup_pin}</span>
+                                            </div>
+                                            <p className="text-xs text-amber-700/80 mt-1 font-medium">Deberás proveer este PIN cuando retires tu pedido.</p>
+                                        </div>
+                                    )}
+                                    
+                                    <div className="pt-3 border-t border-neutral-200/80 flex flex-col gap-2 text-sm text-gray-600">
+                                        <p><strong>Teléfono Bodega:</strong> +57 310 877 7629</p>
+                                        <div className="text-amber-800 bg-amber-50/80 px-3 py-2 rounded-lg inline-flex items-center gap-2 mt-1 font-medium border border-amber-200/60 shadow-sm w-fit">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            Tu pedido estará listo 4 horas hábiles después del pago.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="bg-gray-50 p-4 rounded-lg mb-8">
+                            <h3 className="font-semibold mb-2">Datos de Envío</h3>
+                            <p className="text-gray-600">{order.customer.name}</p>
+                            <p className="text-gray-600">{order.shipping_address}</p>
+                            <p className="text-gray-600">{order.customer.current_phone_number}</p>
+                            <p className="text-gray-600">{order.customer.email}</p>
+                        </div>
+                    )}
 
                     <div className="text-center">
                         <a

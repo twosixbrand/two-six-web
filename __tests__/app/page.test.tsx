@@ -33,20 +33,20 @@ jest.mock('../../src/components/Catalog', () => ({
     )
 }));
 
-// 5. Mock getStoreDesigns data fetching
+// 5. Mock getStoreDesigns data fetching - now returns paginated response
 jest.mock('../../src/data/products', () => ({
-    getStoreDesigns: jest.fn().mockResolvedValue([
-        { id: 1, name: 'Product 1' },
-        { id: 2, name: 'Product 2' }
-    ])
+    getStoreDesigns: jest.fn().mockResolvedValue({
+        data: [
+            { id: 1, name: 'Product 1' },
+            { id: 2, name: 'Product 2' }
+        ],
+        meta: { total: 2, page: 1, totalPages: 1, limit: 12 }
+    })
 }));
 
 describe('HomePage', () => {
 
     it('renders the HeroCarousel', async () => {
-        // Since HomePage is an async server component, we await its render essentially
-        // Testing Library `render` handles promises returned by async components 
-        // in newer setups, or we can resolve it manually.
         const ResolvedPage = await HomePage();
         render(ResolvedPage);
 
@@ -86,6 +86,6 @@ describe('HomePage', () => {
         render(ResolvedPage);
 
         const allBtn = screen.getByRole('link', { name: /Ver Todo el Catálogo/i });
-        expect(allBtn).toHaveAttribute('href', '/unisex');
+        expect(allBtn).toHaveAttribute('href', '/catalog');
     });
 });
