@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import type { Product, Color, Size } from "@/types"; // Asumiendo que tienes un archivo de tipos
+import type { SeoOverride } from "@/utils/seoDictionary";
 import {
   Accordion,
   AccordionContent,
@@ -16,11 +17,13 @@ import { Button } from "@/components/ui/button";
 interface ProductDetailProps {
   initialProduct: Product;
   variants: Product[];
+  seoOverride?: SeoOverride | null;
 }
 
 export default function ProductDetail({
   initialProduct,
   variants,
+  seoOverride,
 }: ProductDetailProps) {
   const [selectedVariant, setSelectedVariant] = useState<Product | null>(null);
   const [selectedColor, setSelectedColor] = useState<Color | null>(null);
@@ -198,7 +201,7 @@ export default function ProductDetail({
               <div className="relative aspect-square w-full min-w-[85vw] md:min-w-0 md:col-span-2 rounded-xl overflow-hidden shadow-sm bg-white snap-center shrink-0">
                 <Image
                   src={currentImages[0] || "/placeholder.png"}
-                  alt={initialProduct.name}
+                  alt={seoOverride?.alt || initialProduct.name}
                   fill
                   className="object-contain object-center"
                   priority
@@ -241,7 +244,7 @@ export default function ProductDetail({
             </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-semibold text-primary mb-4 leading-tight">
-              {initialProduct.name}
+              {seoOverride?.h1 || initialProduct.name}
             </h1>
 
             <p className="text-2xl font-medium text-accent mb-8">

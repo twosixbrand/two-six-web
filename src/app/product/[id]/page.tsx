@@ -3,6 +3,7 @@ import { getProductById, getProductsByDesignReference } from "@/data/products";
 import ProductDetail from "@/components/ProductDetail";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { notFound } from "next/navigation";
+import { getSeoOverrides } from '@/utils/seoDictionary';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,15 +21,24 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     return { title: "Producto no encontrado" };
   }
 
+  const color = product.clothingSize?.clothingColor?.color?.name || "";
+  const gender = product.gender || 'Unisex';
+  const reference = product.clothingSize?.clothingColor?.design?.reference || "";
+  
+  const seoOverride = getSeoOverrides(reference, color, gender);
+
   const imageUrl = product.clothingSize?.clothingColor?.imageClothing?.[0]?.image_url || product.image_url;
+  
+  const title = seoOverride?.title || product.name;
+  const description = seoOverride?.description || product.description || `Compra ${product.name} en Two Six. Ropa colombiana con estilo y confort. Envíos a toda Colombia.`;
 
   return {
-    title: product.name,
-    description: product.description || `Compra ${product.name} en Two Six. Ropa colombiana con estilo y confort. Envíos a toda Colombia.`,
+    title: title,
+    description: description,
     alternates: { canonical: `/product/${id}` },
     openGraph: {
-      title: `${product.name} | Two Six`,
-      description: product.description || `Compra ${product.name} en Two Six.`,
+      title: `${title} | Two Six`,
+      description: description,
       url: `/product/${id}`,
       type: 'website',
       images: imageUrl ? [
@@ -36,14 +46,14 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
           url: imageUrl,
           width: 800,
           height: 800,
-          alt: product.name,
+          alt: seoOverride?.alt || product.name,
         },
       ] : undefined,
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${product.name} | Two Six`,
-      description: product.description || `Compra ${product.name} en Two Six.`,
+      title: `${title} | Two Six`,
+      description: description,
       images: imageUrl ? [imageUrl] : undefined,
     },
   };
@@ -75,10 +85,14 @@ export default async function ProductDetailPage(props: {
   const gender = product.gender || 'Unisex';
   const genderSlug = genderMap[gender.toLowerCase()] || gender.toLowerCase();
 
+  const reference = product.clothingSize?.clothingColor?.design?.reference || "";
+  const color = product.clothingSize?.clothingColor?.color?.name || "";
+  const seoOverride = getSeoOverrides(reference, color, gender);
+
   const breadcrumbItems = [
     { label: 'Inicio', href: '/' },
     { label: gender, href: `/${genderSlug}` },
-    { label: product.name, href: `/${genderSlug}` },
+    { label: seoOverride?.h1 || product.name, href: `/${genderSlug}` },
   ];
 
   const imageUrl = product.clothingSize?.clothingColor?.imageClothing?.[0]?.image_url || product.image_url;
@@ -87,9 +101,13 @@ export default async function ProductDetailPage(props: {
   const productJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: product.name,
-    description: product.description,
+    name: seoOverride?.h1 || product.name,
+    description: seoOverride?.description || product.description,
     image: imageUrl,
+    audience: seoOverride?.audience ? {
+      "@type": "Audience",
+      "audienceType": seoOverride.audience
+    } : undefined,
     brand: {
       '@type': 'Brand',
       name: 'Two Six',
@@ -118,7 +136,11 @@ export default async function ProductDetailPage(props: {
       <div className="py-6">
         <Breadcrumbs items={breadcrumbItems} />
       </div>
-      <ProductDetail initialProduct={product} variants={variants} />
+      <ProductDetail 
+        initialProduct={product} 
+        variants={variants} 
+        seoOverride={seoOverride} 
+      />
     </div>
   );
 }
