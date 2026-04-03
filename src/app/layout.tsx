@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     description: 'Más que ropa, una actitud. Descubre la colección de ropa urbana Two Six. Envíos a toda Colombia.',
     images: [
       {
-        url: '/og-image.png',
+        url: '/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'Two Six - Más que ropa, una actitud',
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Two Six | Ropa Colombiana con Estilo y Confort',
     description: 'Más que ropa, una actitud. Descubre la colección de ropa urbana Two Six.',
-    images: ['/og-image.png'],
+    images: ['/og-image.jpg'],
   },
   robots: {
     index: true,
