@@ -47,8 +47,8 @@ export function getSeoOverrides(reference: string, colorName: string, gender: st
     };
   }
 
-  // REFERENCIA q1a12 (Crop Top Femenino)
-  if (ref === "q1a12") {
+  // REFERENCIA q4a12 (Crop Top Femenino)
+  if (ref === "q4a12") {
     let altText = `Crop Top ${color} para mujer Two Six estilo urbano con eslogan Crafted for real ones.`;
     
     if (color === "crudo" || color === "blanco") {
