@@ -1,5 +1,6 @@
 // src/layout.tsx
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter, Playfair_Display } from "next/font/google";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import "./globals.css";
@@ -104,6 +105,19 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
+        {/* Google Analytics 4 */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-XDW414WCBS"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-XDW414WCBS');
+          `}
+        </Script>
       </head>
       <body className={`${inter.variable} ${playfair.variable} font-sans flex flex-col min-h-screen`}>
         <CartProvider>
