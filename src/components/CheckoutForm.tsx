@@ -60,6 +60,25 @@ export default function CheckoutForm() {
         }
     }, [deliveryMethod, paymentMethod]);
 
+    // GA4 Tracking: begin_checkout
+    useEffect(() => {
+        if (typeof window !== "undefined" && window.gtag && cartItems.length > 0) {
+            window.gtag("event", "begin_checkout", {
+                currency: "COP",
+                value: cartTotal,
+                items: cartItems.map((item) => ({
+                    item_id: item.id.toString(),
+                    item_name: item.name,
+                    item_brand: "Two Six",
+                    item_category: item.gender,
+                    item_variant: `${item.clothingSize?.clothingColor?.color?.name} - ${item.clothingSize?.size?.name}`,
+                    price: item.price,
+                    quantity: item.quantity,
+                })),
+            });
+        }
+    }, [cartItems, cartTotal]);
+
     const [formData, setFormData] = useState({
         document_type: "13",
         document_number: "",

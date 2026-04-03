@@ -59,6 +59,24 @@ export default function ProductDetail({
     setSelectedColor(initialProduct.clothingSize.clothingColor.color);
     setSelectedSize(initialProduct.clothingSize.size);
 
+    // GA4 Tracking: view_item
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("event", "view_item", {
+        currency: "COP",
+        value: initialProduct.price,
+        items: [
+          {
+            item_id: initialProduct.id.toString(),
+            item_name: initialProduct.name,
+            item_brand: "Two Six",
+            item_category: initialProduct.gender,
+            price: initialProduct.price,
+            quantity: 1,
+          },
+        ],
+      });
+    }
+
     const images = getImages(initialProduct);
     setCurrentImages(images);
 
@@ -129,6 +147,25 @@ export default function ProductDetail({
 
   const handleAddToCart = () => {
     if (selectedVariant) {
+      // GA4 Tracking: add_to_cart
+      if (typeof window !== "undefined" && window.gtag) {
+        window.gtag("event", "add_to_cart", {
+          currency: "COP",
+          value: selectedVariant.price,
+          items: [
+            {
+              item_id: selectedVariant.id.toString(),
+              item_name: selectedVariant.name,
+              item_brand: "Two Six",
+              item_category: selectedVariant.gender,
+              item_variant: `${selectedColor?.name} - ${selectedSize?.name}`,
+              price: selectedVariant.price,
+              quantity: 1,
+            },
+          ],
+        });
+      }
+
       // Get the correct image for the cart (position 1)
       const images = getImages(selectedVariant);
       // Create a copy of the product with the correct image

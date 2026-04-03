@@ -67,6 +67,28 @@ function SuccessContent() {
                 setStatus('success');
                 setMessage('¡Gracias por tu compra!');
                 clearCart();
+
+                // GA4 Tracking: purchase (only exactly once)
+                if (typeof window !== "undefined" && window.gtag) {
+                    const trackingKey = `gtag_purchased_${data.id}`;
+                    if (!sessionStorage.getItem(trackingKey)) {
+                        window.gtag("event", "purchase", {
+                            transaction_id: data.order_reference || data.id.toString(),
+                            value: data.total_payment,
+                            currency: "COP",
+                            shipping: data.shipping_cost || 0,
+                            items: data.orderItems.map((item: OrderItem) => ({
+                                item_id: item.id.toString(),
+                                item_name: item.product_name,
+                                item_brand: "Two Six",
+                                item_variant: `${item.color} - ${item.size}`,
+                                price: item.unit_price,
+                                quantity: item.quantity,
+                            })),
+                        });
+                        sessionStorage.setItem(trackingKey, "true");
+                    }
+                }
             } catch (error) {
                 console.error(error);
                 setStatus('error');

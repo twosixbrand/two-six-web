@@ -10,8 +10,56 @@ export default async function HomePage() {
   const productsResponse = await getStoreDesigns({});
   const products = productsResponse.data;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ClothingStore",
+    "name": "Two Six",
+    "legalName": "Two Six S.A.S.",
+    "url": "https://twosixweb.com",
+    "logo": "https://twosixweb.com/og-image.jpg",
+    "image": "https://twosixweb.com/og-image.jpg",
+    "description": "Marca de ropa urbana premium diseñada y confeccionada en Medellín. Streetwear de alta calidad: Crafted for real ones.",
+    "slogan": "Crafted for real ones",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "CL 36D SUR #27D-39, APTO 1001, URB Guadalcanal Apartamentos",
+      "addressLocality": "Envigado",
+      "addressRegion": "Antioquia",
+      "postalCode": "055422",
+      "addressCountry": "CO"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 6.164722,
+      "longitude": -75.575556
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "opens": "08:00",
+      "closes": "18:00"
+    },
+    "sameAs": [
+      "https://www.instagram.com/twosix.brand",
+      "https://www.tiktok.com/@twosix_brand",
+      "https://www.facebook.com/TwoSix.brand"
+    ],
+    "priceRange": "$$"
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <HeroCarousel />
 
       {/* Sección Bento Grid de Categorías */}

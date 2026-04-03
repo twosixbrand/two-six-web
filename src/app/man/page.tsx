@@ -6,12 +6,13 @@ import { getStoreDesigns } from "@/data/products";
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Ropa para Hombre',
-  description: 'Descubre la colección de ropa para hombre Two Six. Camisetas, hoodies y más con diseños exclusivos. Envíos a toda Colombia.',
+  title: 'Ropa Urbana para Hombre | Camisetas y Pantalones',
+  description: 'Eleva tu estilo con la colección masculina de Two Six. Camisetas de alto gramaje en Medellín. Calidad premium, estilo minimalista. Envíos nacionales.',
+  keywords: 'ropa urbana hombre, camisetas hombre Medellín, hoddies urbanos',
   alternates: { canonical: '/man' },
   openGraph: {
-    title: 'Ropa para Hombre | Two Six',
-    description: 'Diseños exclusivos para el hombre contemporáneo. Streetwear colombiano con actitud.',
+    title: 'Ropa Urbana para Hombre | Camisetas y Pantalones | Two Six',
+    description: 'Eleva tu estilo con la colección masculina de Two Six. Camisetas de alto gramaje en Medellín. Calidad premium, estilo minimalista. Envíos nacionales.',
     url: '/man',
   },
 };

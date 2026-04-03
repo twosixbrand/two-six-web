@@ -3,12 +3,13 @@ import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-    title: 'Sobre Nosotros',
-    description: 'Conoce Two Six: ropa colombiana diseñada y confeccionada en Medellín. Crafted for real ones. Calidad, resistencia y diseño urbano.',
+    title: 'Sobre Two Six | Ropa Urbana Premium Hecha en Medellín',
+    description: 'Conoce la historia de Two Six S.A.S. Moda urbana con propósito, confeccionada con talento local en Medellín. Calidad, resistencia y diseño artesanal desde Colombia.',
+    keywords: 'marca de ropa Medellín, Two Six S.A.S, confección nacional Colombia',
     alternates: { canonical: '/sobre-nosotros' },
     openGraph: {
-        title: 'Sobre Nosotros | Two Six',
-        description: 'Nuestra Identidad. Crafted for real ones. Diseñado y confeccionado en Medellín, Colombia.',
+        title: 'Sobre Two Six | Ropa Urbana Premium Hecha en Medellín',
+        description: 'Conoce la historia de Two Six S.A.S. Moda urbana con propósito, confeccionada con talento local en Medellín. Calidad, resistencia y diseño artesanal desde Colombia.',
         url: '/sobre-nosotros',
     },
 };

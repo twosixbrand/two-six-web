@@ -6,12 +6,13 @@ import { getStoreDesigns } from "@/data/products";
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Ropa para Mujer',
-  description: 'Colección de ropa para mujer Two Six. Prendas con estilo urbano, comodidad y versatilidad. Envíos a toda Colombia.',
+  title: 'Streetwear para Mujer | Tops y Moda Urbana',
+  description: 'Prendas atemporales para mujer. Tops, camisetas y hoddies con el sello de calidad Two Six. Diseñados para destacar tu esencia. Hecho en Medellín, Colombia.',
+  keywords: 'ropa urbana mujer, tops streetwear mujer, moda independiente Medellín',
   alternates: { canonical: '/woman' },
   openGraph: {
-    title: 'Ropa para Mujer | Two Six',
-    description: 'Elegancia, comodidad y versatilidad. Streetwear colombiano para la mujer moderna.',
+    title: 'Streetwear para Mujer | Tops y Moda Urbana | Two Six',
+    description: 'Prendas atemporales para mujer. Tops, camisetas y hoddies con el sello de calidad Two Six. Diseñados para destacar tu esencia. Hecho en Medellín, Colombia.',
     url: '/woman',
   },
 };

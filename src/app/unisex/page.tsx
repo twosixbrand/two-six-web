@@ -6,12 +6,13 @@ import { getStoreDesigns } from "@/data/products";
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Ropa Unisex',
-  description: 'Colección unisex Two Six. Streetwear sin género con diseños atrevidos y cómodos. Envíos a toda Colombia.',
+  title: 'Ropa Unisex y Streetwear Sin Género',
+  description: 'Explora nuestra línea unisex: prendas versátiles con fit oversize y materiales premium. Diseños pensados para todos. Crafted for real ones. Compra online aquí.',
+  keywords: 'ropa unisex colombia, streetwear sin género, moda oversize',
   alternates: { canonical: '/unisex' },
   openGraph: {
-    title: 'Ropa Unisex | Two Six',
-    description: 'Streetwear sin género. Diseños atrevidos y cómodos para todos.',
+    title: 'Ropa Unisex y Streetwear Sin Género | Two Six',
+    description: 'Explora nuestra línea unisex: prendas versátiles con fit oversize y materiales premium. Diseños pensados para todos. Crafted for real ones. Compra online aquí.',
     url: '/unisex',
   },
 };
