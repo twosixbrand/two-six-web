@@ -64,6 +64,15 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://twosixweb.com',
   },
+  icons: {
+    icon: [
+      { url: '/icon.png' },
+      { url: '/icon.png', sizes: 'any' },
+    ],
+    apple: [
+      { url: '/apple-icon.png' },
+    ],
+  },
 };
 
 // JSON-LD Organization structured data
