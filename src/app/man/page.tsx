@@ -1,8 +1,20 @@
+import type { Metadata } from 'next';
 import Catalog from "@/components/Catalog";
 import { SectionBanner } from "@/components/SectionBanner";
 import { getStoreDesigns } from "@/data/products";
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: 'Ropa para Hombre',
+  description: 'Descubre la colección de ropa para hombre Two Six. Camisetas, hoodies y más con diseños exclusivos. Envíos a toda Colombia.',
+  alternates: { canonical: '/man' },
+  openGraph: {
+    title: 'Ropa para Hombre | Two Six',
+    description: 'Diseños exclusivos para el hombre contemporáneo. Streetwear colombiano con actitud.',
+    url: '/man',
+  },
+};
 
 export default async function ManPage({
   searchParams,

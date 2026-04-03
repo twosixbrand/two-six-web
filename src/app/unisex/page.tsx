@@ -1,8 +1,20 @@
+import type { Metadata } from 'next';
 import Catalog from "@/components/Catalog";
 import { SectionBanner } from "@/components/SectionBanner";
 import { getStoreDesigns } from "@/data/products";
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: 'Ropa Unisex',
+  description: 'Colección unisex Two Six. Streetwear sin género con diseños atrevidos y cómodos. Envíos a toda Colombia.',
+  alternates: { canonical: '/unisex' },
+  openGraph: {
+    title: 'Ropa Unisex | Two Six',
+    description: 'Streetwear sin género. Diseños atrevidos y cómodos para todos.',
+    url: '/unisex',
+  },
+};
 
 export default async function UnisexPage({
   searchParams,

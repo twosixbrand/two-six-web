@@ -1,9 +1,16 @@
+import type { Metadata } from 'next';
 import Image from "next/image";
 import Link from "next/link";
 
-export const metadata = {
-    title: "Sobre Nosotros | Two Six",
-    description: "Nuestra Identidad. Crafted for real ones. Diseñado y confeccionado en Medellín, Colombia.",
+export const metadata: Metadata = {
+    title: 'Sobre Nosotros',
+    description: 'Conoce Two Six: ropa colombiana diseñada y confeccionada en Medellín. Crafted for real ones. Calidad, resistencia y diseño urbano.',
+    alternates: { canonical: '/sobre-nosotros' },
+    openGraph: {
+        title: 'Sobre Nosotros | Two Six',
+        description: 'Nuestra Identidad. Crafted for real ones. Diseñado y confeccionado en Medellín, Colombia.',
+        url: '/sobre-nosotros',
+    },
 };
 
 export default function SobreNosotrosPage() {

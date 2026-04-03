@@ -1,8 +1,20 @@
+import type { Metadata } from 'next';
 import Catalog from "@/components/Catalog";
 import { SectionBanner } from "@/components/SectionBanner";
 import { getStoreDesigns } from "@/data/products";
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: 'Outlet - Descuentos Exclusivos',
+  description: 'Aprovecha los descuentos exclusivos del Outlet Two Six. Piezas atemporales a precios únicos. Stock limitado.',
+  alternates: { canonical: '/outlet' },
+  openGraph: {
+    title: 'Outlet | Two Six',
+    description: 'Oportunidades únicas de piezas atemporales a precios especiales.',
+    url: '/outlet',
+  },
+};
 
 export default async function OutletPage() {
   // Obtenemos todos los diseños que están marcados como outlet

@@ -1,8 +1,20 @@
+import type { Metadata } from 'next';
 import Catalog from "@/components/Catalog";
 import { SectionBanner } from "@/components/SectionBanner";
 import { getStoreDesigns } from "@/data/products";
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: 'Catálogo Completo',
+  description: 'Explora el catálogo completo de Two Six. Camisetas, hoodies, joggers y más. Ropa colombiana con envíos a todo el país.',
+  alternates: { canonical: '/catalog' },
+  openGraph: {
+    title: 'Catálogo Completo | Two Six',
+    description: 'Toda la colección Two Six en un solo lugar. Encuentra tu estilo.',
+    url: '/catalog',
+  },
+};
 
 export default async function FullCatalogPage({
     searchParams,

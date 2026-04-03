@@ -1,8 +1,20 @@
+import type { Metadata } from 'next';
 import Catalog from "@/components/Catalog";
 import { SectionBanner } from "@/components/SectionBanner";
 import { getStoreDesigns } from "@/data/products";
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: 'Ropa para Mujer',
+  description: 'Colección de ropa para mujer Two Six. Prendas con estilo urbano, comodidad y versatilidad. Envíos a toda Colombia.',
+  alternates: { canonical: '/woman' },
+  openGraph: {
+    title: 'Ropa para Mujer | Two Six',
+    description: 'Elegancia, comodidad y versatilidad. Streetwear colombiano para la mujer moderna.',
+    url: '/woman',
+  },
+};
 
 export default async function WomanPage({
   searchParams,
