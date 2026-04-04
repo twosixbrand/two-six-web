@@ -2,7 +2,7 @@
 title: "Guía Pro: Cómo cuidar tus prendas Two Six para que duren toda la vida"
 date: "2026-04-04"
 excerpt: "Comprar una prenda de Two Six no es simplemente comprar ropa; es adquirir diseño local premium. Aprende cómo lavar y cuidar tus camisetas para que mantengan su textura y color como nuevos."
-coverImage: "/placeholder.png"
+coverImage: "/blog_cuidado_ropa.png"
 tags: ["cuidado", "guia", "calidad", "streetwear"]
 ---
 

@@ -23,7 +23,7 @@ export default async function BlogIndexPage() {
       </div>
       
       <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4 tracking-tight">Two Six Journal</h1>
+        <h1 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4 tracking-tight">Two Six Journal (Blog)</h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           Cultura, tendencias y guías sobre moda urbana directamente desde Medellín.
         </p>
