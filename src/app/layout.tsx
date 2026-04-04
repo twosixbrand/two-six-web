@@ -66,11 +66,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/icon.png' },
-      { url: '/icon.png', sizes: 'any' },
+      { url: '/logo-black.png' },
+      { url: '/logo-black.png', sizes: 'any' },
     ],
     apple: [
-      { url: '/apple-icon.png' },
+      { url: '/logo-black.png' },
     ],
   },
 };
