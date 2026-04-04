@@ -87,6 +87,7 @@ const Footer = ({ showOutletLink }: FooterProps) => {
           <div className="flex flex-col space-y-4">
             <h3 className="font-serif text-lg text-secondary mb-2 tracking-wide">La Marca</h3>
             <FooterLink href="/sobre-nosotros" label="Nuestra Identidad" />
+            <FooterLink href="/blog" label="Two Six Journal (Blog)" />
 
             <h3 className="font-serif text-lg text-secondary mt-4 mb-2 tracking-wide">Colecciones</h3>
             <FooterLink href="/man" label="Hombre" />

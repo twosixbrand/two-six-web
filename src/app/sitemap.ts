@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { getProducts } from '@/data/products';
+import { getPostSlugs } from '@/lib/blog';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://twosixweb.com';
@@ -11,6 +12,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/man`,
@@ -112,5 +119,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Error fetching products for sitemap:', error);
   }
 
-  return [...staticPages, ...productPages];
+  // Páginas dinámicas de Blog
+  const blogSlugs = getPostSlugs();
+  const blogPages: MetadataRoute.Sitemap = blogSlugs
+    .filter((slug) => slug.endsWith('.md'))
+    .map((slug) => ({
+      url: `${baseUrl}/blog/${slug.replace(/\.md$/, '')}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    }));
+
+  return [...staticPages, ...productPages, ...blogPages];
 }
