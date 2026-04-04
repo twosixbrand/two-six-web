@@ -193,6 +193,14 @@ const Header = ({ showOutletLink }: HeaderProps) => {
                 </NavigationMenuLink>
               </NavigationMenuItem>
 
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-transparent text-sm font-medium uppercase tracking-wider text-primary hover:text-accent")}>
+                  <Link href="/blog">
+                    Blog
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+
             </NavigationMenuList>
           </NavigationMenu>
         </div>
@@ -556,6 +564,18 @@ const Header = ({ showOutletLink }: HeaderProps) => {
               className="py-5 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent block text-center w-full"
             >
               Rastrear Pedido
+            </Link>
+          </li>
+
+          <div className="w-full h-[1px] bg-gray-200"></div>
+
+          <li className="w-full">
+            <Link
+              href="/blog"
+              onClick={() => setIsMenuOpen(false)}
+              className="py-5 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent block text-center w-full"
+            >
+              Blog
             </Link>
           </li>
 
