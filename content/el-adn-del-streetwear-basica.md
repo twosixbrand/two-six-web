@@ -2,7 +2,7 @@
 title: "El ADN del Streetwear: Por qué una camiseta básica es tu mejor inversión"
 date: "2026-04-03"
 excerpt: "En el mundo de la moda urbana, existe una línea delgada entre lo que es pasajero y lo que es permanente. Descubre por qué un básico premium es la clave de tu rotación diaria."
-coverImage: "https://twosixweb.com/placeholder.png"
+coverImage: "/placeholder.png"
 tags: ["streetwear", "essentials", "calidad", "medellin"]
 ---
 
