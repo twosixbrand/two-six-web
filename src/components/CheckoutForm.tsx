@@ -53,12 +53,17 @@ export default function CheckoutForm() {
     // Si el usuario está logueado, bloquear campos de identidad
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    // Reset COD if pickup selected
+    // Global calculations
+    const globalDiscountAmount = appliedDiscount ? cartTotal * (appliedDiscount.percentage / 100) : 0;
+    const globalFinalCartTotal = cartTotal - globalDiscountAmount;
+    const isFreeShipping = globalFinalCartTotal >= 150000;
+
+    // Reset COD if pickup selected or if free shipping applies
     useEffect(() => {
-        if (deliveryMethod === "PICKUP" && paymentMethod === "WOMPI_COD") {
+        if ((deliveryMethod === "PICKUP" || isFreeShipping) && paymentMethod === "WOMPI_COD") {
             setPaymentMethod("WOMPI_FULL");
         }
-    }, [deliveryMethod, paymentMethod]);
+    }, [deliveryMethod, paymentMethod, isFreeShipping]);
 
     // GA4 Tracking: begin_checkout
     useEffect(() => {
@@ -767,7 +772,7 @@ export default function CheckoutForm() {
                                 </div>
                             </label>
 
-                            {deliveryMethod === "SHIPPING" && (
+                            {deliveryMethod === "SHIPPING" && !isFreeShipping && (
                                 <label className={`relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none ${paymentMethod === 'WOMPI_COD' ? 'border-amber-500 ring-1 ring-amber-500 bg-amber-50/50' : 'border-gray-300'}`}>
                                     {/* Cash on Delivery */}
                                     <input
