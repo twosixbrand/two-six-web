@@ -344,9 +344,11 @@ export default function CheckoutForm() {
             return;
         }
 
-        const effectiveShippingCost = deliveryMethod === "PICKUP" ? 0 : (shippingCost || 0);
         const discountAmount = appliedDiscount ? cartTotal * (appliedDiscount.percentage / 100) : 0;
         const finalCartTotal = cartTotal - discountAmount;
+        const isFreeShipping = finalCartTotal >= 150000;
+        const effectiveShippingCost = (deliveryMethod === "PICKUP" || isFreeShipping) ? 0 : (shippingCost || 0);
+        
         const totalWithShipping = finalCartTotal + effectiveShippingCost;
 
         const checkoutData = {
@@ -792,42 +794,63 @@ export default function CheckoutForm() {
                         </div>
                     </div>
 
-                    <div className="mt-8 border-t pt-8">
-                        <div className="flex justify-between items-center text-muted-foreground mb-3 text-sm">
-                            <span>Subtotal de productos:</span>
-                            <span className={appliedDiscount ? "line-through text-gray-400" : ""}>${cartTotal.toLocaleString()}</span>
-                        </div>
-                        {paymentMethod === 'WOMPI_COD' && (
-                            <div className="flex justify-between items-center text-amber-600 mb-3 text-sm font-medium">
-                                <span>A Pagar Contra Entrega (PCE):</span>
-                                <span>${cartTotal.toLocaleString()}</span>
-                            </div>
-                        )}
-                        {appliedDiscount && (() => {
-                            const discountAmount = cartTotal * (appliedDiscount.percentage / 100);
-                            return (
-                                <div className="flex justify-between items-center text-green-600 mb-3 text-sm font-medium">
-                                    <span>Descuento ({appliedDiscount.percentage}%):</span>
-                                    <span>-${discountAmount.toLocaleString()}</span>
-                                </div>
-                            );
-                        })()}
-                        <div className="flex justify-between items-center text-muted-foreground mb-6 text-sm">
-                            <span>Costo de envío estimado:</span>
-                            <span>${(shippingCost || 0).toLocaleString()}</span>
-                        </div>
-                        <div className="flex justify-between items-end text-2xl font-bold text-accent mb-8">
-                            <span className="text-sm font-semibold uppercase tracking-wider text-primary">Total a Pagar Hoy</span>
-                            {(() => {
-                                const discountAmount = appliedDiscount ? cartTotal * (appliedDiscount.percentage / 100) : 0;
-                                const finalCartTotal = cartTotal - discountAmount;
-                                const totalWithShipping = paymentMethod === 'WOMPI_COD' ? (shippingCost || 0) : finalCartTotal + (shippingCost || 0);
-                                return <span>${totalWithShipping.toLocaleString()}</span>;
-                            })()}
-                        </div>
+                <div className="mt-8 border-t pt-8">
+                    <div className="flex justify-between items-center text-muted-foreground mb-3 text-sm">
+                        <span>Subtotal de productos:</span>
+                        <span className={appliedDiscount ? "line-through text-gray-400" : ""}>${cartTotal.toLocaleString()}</span>
                     </div>
+                    {paymentMethod === 'WOMPI_COD' && (
+                        <div className="flex justify-between items-center text-amber-600 mb-3 text-sm font-medium">
+                            <span>A Pagar Contra Entrega (PCE):</span>
+                            <span>${(cartTotal - (appliedDiscount ? cartTotal * (appliedDiscount.percentage / 100) : 0)).toLocaleString()}</span>
+                        </div>
+                    )}
+                    {appliedDiscount && (() => {
+                        const discountAmount = cartTotal * (appliedDiscount.percentage / 100);
+                        return (
+                            <div className="flex justify-between items-center text-green-600 mb-3 text-sm font-medium">
+                                <span>Descuento ({appliedDiscount.percentage}%):</span>
+                                <span>-${discountAmount.toLocaleString()}</span>
+                            </div>
+                        );
+                    })()}
+                    <div className="flex justify-between items-center text-muted-foreground mb-6 text-sm">
+                        <span>Costo de envío estimado:</span>
+                        {(() => {
+                            const discountAmount = appliedDiscount ? cartTotal * (appliedDiscount.percentage / 100) : 0;
+                            const finalCartTotal = cartTotal - discountAmount;
+                            const isFreeShipping = finalCartTotal >= 150000;
+                            const rawShip = shippingCost || 0;
+                            
+                            if (deliveryMethod === "PICKUP") {
+                                return <span>$0</span>;
+                            }
+                            if (isFreeShipping) {
+                                return (
+                                    <div className="flex items-center gap-2">
+                                        <span className="line-through text-gray-400">${rawShip.toLocaleString()}</span>
+                                        <span className="text-green-600 font-bold uppercase text-[11.5px] tracking-widest bg-green-50 px-2.5 py-0.5 rounded-full border border-green-200 shadow-sm">¡Envío Gratis!</span>
+                                    </div>
+                                );
+                            }
+                            return <span>${rawShip.toLocaleString()}</span>;
+                        })()}
+                    </div>
+                    <div className="flex justify-between items-end text-2xl font-bold text-accent mb-8">
+                        <span className="text-sm font-semibold uppercase tracking-wider text-primary">Total a Pagar Hoy</span>
+                        {(() => {
+                            const discountAmount = appliedDiscount ? cartTotal * (appliedDiscount.percentage / 100) : 0;
+                            const finalCartTotal = cartTotal - discountAmount;
+                            const isFreeShipping = finalCartTotal >= 150000;
+                            const effectiveShippingCost = (deliveryMethod === "PICKUP" || isFreeShipping) ? 0 : (shippingCost || 0);
 
-                    <div className="mb-6 flex items-start gap-3">
+                            const totalWithShipping = paymentMethod === 'WOMPI_COD' ? effectiveShippingCost : (finalCartTotal + effectiveShippingCost);
+                            return <span>${totalWithShipping.toLocaleString()}</span>;
+                        })()}
+                    </div>
+                </div>
+
+                <div className="mb-6 flex items-start gap-3">
                         <div className="flex items-center h-5 mt-1">
                             <input
                                 id="terms-privacy"
