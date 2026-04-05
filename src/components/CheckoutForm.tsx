@@ -937,13 +937,27 @@ export default function CheckoutForm() {
 
                         <div className="flex justify-between items-center text-muted-foreground">
                             <span>Envío</span>
-                            <span className="font-medium text-primary">{shippingCost > 0 ? formatPrice(shippingCost) : <span className="text-xs uppercase tracking-wider">Calculado en el siguiente paso</span>}</span>
+                            {(() => {
+                                const rawShip = shippingCost || 0;
+                                if (deliveryMethod === "PICKUP") {
+                                    return <span className="font-medium text-primary">$0</span>;
+                                }
+                                if (isFreeShipping) {
+                                    return (
+                                        <div className="flex items-center gap-2">
+                                            <span className="line-through text-gray-400">{formatPrice(rawShip)}</span>
+                                            <span className="text-green-600 font-bold uppercase text-[11px] tracking-wider bg-green-50 px-2 py-0.5 rounded-full">¡Envío Gratis!</span>
+                                        </div>
+                                    );
+                                }
+                                return <span className="font-medium text-primary">{shippingCost > 0 ? formatPrice(shippingCost) : <span className="text-xs uppercase tracking-wider">Calculado en el siguiente paso</span>}</span>;
+                            })()}
                         </div>
 
                         {paymentMethod === 'WOMPI_COD' && (
                             <div className="flex justify-between items-center text-amber-600 font-medium">
                                 <span>A Pagar Contra Entrega (PCE)</span>
-                                <span>{formatPrice(cartTotal)}</span>
+                                <span>{formatPrice(cartTotal - (appliedDiscount ? cartTotal * (appliedDiscount.percentage / 100) : 0))}</span>
                             </div>
                         )}
                     </div>
@@ -954,9 +968,8 @@ export default function CheckoutForm() {
                         <span className="text-sm font-semibold uppercase tracking-wider text-primary">Total a Pagar Hoy</span>
                         <span className="text-2xl font-bold text-accent">
                             {(() => {
-                                const discountAmount = appliedDiscount ? cartTotal * (appliedDiscount.percentage / 100) : 0;
-                                const finalCartTotal = cartTotal - discountAmount;
-                                const totalWithShipping = paymentMethod === 'WOMPI_COD' ? (shippingCost || 0) : finalCartTotal + (shippingCost || 0);
+                                const effectiveShippingCost = (deliveryMethod === "PICKUP" || isFreeShipping) ? 0 : (shippingCost || 0);
+                                const totalWithShipping = paymentMethod === 'WOMPI_COD' ? effectiveShippingCost : (globalFinalCartTotal + effectiveShippingCost);
                                 return formatPrice(totalWithShipping);
                             })()}
                         </span>
