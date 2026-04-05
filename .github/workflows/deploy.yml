@@ -27,13 +27,13 @@ jobs:
       - name: 3. Autenticarse en el Container Registry de DO
         run: doctl registry login --expiry-seconds 600
 
-      - name: 4. Construir la Imagen (Docker Build) usando la RAM de GitHub
-        run: docker build --build-arg NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }} -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
-
-      - name: 5. Subir imagen tag específica
-        run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-
-      - name: 6. Etiquetar y Subir como 'latest'
+      - name: 4. Borrar tags antiguos para liberar espacio (Previene Quota Exceeded)
         run: |
-          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          doctl registry repository list-manifests ${{ env.IMAGE_NAME }} --format Digest,Tags --no-header | grep -v "latest" | awk '{print $1}' | xargs -I {} doctl registry repository delete-manifest ${{ env.IMAGE_NAME }} {} --force || true
+          doctl registry garbage-collection start --include-untagged-manifests --force || true
+
+      - name: 5. Construir la Imagen (Docker Build) usando la RAM de GitHub
+        run: docker build --build-arg NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }} -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
+
+      - name: 6. Subir imagen al Registry
+        run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
