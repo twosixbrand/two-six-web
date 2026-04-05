@@ -25,7 +25,7 @@ jobs:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: 3. Autenticarse en el Container Registry de DO
-        run: doctl registry login --expiry-seconds 600
+        run: doctl registry login --expiry-seconds 3600
 
       - name: 4. Borrar tags antiguos para liberar espacio (Previene Quota Exceeded)
         run: |
