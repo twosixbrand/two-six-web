@@ -42,6 +42,10 @@ interface ClothingSizeEntity {
   clothingColor: {
     id: number;
     slug?: string;
+    seo_title?: string | null;
+    seo_desc?: string | null;
+    seo_h1?: string | null;
+    seo_alt?: string | null;
     image_url: string | null;
     imageClothing: {
       id: number;

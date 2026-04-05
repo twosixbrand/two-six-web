@@ -30,16 +30,24 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   // Encontramos el producto representativo del color seleccionado
   const product = fallbackProduct || (result.products.find(p => p.clothingSize?.clothingColor?.color?.id === result.colorId) || result.products[0]);
 
-  const color = product.clothingSize?.clothingColor?.color?.name || "";
+  const clothingColor = product.clothingSize?.clothingColor;
+  const color = clothingColor?.color?.name || "";
   const gender = product.gender || 'Unisex';
-  const reference = product.clothingSize?.clothingColor?.design?.reference || "";
+  const reference = clothingColor?.design?.reference || "";
   
+  // Cadena de prioridad: DB → diccionario → genérico
   const seoOverride = getSeoOverrides(reference, color, gender);
+  const dbSeo = {
+    title: clothingColor?.seo_title || null,
+    description: clothingColor?.seo_desc || null,
+    h1: clothingColor?.seo_h1 || null,
+    alt: clothingColor?.seo_alt || null,
+  };
 
-  const imageUrl = product.clothingSize?.clothingColor?.imageClothing?.[0]?.image_url || product.image_url;
+  const imageUrl = clothingColor?.imageClothing?.[0]?.image_url || product.image_url;
   
-  const title = seoOverride?.title || product.name || "Two Six";
-  const description = seoOverride?.description || product.description || `Compra ${product.name} en Two Six. Ropa colombiana con estilo y confort. Envíos a toda Colombia.`;
+  const title = dbSeo.title || seoOverride?.title || product.name || "Two Six";
+  const description = dbSeo.description || seoOverride?.description || product.description || `Compra ${product.name} en Two Six. Ropa colombiana con estilo y confort. Envíos a toda Colombia.`;
 
   return {
     title: title,
@@ -55,7 +63,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
           url: imageUrl,
           width: 800,
           height: 800,
-          alt: seoOverride?.alt || product.name,
+          alt: dbSeo.alt || seoOverride?.alt || product.name,
         },
       ] : undefined,
     },
@@ -102,28 +110,50 @@ export default async function ProductDetailPage(props: {
   const gender = product.gender || 'Unisex';
   const genderSlug = genderMap[gender.toLowerCase()] || gender.toLowerCase();
 
-  const reference = product.clothingSize?.clothingColor?.design?.reference || "";
-  const colorName = product.clothingSize?.clothingColor?.color?.name || "";
+  const clothingColor = product.clothingSize?.clothingColor;
+  const reference = clothingColor?.design?.reference || "";
+  const colorName = clothingColor?.color?.name || "";
   const seoOverride = getSeoOverrides(reference, colorName, gender);
+
+  // Cadena de prioridad: DB → diccionario → genérico
+  const dbSeo = {
+    h1: clothingColor?.seo_h1 || null,
+    alt: clothingColor?.seo_alt || null,
+    description: clothingColor?.seo_desc || null,
+    audience: seoOverride?.audience || gender,
+  };
+
+  const resolvedH1 = dbSeo.h1 || seoOverride?.h1 || product.name || "Diseño";
+  const resolvedAlt = dbSeo.alt || seoOverride?.alt || product.name;
+  const resolvedDescription = dbSeo.description || seoOverride?.description || product.description;
 
   const breadcrumbItems = [
     { label: 'Inicio', href: '/' },
     { label: gender, href: `/${genderSlug}` },
-    { label: seoOverride?.h1 || product.name || "Diseño", href: `/${genderSlug}` },
+    { label: resolvedH1, href: `/${genderSlug}` },
   ];
 
   const imageUrl = product.clothingSize?.clothingColor?.imageClothing?.[0]?.image_url || product.image_url;
+
+  // Construct a merged seoOverride to pass to ProductDetail
+  const mergedSeo = {
+    title: clothingColor?.seo_title || seoOverride?.title || product.name || 'Two Six',
+    description: resolvedDescription,
+    h1: resolvedH1,
+    alt: resolvedAlt,
+    audience: dbSeo.audience,
+  };
 
   // JSON-LD Product structured data for Google rich snippets
   const productJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: seoOverride?.h1 || product.name,
-    description: seoOverride?.description || product.description,
+    name: resolvedH1,
+    description: resolvedDescription,
     image: imageUrl,
-    audience: seoOverride?.audience ? {
+    audience: mergedSeo.audience ? {
       "@type": "Audience",
-      "audienceType": seoOverride.audience
+      "audienceType": mergedSeo.audience
     } : undefined,
     brand: {
       '@type': 'Brand',
@@ -156,7 +186,7 @@ export default async function ProductDetailPage(props: {
       <ProductDetail 
         initialProduct={product} 
         variants={variants} 
-        seoOverride={seoOverride} 
+        seoOverride={mergedSeo} 
       />
     </div>
   );
