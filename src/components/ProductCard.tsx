@@ -21,7 +21,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
   }).format(product.price);
 
   return (
-    <Link href={`/product/${product.id_product}`} className="group block text-center">
+    <Link href={`/product/${product.slug || product.id_product}`} className="group block text-center">
       {/* Contenedor para el efecto de zoom */}
       <div className="relative overflow-hidden rounded-xl border border-transparent group-hover:border-gray-200/60 group-hover:shadow-xl group-hover:shadow-black/5 transition-all duration-500 ease-out">
         <Image

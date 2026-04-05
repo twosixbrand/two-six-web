@@ -21,8 +21,8 @@ Sentry.init({
   beforeSend(event) {
     const message = event.exception?.values?.[0]?.value || "";
 
-    // Next.js internal control-flow — not real errors
-    if (message === "NEXT_REDIRECT" || message === "NEXT_NOT_FOUND") {
+    // Next.js internal control-flow y Edge POST a missing paths ('x') -> not real errors
+    if (message === "NEXT_REDIRECT" || message === "NEXT_NOT_FOUND" || message === "x") {
       return null;
     }
 

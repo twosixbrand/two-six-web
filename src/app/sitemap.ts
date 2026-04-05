@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { getProducts } from '@/data/products';
+import { getStoreDesigns } from '../data/products';
 import { getPostSlugs } from '@/lib/blog';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -108,9 +108,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Páginas dinámicas de productos
   let productPages: MetadataRoute.Sitemap = [];
   try {
-    const products = await getProducts();
+    const productsRes = await getStoreDesigns();
+    const products = productsRes.data || [];
+    
     productPages = products.map((product) => ({
-      url: `${baseUrl}/product/${product.id}`,
+      url: `${baseUrl}/product/${product.slug || product.id_product}`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.7,

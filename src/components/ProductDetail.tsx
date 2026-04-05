@@ -1,6 +1,7 @@
 "use client"; // Este componente es interactivo y se ejecuta en el cliente
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
@@ -25,6 +26,7 @@ export default function ProductDetail({
   variants,
   seoOverride,
 }: ProductDetailProps) {
+  const router = useRouter();
   const [selectedVariant, setSelectedVariant] = useState<Product | null>(null);
   const [selectedColor, setSelectedColor] = useState<Color | null>(null);
   const [selectedSize, setSelectedSize] = useState<Size | null>(null);
@@ -116,9 +118,7 @@ export default function ProductDetail({
   }
 
   const handleColorSelect = (color: Color) => {
-    setSelectedColor(color);
-    // Busca la primera variante disponible para el nuevo color y la talla actual.
-    // Si no existe, busca la primera variante disponible para ese color con cualquier talla.
+    // Busca la primera variante disponible para el nuevo color
     let newVariant = variants.find(
       (v) =>
         v.clothingSize.clothingColor.color.id === color.id &&
@@ -129,12 +129,12 @@ export default function ProductDetail({
       newVariant = variants.find((v) => v.clothingSize.clothingColor.color.id === color.id);
     }
 
-    if (newVariant) {
-      setSelectedSize(newVariant.clothingSize.size);
-      setSelectedVariant(newVariant);
-
-      const images = getImages(newVariant);
-      setCurrentImages(images);
+    if (newVariant && newVariant.clothingSize.clothingColor.slug) {
+      // Navegamos al SEO router del nuevo color slug
+      router.push(`/product/${newVariant.clothingSize.clothingColor.slug}`);
+    } else if (newVariant) {
+      // Fallback a la ID si por alguna razón no tiene slug
+      router.push(`/product/${newVariant.id}`);
     }
   };
 

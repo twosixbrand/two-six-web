@@ -41,6 +41,7 @@ interface ClothingSizeEntity {
   size: Size;
   clothingColor: {
     id: number;
+    slug?: string;
     image_url: string | null;
     imageClothing: {
       id: number;

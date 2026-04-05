@@ -87,6 +87,7 @@ const Header = ({ showOutletLink }: HeaderProps) => {
               alt="two-six-web Logo"
               width={180}
               height={60}
+              priority
               className="h-auto w-auto"
             />
           </Link>

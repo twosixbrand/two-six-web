@@ -61,6 +61,8 @@ export function HeroCarousel() {
                                 alt={slide.title}
                                 fill
                                 priority={slide.id === 1}
+                                sizes="100vw"
+                                quality={60}
                                 className="object-cover object-center"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>

@@ -80,6 +80,7 @@ export default async function HomePage() {
               src="https://twosix-catalog-storage.atl1.cdn.digitaloceanspaces.com/twosixweb.com/home-hombre-1.png"
               alt="Colección Hombre"
               fill
+              quality={65}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 66vw"
               className="object-cover transition-transform duration-700 group-hover:scale-105"
             />
@@ -98,6 +99,7 @@ export default async function HomePage() {
               src="https://twosix-catalog-storage.atl1.cdn.digitaloceanspaces.com/twosixweb.com/home-mujer-1.png"
               alt="Colección Mujer"
               fill
+              quality={65}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
             />
@@ -116,6 +118,7 @@ export default async function HomePage() {
               src="https://twosix-catalog-storage.atl1.cdn.digitaloceanspaces.com/twosixweb.com/home-uisex-1.png"
               alt="Colección Unisex"
               fill
+              quality={65}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover transition-transform duration-700 group-hover:scale-105"
             />

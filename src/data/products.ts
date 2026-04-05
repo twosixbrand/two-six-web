@@ -42,7 +42,7 @@ export const getProductsByGender = async (
   }
 };
 
-export const getProductById = async (id: number): Promise<Product | null> => {
+export async function getProductById(id: number): Promise<Product | null> {
   try {
 
     return await apiClient<Product>(`/products/${id}`);
@@ -78,6 +78,21 @@ export async function getProductsByDesignReference(
       stack: error instanceof Error ? error.stack : String(error),
     });
     return [];
+  }
+}
+
+export async function getProductsBySlug(
+  slug: string
+): Promise<{ products: Product[], colorId: number | null }> {
+  try {
+    return await apiClient<{ products: Product[], colorId: number | null }>(`/products/by-slug/${slug}`);
+  } catch (error) {
+    console.error(`Error al obtener productos por slug ${slug}:`, error);
+    await logError({
+      message: `Fallo en getProductsBySlug para el slug: ${slug}`,
+      stack: error instanceof Error ? error.stack : String(error),
+    });
+    return { products: [], colorId: null };
   }
 }
 

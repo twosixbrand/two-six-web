@@ -3,6 +3,7 @@ export interface StoreDesign {
     name: string;
     description: string | null;
     id_product: number;
+    slug?: string;
     price: number;
     image_url: string | null;
     is_outlet: boolean;
