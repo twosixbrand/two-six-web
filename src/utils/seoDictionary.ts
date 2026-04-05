@@ -14,24 +14,13 @@ export function getSeoOverrides(reference: string, colorName: string, gender: st
   const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
   const colorCapitalized = capitalize(color);
 
-  // REFERENCIA Q4A13 (Estampado Frontal y Manga)
-  if (ref === "q4a13") {
+  // REFERENCIA Q4A14 (Estampado Frontal y Manga)
+  if (ref === "q4a14") {
     return {
       title: `Camiseta ${colorCapitalized} Two Six - Estampado Naranja y Blanco | Crafted for Real Ones`,
       description: `Compra la Camiseta Estampada Two Six para hombre en color ${color}. Calidad premium con diseño exclusivo "Crafted for real ones". Envíos a todo el país.`,
       h1: `Camiseta Masculina - Estampado Frontal y Manga (Color ${colorCapitalized})`,
       alt: `Hombre vistiendo camiseta ${color} Two Six con logo naranja y eslogan Crafted for real ones`,
-      audience: "Masculino"
-    };
-  }
-
-  // REFERENCIA Q4A16 (City Skyline)
-  if (ref === "q4a16") {
-    return {
-      title: `Camiseta City Skyline Two Six - ${colorCapitalized} y Estampado Atardecer | Two Six`,
-      description: `Dale un toque urbano a tu estilo con la Camiseta City Skyline de Two Six. Diseño premium en ${color} con estampado frontal de silueta urbana. Crafted for real ones. ¡Cómprala hoy!`,
-      h1: `Camiseta ${colorCapitalized} - Edición City Skyline`,
-      alt: `Camiseta ${color} masculina Two Six con estampado cuadrado de edificios y cielo naranja atardecer`,
       audience: "Masculino"
     };
   }
@@ -47,8 +36,8 @@ export function getSeoOverrides(reference: string, colorName: string, gender: st
     };
   }
 
-  // REFERENCIA Q4A15 (Crop Top Femenino)
-  if (ref === "q4a15") {
+  // REFERENCIA Q4A12 (Crop Top Femenino)
+  if (ref === "q4a12") {
     let altText = `Crop Top ${color} para mujer Two Six estilo urbano con eslogan Crafted for real ones.`;
     
     if (color === "crudo" || color === "blanco") {
@@ -68,8 +57,8 @@ export function getSeoOverrides(reference: string, colorName: string, gender: st
     };
   }
 
-  // REFERENCIA Q4A12 (Essentials Mujer)
-  if (ref === "q4a12") {
+  // REFERENCIA Q4A13 (Essentials Mujer)
+  if (ref === "q4a13") {
     let altText = `Camiseta básica ${color} para mujer marca Two Six con logo minimalista del gorila.`;
     let titleColor = "Mujer " + colorCapitalized;
     
@@ -90,8 +79,8 @@ export function getSeoOverrides(reference: string, colorName: string, gender: st
     };
   }
 
-  // REFERENCIA Q4A14 (Gorila en Espalda)
-  if (ref === "q4a14") {
+  // REFERENCIA Q4A16 (Gorila en Espalda)
+  if (ref === "q4a16") {
     const isBlanca = color === "crudo" || color === "blanco";
     const title = isBlanca 
       ? "Camiseta Blanca Two Six - Estampado Gorila en Espalda | Two Six"
@@ -103,6 +92,17 @@ export function getSeoOverrides(reference: string, colorName: string, gender: st
       h1: `Camiseta ${colorCapitalized} - Edición Gorilla Logo (Espalda)`,
       alt: `Camiseta ${color} para ${gender} Two Six con ilustración de gorila con gorra amarilla estampada en la espalda`,
       audience: gender
+    };
+  }
+
+  // REFERENCIA Q4A15 (Estampado Frente)
+  if (ref === "q4a15") {
+    return {
+      title: `Camiseta ${colorCapitalized} Two Six - Estampado Frontal Original | Two Six`,
+      description: `Lleva el estilo auténtico de Two Six con nuestra camiseta estampada al frente en color ${color}. Diseño urbano y calidad premium. Crafted for real ones.`,
+      h1: `Camiseta Masculina - Estampado Frontal Original (${colorCapitalized})`,
+      alt: `Camiseta ${color} Two Six con estampado frontal exclusivo`,
+      audience: "Masculino"
     };
   }
 
