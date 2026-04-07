@@ -39,4 +39,4 @@ jobs:
 
       - name: 7. Disparar Deploy en App Platform
         run: |
-          doctl apps create-deployment 4edf0771-db78-4210-b463-a065a7b5ca8c --force-rebuild --wait
+          doctl apps create-deployment ${{ secrets.DIGITALOCEAN_APP_ID }} --force-rebuild --wait
