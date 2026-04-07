@@ -4,7 +4,7 @@ import { getStoreDesigns } from "@/data/products";
 import Link from "next/link";
 import Image from "next/image";
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // ISR: regenerate every hour
 
 export default async function HomePage() {
   const productsResponse = await getStoreDesigns({});

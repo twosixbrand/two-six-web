@@ -3,7 +3,7 @@ import Catalog from "@/components/Catalog";
 import { SectionBanner } from "@/components/SectionBanner";
 import { getStoreDesigns } from "@/data/products";
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // ISR: regenerate every hour
 
 export const metadata: Metadata = {
   title: 'Outlet - Descuentos Exclusivos',

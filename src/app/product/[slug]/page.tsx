@@ -1,11 +1,23 @@
 import type { Metadata } from 'next';
-import { getProductsBySlug, getProductById } from "@/data/products";
+import { getProductsBySlug, getProductById, getStoreDesigns } from "@/data/products";
 import ProductDetail from "@/components/ProductDetail";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { notFound, permanentRedirect } from "next/navigation";
 import { getSeoOverrides } from '@/utils/seoDictionary';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // ISR: regenerate every hour
+
+// Pre-generate static pages for all known product slugs at build time
+export async function generateStaticParams() {
+  try {
+    const res = await getStoreDesigns();
+    return (res.data || [])
+      .filter((p) => p.slug)
+      .map((p) => ({ slug: p.slug }));
+  } catch {
+    return [];
+  }
+}
 
 // Esta función genera metadatos dinámicos para el <head> de la página
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -54,7 +66,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description: description,
     alternates: { canonical: `/product/${slug}` },
     openGraph: {
-      title: `${title} | Two Six`,
+      title: title,
       description: description,
       url: `/product/${slug}`,
       type: 'website',
@@ -69,7 +81,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${title} | Two Six`,
+      title: title,
       description: description,
       images: imageUrl ? [imageUrl] : undefined,
     },
@@ -91,7 +103,7 @@ export default async function ProductDetailPage(props: {
     if (/^\d+$/.test(slug)) {
       const fallbackProduct = await getProductById(Number(slug));
       if (fallbackProduct?.clothingSize?.clothingColor?.slug) {
-         // Redirigimos permanentemente para que Google aprenda la nueva URL
+         // permanentRedirect sends a 308 which Google treats identically to 301
          permanentRedirect(`/product/${fallbackProduct.clothingSize.clothingColor.slug}`);
       }
     }
