@@ -36,3 +36,7 @@ jobs:
 
       - name: 6. Subir imagen al Registry
         run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: 7. Disparar Deploy en App Platform
+        run: |
+          doctl apps create-deployment ${{ secrets.DIGITALOCEAN_APP_ID }} --force-rebuild --wait
