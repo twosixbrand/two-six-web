@@ -39,8 +39,28 @@ export default async function ManPage({
     suggestedProducts = allManProductsResponse.data;
   }
 
+  // ItemList JSON-LD for Google product carousel rich results
+  const itemListJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Colección Hombre Two Six',
+    description: 'Ropa urbana para hombre. Camisetas, hoodies y más con estilo streetwear.',
+    numberOfItems: products.length,
+    itemListElement: products.map((product, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: `https://twosixweb.com/product/${product.slug || product.id_product}`,
+      name: product.name,
+      image: product.image_url,
+    })),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
       <SectionBanner
         imageSrc="https://twosix-catalog-storage.atl1.cdn.digitaloceanspaces.com/twosixweb.com/banner-hombre.png"
         title="Hombre"

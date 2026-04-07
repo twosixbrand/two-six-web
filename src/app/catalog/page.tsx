@@ -31,8 +31,28 @@ export default async function FullCatalogPage({
     const products = productsResponse.data;
     const meta = productsResponse.meta;
 
+    // ItemList JSON-LD for Google product carousel rich results
+    const itemListJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'Catálogo Completo Two Six',
+        description: 'Explora el catálogo completo de Two Six. Camisetas, hoodies, joggers y más.',
+        numberOfItems: products.length,
+        itemListElement: products.map((product, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            url: `https://twosixweb.com/product/${product.slug || product.id_product}`,
+            name: product.name,
+            image: product.image_url,
+        })),
+    };
+
     return (
         <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+            />
             <SectionBanner
                 imageSrc="https://twosix-catalog-storage.atl1.cdn.digitaloceanspaces.com/twosixweb.com/banner-catalogo.png"
                 title="Catálogo Completo"

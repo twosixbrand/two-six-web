@@ -163,6 +163,7 @@ export default async function ProductDetailPage(props: {
     name: resolvedH1,
     description: resolvedDescription,
     image: imageUrl,
+    color: colorName || undefined,
     audience: mergedSeo.audience ? {
       "@type": "Audience",
       "audienceType": mergedSeo.audience
@@ -176,6 +177,8 @@ export default async function ProductDetailPage(props: {
       url: `https://twosixweb.com/product/${slug}`,
       priceCurrency: 'COP',
       price: product.price,
+      priceValidUntil: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      itemCondition: 'https://schema.org/NewCondition',
       availability: product.clothingSize?.quantity_available > 0
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
@@ -183,7 +186,31 @@ export default async function ProductDetailPage(props: {
         '@type': 'Organization',
         name: 'Two Six',
       },
+      shippingDetails: {
+        '@type': 'OfferShippingDetails',
+        shippingDestination: {
+          '@type': 'DefinedRegion',
+          addressCountry: 'CO',
+        },
+        deliveryTime: {
+          '@type': 'ShippingDeliveryTime',
+          handlingTime: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 2, unitCode: 'DAY' },
+          transitTime: { '@type': 'QuantitativeValue', minValue: 2, maxValue: 5, unitCode: 'DAY' },
+        },
+      },
     },
+  };
+
+  // BreadcrumbList JSON-LD for Google rich navigation snippets
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: breadcrumbItems.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.label,
+      item: index < breadcrumbItems.length - 1 ? `https://twosixweb.com${item.href}` : undefined,
+    })),
   };
 
   return (
@@ -191,6 +218,10 @@ export default async function ProductDetailPage(props: {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <div className="py-6">
         <Breadcrumbs items={breadcrumbItems} />

@@ -38,8 +38,28 @@ export default async function UnisexPage({
     suggestedProducts = allUnisexProductsResponse.data;
   }
 
+  // ItemList JSON-LD for Google product carousel rich results
+  const itemListJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Colección Unisex Two Six',
+    description: 'Prendas versátiles con fit oversize y materiales premium. Diseños sin género.',
+    numberOfItems: products.length,
+    itemListElement: products.map((product, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: `https://twosixweb.com/product/${product.slug || product.id_product}`,
+      name: product.name,
+      image: product.image_url,
+    })),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
       <SectionBanner
         imageSrc="https://twosix-catalog-storage.atl1.cdn.digitaloceanspaces.com/twosixweb.com/banner-unisex.png"
         title="Unisex"
