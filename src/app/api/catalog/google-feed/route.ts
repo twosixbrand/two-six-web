@@ -99,11 +99,8 @@ function buildProductXml(product: FeedProduct, baseUrl: string): string {
     .map((url) => `      <g:additional_image_link>${escapeXml(url)}</g:additional_image_link>`)
     .join('\n');
 
-  // Shipping: 8000 COP for 1 item (Google will show this per item)
-  const shippingBlock = `      <g:shipping>
-        <g:country>CO</g:country>
-        <g:price>8000.00 COP</g:price>
-      </g:shipping>`;
+  // Shipping is managed directly in Google Merchant Center rules
+  // Removed <g:shipping> block to avoid hardcoded 8000 COP overriding the free shipping threshold
 
   return `    <item>
       <g:id>${escapeXml(product.sku)}</g:id>
@@ -116,11 +113,12 @@ ${additionalImageLines ? additionalImageLines + '\n' : ''}      <g:availability>
 ${salePriceLine ? salePriceLine + '\n' : ''}      <g:brand>Two Six</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>false</g:identifier_exists>
+      <g:mpn>${escapeXml(product.sku)}</g:mpn>
       <g:item_group_id>${escapeXml(product.design_reference || String(product.id))}</g:item_group_id>
 ${product.color_name ? `      <g:color>${escapeXml(product.color_name)}</g:color>\n` : ''}${product.size_name ? `      <g:size>${escapeXml(product.size_name)}</g:size>\n` : ''}      <g:gender>${gender}</g:gender>
       <g:age_group>adult</g:age_group>
       <g:google_product_category>${googleCategory}</g:google_product_category>
-${product.type_clothing_name ? `      <g:product_type>${escapeXml(`Ropa > ${product.type_clothing_name}`)}</g:product_type>\n` : ''}${shippingBlock}
+${product.type_clothing_name ? `      <g:product_type>${escapeXml(`Ropa > ${product.type_clothing_name}`)}</g:product_type>` : ''}
     </item>`;
 }
 
