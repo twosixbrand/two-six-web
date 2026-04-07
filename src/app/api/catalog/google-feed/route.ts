@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { apiClient } from '@/lib/api-client';
 
 // Revalidate every hour — Google fetches every 24h, this ensures fresh data
-export const revalidate = 1800;
+export const revalidate = 3600;
 
 /** Google Product Category mapping based on Two Six's typeClothing values */
 const GOOGLE_CATEGORY_MAP: Record<string, string> = {
