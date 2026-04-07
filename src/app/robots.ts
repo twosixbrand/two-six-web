@@ -17,7 +17,7 @@ export default function robots(): MetadataRoute.Robots {
           '/tracking',
           '/unsubscribe',
           '/mantenimiento',
-          '/api/',
+          '/api/sentry-example-api/',
           '/sentry-example-page',
         ],
       },
@@ -25,3 +25,4 @@ export default function robots(): MetadataRoute.Robots {
     sitemap: 'https://twosixweb.com/sitemap.xml',
   };
 }
+
