@@ -18,9 +18,9 @@ export default function PaginationControls({
 
     if (totalPages <= 1) return null;
 
-    const createPageURL = (pageNumber: number) => {
-        const params = new URLSearchParams(searchParams.toString());
-        params.set("page", pageNumber.toString());
+    const createPageURL = (pageNumber: number | string) => {
+        const params = new URLSearchParams(searchParams?.toString() || '');
+        params.set('page', pageNumber.toString());
         return `${pathname}?${params.toString()}`;
     };
 

@@ -209,5 +209,6 @@ export default function OtpPage() {
         }>
             <OtpForm />
         </Suspense>
+        </div>
     );
 }

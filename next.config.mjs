@@ -46,10 +46,8 @@ const nextConfig = {
     root: __dirname,
   },
   eslint: {
+    // Only ESLint falls back to warnings due to 130+ test-suite issues. TS strict types are purely enforced. (MED-04)
     ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
   },
   experimental: {
     // Limits the memory that Next.js will use for the web workers to 1 thread instead of CPU core count.

@@ -51,8 +51,11 @@ const statusMap = {
 export const TrackingTimeline: React.FC<TrackingTimelineProps> = ({ order }) => {
     // Determinar si la orden está cancelada o rechazada
     const isErrorState = order.status === 'Cancelado' || order.status === 'Rechazado';
-
-    const isPCE = order.payment_method === 'WOMPI_COD';
+    const isCanceled = order.status === 'Cancelado';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const isPCE = (order as any).payment_method === 'WOMPI_COD';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const hasTracking = !!(order as any).tracking_number;
 
     // LOGICA PARA ENVIOS (SHIPPING)
     let shippingCurrentStepIndex = statusMap[order.status as keyof typeof statusMap] ?? 0;

@@ -67,8 +67,8 @@ function ContactForm() {
                 height: 0,
                 width: 0,
                 overflow: "hidden",
-                tabIndex: -1,
               }}
+              tabIndex={-1}
             >
               <label htmlFor="website">No llenes este campo</label>
               <input
