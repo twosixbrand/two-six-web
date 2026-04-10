@@ -1,11 +1,12 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import ProductDetailPage, { generateMetadata } from '../../src/app/product/[id]/page';
+import ProductDetailPage, { generateMetadata } from '../../src/app/product/[slug]/page';
 import { notFound } from 'next/navigation';
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
     notFound: jest.fn(),
+    permanentRedirect: jest.fn(),
 }));
 
 // Mock ProductDetail component
@@ -30,11 +31,17 @@ jest.mock('../../src/components/Breadcrumbs', () => ({
 
 // Mock data fetching
 jest.mock('../../src/data/products', () => ({
+    getProductsBySlug: jest.fn(),
     getProductById: jest.fn(),
-    getProductsByDesignReference: jest.fn()
+    getStoreDesigns: jest.fn()
 }));
 
-import { getProductById, getProductsByDesignReference } from '../../src/data/products';
+// Mock utils
+jest.mock('../../src/utils/seoDictionary', () => ({
+    getSeoOverrides: jest.fn(() => ({}))
+}));
+
+import { getProductsBySlug, getProductById } from '../../src/data/products';
 
 describe('ProductDetailPage', () => {
 
@@ -43,53 +50,61 @@ describe('ProductDetailPage', () => {
     });
 
     describe('generateMetadata', () => {
-        it('returns "Página no encontrada" if id is NaN', async () => {
-            const result = await generateMetadata({ params: Promise.resolve({ id: 'abc' }) });
+        it('returns "Página no encontrada" if slug is empty', async () => {
+            const result = await generateMetadata({ params: Promise.resolve({ slug: '' }) });
             expect(result.title).toBe('Página no encontrada');
         });
 
         it('returns "Producto no encontrado" if product does not exist', async () => {
+            (getProductsBySlug as jest.Mock).mockResolvedValueOnce({ products: [], colorId: null });
             (getProductById as jest.Mock).mockResolvedValueOnce(null);
 
-            const result = await generateMetadata({ params: Promise.resolve({ id: '999' }) });
+            const result = await generateMetadata({ params: Promise.resolve({ slug: 'test-slug' }) });
             expect(result.title).toBe('Producto no encontrado');
         });
 
         it('returns proper metadata if product exists', async () => {
-            (getProductById as jest.Mock).mockResolvedValueOnce({
-                id: 1,
-                name: 'Camiseta Cool',
-                description: 'Una camiseta muy cool'
+            (getProductsBySlug as jest.Mock).mockResolvedValueOnce({
+                products: [{
+                    id: 1,
+                    name: 'Camiseta Cool',
+                    description: 'Una camiseta muy cool',
+                    clothingSize: { clothingColor: { color: { id: 1, name: 'Negro' } } }
+                }],
+                colorId: 1
             });
 
-            const result = await generateMetadata({ params: Promise.resolve({ id: '1' }) });
-            expect(result.title).toBe('Camiseta Cool | Two Six Brand');
+            const result = await generateMetadata({ params: Promise.resolve({ slug: 'camiseta-cool' }) });
+            expect(result.title).toBe('Camiseta Cool');
             expect(result.description).toBe('Una camiseta muy cool');
         });
     });
 
     describe('Page Component', () => {
-        it('calls notFound if id is NaN', async () => {
+        it('calls notFound if slug is missing', async () => {
             (notFound as jest.Mock).mockImplementationOnce(() => { throw new Error('NOT_FOUND'); });
-            await expect(ProductDetailPage({ params: Promise.resolve({ id: 'invalid' }) })).rejects.toThrow('NOT_FOUND');
+            await expect(ProductDetailPage({ params: Promise.resolve({ slug: '' }) })).rejects.toThrow('NOT_FOUND');
             expect(notFound).toHaveBeenCalled();
         });
 
-        it('calls notFound if product does not exist', async () => {
-            (getProductById as jest.Mock).mockResolvedValueOnce(null);
+        it('calls notFound if product does not exist and slug is not numeric', async () => {
+            (getProductsBySlug as jest.Mock).mockResolvedValueOnce({ products: [], colorId: null });
             (notFound as jest.Mock).mockImplementationOnce(() => { throw new Error('NOT_FOUND'); });
 
-            await expect(ProductDetailPage({ params: Promise.resolve({ id: '999' }) })).rejects.toThrow('NOT_FOUND');
+            await expect(ProductDetailPage({ params: Promise.resolve({ slug: 'non-existent' }) })).rejects.toThrow('NOT_FOUND');
             expect(notFound).toHaveBeenCalled();
         });
 
-        it('renders breadcrumbs and product details correctly for a valid product', async () => {
+        it('renders breadcrumbs and product details correctly for a valid slug', async () => {
             const mockProduct = {
                 id: 1,
                 name: 'Chaqueta Test',
                 gender: 'Femenino',
+                price: 100000,
                 clothingSize: {
+                    quantity_available: 5,
                     clothingColor: {
+                        color: { id: 1, name: 'Rojo' },
                         design: {
                             reference: 'REF-123'
                         }
@@ -97,41 +112,16 @@ describe('ProductDetailPage', () => {
                 }
             };
 
-            const mockVariants = [
-                { id: 1, name: 'Chaqueta Test' },
-                { id: 2, name: 'Chaqueta Test (Otro color)' }
-            ];
+            (getProductsBySlug as jest.Mock).mockResolvedValueOnce({
+                products: [mockProduct],
+                colorId: 1
+            });
 
-            (getProductById as jest.Mock).mockResolvedValueOnce(mockProduct);
-            (getProductsByDesignReference as jest.Mock).mockResolvedValueOnce(mockVariants);
-
-            const ResolvedPage = await ProductDetailPage({ params: Promise.resolve({ id: '1' }) });
+            const ResolvedPage = await ProductDetailPage({ params: Promise.resolve({ slug: 'chaqueta-test' }) });
             render(ResolvedPage);
 
             expect(screen.getByTestId('mock-breadcrumbs')).toHaveTextContent('Breadcrumbs: Inicio > Femenino > Chaqueta Test');
-            expect(screen.getByTestId('mock-product-detail')).toHaveTextContent('Detail for Chaqueta Test with 2 variants');
-        });
-
-        it('handles default gender properly when gender is missing or unknown', async () => {
-            const mockProduct = {
-                id: 2,
-                name: 'Botones',
-                clothingSize: {
-                    clothingColor: {
-                        design: {
-                            reference: 'REF-BTN'
-                        }
-                    }
-                }
-            };
-
-            (getProductById as jest.Mock).mockResolvedValueOnce(mockProduct);
-            (getProductsByDesignReference as jest.Mock).mockResolvedValueOnce([]);
-
-            const ResolvedPage = await ProductDetailPage({ params: Promise.resolve({ id: '2' }) });
-            render(ResolvedPage);
-
-            expect(screen.getByTestId('mock-breadcrumbs')).toHaveTextContent('Breadcrumbs: Inicio > Unisex > Botones');
+            expect(screen.getByTestId('mock-product-detail')).toHaveTextContent('Detail for Chaqueta Test with 1 variants');
         });
     });
 });

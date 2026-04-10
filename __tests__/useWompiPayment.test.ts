@@ -144,4 +144,19 @@ describe('useWompiPayment', () => {
         expect(mockOnCancel).toHaveBeenCalled();
         expect(result.current.loadingPayment).toBe(false);
     });
+
+    it('handles script loading error', async () => {
+        const { result } = renderHook(() => useWompiPayment({
+            onSuccess: jest.fn(),
+            onError: jest.fn(),
+            onCancel: jest.fn()
+        }));
+        
+        const script = document.querySelector('script[src*="wompi"]');
+        if (script) {
+            fireEvent.error(script);
+        }
+
+        expect(result.current.loadingPayment).toBe(false);
+    });
 });

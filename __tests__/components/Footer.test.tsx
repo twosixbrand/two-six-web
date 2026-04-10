@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Footer from '../../src/components/Footer';
 
@@ -86,5 +86,40 @@ describe('Footer component', () => {
 
         const currentYear = new Date().getFullYear();
         expect(screen.getByText(new RegExp(currentYear.toString()))).toBeInTheDocument();
+    });
+
+    it('handles newsletter subscription success', async () => {
+        global.fetch = jest.fn().mockResolvedValue({
+            ok: true,
+            json: async () => ({ success: true })
+        });
+
+        render(<Footer />);
+        const input = screen.getByPlaceholderText('Tu correo electrónico');
+        const submitBtn = screen.getByRole('button', { name: /Suscribirme/i });
+
+        fireEvent.change(input, { target: { value: 'test@email.com' } });
+        fireEvent.submit(input.closest('form')!);
+
+        await waitFor(() => {
+            expect(screen.getByText(/¡Gracias por suscribirte/i)).toBeInTheDocument();
+        });
+    });
+
+    it('handles newsletter subscription error', async () => {
+        global.fetch = jest.fn().mockResolvedValue({
+            ok: false,
+            json: async () => ({ message: 'Error' })
+        });
+
+        render(<Footer />);
+        const input = screen.getByPlaceholderText('Tu correo electrónico');
+        
+        fireEvent.change(input, { target: { value: 'test@email.com' } });
+        fireEvent.submit(input.closest('form')!);
+
+        await waitFor(() => {
+            expect(screen.getByText(/Error/i)).toBeInTheDocument();
+        });
     });
 });

@@ -139,4 +139,32 @@ describe('SuccessPage', () => {
             expect(screen.getByText(/no fue aprobado/)).toBeInTheDocument();
         });
     });
+
+    it('shows COD and PICKUP details correctly', async () => {
+        mockSearchParams.set('orderId', 'COD-1');
+        global.fetch = jest.fn().mockResolvedValue({
+            ok: true,
+            json: async () => ({
+                id: 100,
+                order_reference: 'TS-COD-1',
+                total_payment: 15000, // only shipping paid
+                shipping_cost: 15000,
+                payment_method: 'WOMPI_COD',
+                cod_amount: 85000,
+                delivery_method: 'PICKUP',
+                pickup_pin: '1234',
+                customer: { name: 'Juan', email: 'j@t.com', current_phone_number: '123' },
+                orderItems: [],
+            }),
+        });
+
+        render(<SuccessPage />);
+
+        await waitFor(() => {
+            expect(screen.getByText('A Pagar Contra Entrega (PCE):')).toBeInTheDocument();
+            expect(screen.getByText('$85,000')).toBeInTheDocument();
+            expect(screen.getByText('Punto de Retiro Seleccionado')).toBeInTheDocument();
+            expect(screen.getByText('1234')).toBeInTheDocument();
+        });
+    });
 });

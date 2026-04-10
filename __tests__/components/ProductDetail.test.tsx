@@ -34,6 +34,7 @@ const createMockProduct = (overrides: any = {}) => ({
         size: { id: 1, name: 'M' },
         clothingColor: {
             id: 1,
+            slug: 'negro-slug',
             image_url: '/color-img.jpg',
             imageClothing: [
                 { image_url: '/img1.jpg', position: 1 },
@@ -56,6 +57,7 @@ const createVariants = () => {
             size: { id: 2, name: 'L' },
             clothingColor: {
                 id: 1,
+                slug: 'negro-slug',
                 image_url: '/color-img.jpg',
                 imageClothing: [
                     { image_url: '/img1.jpg', position: 1 },
@@ -73,6 +75,7 @@ const createVariants = () => {
             size: { id: 1, name: 'M' },
             clothingColor: {
                 id: 2,
+                slug: 'blanco-slug',
                 image_url: '/white-img.jpg',
                 imageClothing: [],
                 color: { id: 2, name: 'Blanco', hex: '#FFFFFF' },
@@ -82,6 +85,19 @@ const createVariants = () => {
     });
     return [product1, product2, product3];
 };
+
+// Import useRouter mock access
+const mockPush = jest.fn();
+jest.mock('next/navigation', () => ({
+    useRouter: () => ({
+        push: mockPush,
+        replace: jest.fn(),
+        prefetch: jest.fn(),
+        back: jest.fn(),
+    }),
+    usePathname: () => '',
+    useSearchParams: () => new URLSearchParams(),
+}));
 
 describe('ProductDetail component', () => {
     beforeEach(() => {
@@ -142,8 +158,8 @@ describe('ProductDetail component', () => {
         render(<ProductDetail initialProduct={initialProduct} variants={variants} />);
         const whiteBtn = screen.getByLabelText('Seleccionar color Blanco');
         fireEvent.click(whiteBtn);
-        // After switching to white, the selected color text should update
-        expect(screen.getByText('Blanco')).toBeInTheDocument();
+        
+        expect(mockPush).toHaveBeenCalledWith('/product/blanco-slug');
     });
 
     it('changes size when a size button is clicked', () => {

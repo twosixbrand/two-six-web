@@ -42,6 +42,7 @@ export default function PaginationControls({
                 <Link
                     key={page}
                     href={createPageURL(page)}
+                    aria-label={`Ir a la página ${page}`}
                     className={`flex h-10 w-10 items-center justify-center rounded-md border text-sm font-semibold transition-colors hover:bg-accent hover:text-white ${page === currentPage
                             ? "bg-primary text-white pointer-events-none"
                             : "text-primary hover:bg-accent hover:text-white"
