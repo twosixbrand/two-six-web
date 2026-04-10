@@ -139,7 +139,12 @@ export default function ProfilePage() {
             }
 
             const updatedCustomer = await response.json();
-            localStorage.setItem('customerData', JSON.stringify(updatedCustomer));
+            // CRIT-05: Solo almacenar campos mínimos en localStorage
+            localStorage.setItem('customerData', JSON.stringify({
+                id: updatedCustomer.id,
+                name: updatedCustomer.name,
+                email: updatedCustomer.email,
+            }));
             setSuccess('Perfil actualizado correctamente');
         } catch (err: unknown) {
             if (err instanceof Error) {

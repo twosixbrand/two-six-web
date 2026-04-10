@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
+import { getAuthHeaders } from '@/lib/auth';
+
 export default function PqrPage() {
     const [formData, setFormData] = useState({
         customer_name: "",
@@ -24,23 +26,41 @@ export default function PqrPage() {
 
     // Auto-fill form data for logged-in customers
     useEffect(() => {
-        try {
-            const customerDataStore = localStorage.getItem('customerData');
-            if (customerDataStore) {
-                const customer = JSON.parse(customerDataStore);
-                setFormData(prev => ({
-                    ...prev,
-                    customer_name: customer.name || "",
-                    customer_email: customer.email || "",
-                    // Si el backend devuelve identificación/tributario bajo otras keys, usaríamos fallback. 
-                    // Por lo general el identificador en e-commerce B2B se asocia al NIT o docIdentity, 
-                    // asumiendo que está disponible como 'document' o similar. Se deja vacío si no existe.
-                    customer_id: customer.document_number || customer.nit || "",
-                }));
+        const autofill = async () => {
+            try {
+                const customerDataStore = localStorage.getItem('customerData');
+                if (customerDataStore) {
+                    const storedCustomer = JSON.parse(customerDataStore);
+                    // Pre-fill with data available in localStorage (name, email)
+                    setFormData(prev => ({
+                        ...prev,
+                        customer_name: storedCustomer.name || "",
+                        customer_email: storedCustomer.email || "",
+                    }));
+
+                    // CRIT-05: Cargar datos sensibles (document_number) via API autenticada
+                    if (storedCustomer.id) {
+                        try {
+                            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customer/${storedCustomer.id}`, {
+                                headers: { ...getAuthHeaders() },
+                            });
+                            if (response.ok) {
+                                const fullCustomer = await response.json();
+                                setFormData(prev => ({
+                                    ...prev,
+                                    customer_id: fullCustomer.document_number || fullCustomer.nit || "",
+                                }));
+                            }
+                        } catch {
+                            // Silently fail — user can fill document manually
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Error parsing user data for PQR form autofill", e);
             }
-        } catch (e) {
-            console.error("Error parsing user data for PQR form autofill", e);
-        }
+        };
+        autofill();
     }, []);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

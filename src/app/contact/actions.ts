@@ -4,6 +4,18 @@ import { logError } from "@/lib/actions/error";
 import nodemailer from "nodemailer";
 import { headers } from "next/headers";
 
+/**
+ * Escapa caracteres HTML peligrosos para prevenir inyección HTML en emails.
+ */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 export interface FormState {
   success: boolean;
   message: string;
@@ -109,12 +121,12 @@ export async function sendContactEmail(
 
   try {
     await transporter.sendMail({
-      from: `"${name}" <${process.env.EMAIL_SERVER_USER}>`,
+      from: `"${escapeHtml(name)}" <${process.env.EMAIL_SERVER_USER}>`,
       to: process.env.EMAIL_TO,
       replyTo: email,
-      subject: `Nuevo mensaje de contacto de ${name}`,
+      subject: `Nuevo mensaje de contacto de ${escapeHtml(name)}`,
       text: message,
-      html: `<p>Has recibido un nuevo mensaje de tu tienda:</p><p><strong>Nombre:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Mensaje:</strong></p><p>${message}</p>`,
+      html: `<p>Has recibido un nuevo mensaje de tu tienda:</p><p><strong>Nombre:</strong> ${escapeHtml(name)}</p><p><strong>Email:</strong> ${escapeHtml(email)}</p><p><strong>Mensaje:</strong></p><p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>`,
     });
     return { success: true, message: "¡Mensaje enviado con éxito!" };
   } catch (error) {

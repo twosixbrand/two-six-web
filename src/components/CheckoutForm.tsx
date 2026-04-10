@@ -116,12 +116,26 @@ export default function CheckoutForm() {
                 // Check for logged-in user
                 const customerData = localStorage.getItem('customerData');
                 if (customerData) {
-                    const customer = JSON.parse(customerData);
+                    const storedCustomer = JSON.parse(customerData);
                     setIsLoggedIn(true);
+
+                    // CRIT-05: Cargar datos completos del cliente via API autenticada
+                    // (localStorage solo tiene id, name, email)
+                    let fullCustomer = storedCustomer;
+                    try {
+                        const customerResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customer/${storedCustomer.id}`, {
+                            headers: { ...getAuthHeaders() },
+                        });
+                        if (customerResponse.ok) {
+                            fullCustomer = await customerResponse.json();
+                        }
+                    } catch (e) {
+                        console.error("Error fetching customer profile for checkout", e);
+                    }
 
                     // Fetch saved addresses
                     try {
-                        const addrResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/address/customer/${customer.id}`, {
+                        const addrResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/address/customer/${storedCustomer.id}`, {
                             headers: { ...getAuthHeaders() },
                         });
                         if (addrResponse.ok) {
@@ -133,52 +147,19 @@ export default function CheckoutForm() {
                             const defaultAddr = addresses.find((a: any) => a.is_default);
                             if (defaultAddr) {
                                 setSelectedAddressId(defaultAddr.id.toString());
-                                fillFormWithAddress(defaultAddr, customer, data);
+                                fillFormWithAddress(defaultAddr, fullCustomer, data);
                             } else {
                                 // Fallback to customer profile data
-                                setFormData(prev => ({
-                                    ...prev,
-                                    document_type: customer.id_identification_type ? customer.id_identification_type.toString() : "13",
-                                    document_number: customer.document_number || "",
-                                    name: customer.name || "",
-                                    email: customer.email || "",
-                                    phone: customer.current_phone_number || "",
-                                    address: customer.shipping_address || "",
-                                    city: customer.city || "",
-                                    department: customer.state || "",
-                                }));
-                                matchLocation(customer.state, customer.city, data);
+                                prefillFromCustomer(fullCustomer, data);
                             }
                         } else {
                             // Fallback to customer profile data if address fetch fails
-                            setFormData(prev => ({
-                                ...prev,
-                                document_type: customer.id_identification_type ? customer.id_identification_type.toString() : "13",
-                                document_number: customer.document_number || "",
-                                name: customer.name || "",
-                                email: customer.email || "",
-                                phone: customer.current_phone_number || "",
-                                address: customer.shipping_address || "",
-                                city: customer.city || "",
-                                department: customer.state || "",
-                            }));
-                            matchLocation(customer.state, customer.city, data);
+                            prefillFromCustomer(fullCustomer, data);
                         }
                     } catch (e) {
                         console.error("Error fetching addresses", e);
                         // Fallback to customer profile data
-                        setFormData(prev => ({
-                            ...prev,
-                            document_type: customer.id_identification_type ? customer.id_identification_type.toString() : "13",
-                            document_number: customer.document_number || "",
-                            name: customer.name || "",
-                            email: customer.email || "",
-                            phone: customer.current_phone_number || "",
-                            address: customer.shipping_address || "",
-                            city: customer.city || "",
-                            department: customer.state || "",
-                        }));
-                        matchLocation(customer.state, customer.city, data);
+                        prefillFromCustomer(fullCustomer, data);
                     }
                 }
 
@@ -219,6 +200,8 @@ export default function CheckoutForm() {
     const fillFormWithAddress = (address: any, customer: any, depts: Department[]) => {
         setFormData(prev => ({
             ...prev,
+            document_type: customer.id_identification_type ? customer.id_identification_type.toString() : prev.document_type,
+            document_number: customer.document_number || prev.document_number,
             name: customer.name || "",
             email: customer.email || "",
             phone: customer.current_phone_number || "",
@@ -231,7 +214,23 @@ export default function CheckoutForm() {
         matchLocation(address.state, address.city, depts);
     };
 
-    const handleAddressSelection = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const prefillFromCustomer = (customer: any, depts: Department[]) => {
+        setFormData(prev => ({
+            ...prev,
+            document_type: customer.id_identification_type ? customer.id_identification_type.toString() : "13",
+            document_number: customer.document_number || "",
+            name: customer.name || "",
+            email: customer.email || "",
+            phone: customer.current_phone_number || "",
+            address: customer.shipping_address || "",
+            city: customer.city || "",
+            department: customer.state || "",
+        }));
+        matchLocation(customer.state, customer.city, depts);
+    };
+
+    const handleAddressSelection = async (e: React.ChangeEvent<HTMLSelectElement>) => {
         const addrId = e.target.value;
         setSelectedAddressId(addrId);
 
@@ -250,8 +249,15 @@ export default function CheckoutForm() {
         } else {
             const address = savedAddresses.find(a => a.id.toString() === addrId);
             if (address) {
-                const customerData = localStorage.getItem('customerData');
-                const customer = customerData ? JSON.parse(customerData) : {};
+                // Cargar datos del cliente via API (localStorage solo tiene datos mínimos)
+                const storedData = localStorage.getItem('customerData');
+                let customer = storedData ? JSON.parse(storedData) : {};
+                try {
+                    const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customer/${customer.id}`, {
+                        headers: { ...getAuthHeaders() },
+                    });
+                    if (resp.ok) customer = await resp.json();
+                } catch { /* use minimal data as fallback */ }
                 fillFormWithAddress(address, customer, departments);
             }
         }
