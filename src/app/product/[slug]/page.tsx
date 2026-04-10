@@ -157,6 +157,20 @@ export default async function ProductDetailPage(props: {
   };
 
   // JSON-LD Product structured data for Google rich snippets
+  // TODO: Add "aggregateRating" and "review" once real user reviews are collected.
+  //       Google Search Console flags these as missing but they must NOT be faked.
+  //       Implement a review collection system and then add:
+  //       aggregateRating: { '@type': 'AggregateRating', ratingValue: X, reviewCount: Y }
+  //       review: [{ '@type': 'Review', author: {...}, reviewRating: {...}, reviewBody: '...' }]
+
+  // Map gender to Google's expected suggestedGender values
+  const suggestedGenderMap: Record<string, string> = {
+    'femenino': 'female',
+    'masculino': 'male',
+    'unisex': 'unisex',
+  };
+  const suggestedGender = suggestedGenderMap[(mergedSeo.audience || '').toLowerCase()] || 'unisex';
+
   const productJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -164,10 +178,10 @@ export default async function ProductDetailPage(props: {
     description: resolvedDescription,
     image: imageUrl,
     color: colorName || undefined,
-    audience: mergedSeo.audience ? {
-      "@type": "Audience",
-      "audienceType": mergedSeo.audience
-    } : undefined,
+    audience: {
+      '@type': 'PeopleAudience',
+      suggestedGender: suggestedGender,
+    },
     brand: {
       '@type': 'Brand',
       name: 'Two Six',
@@ -186,11 +200,29 @@ export default async function ProductDetailPage(props: {
         '@type': 'Organization',
         name: 'Two Six',
       },
+      hasMerchantReturnPolicy: {
+        '@type': 'MerchantReturnPolicy',
+        applicableCountry: 'CO',
+        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+        merchantReturnDays: 30,
+        returnMethod: 'https://schema.org/ReturnByMail',
+        returnFees: 'https://schema.org/FreeReturn',
+      },
       shippingDetails: {
         '@type': 'OfferShippingDetails',
         shippingDestination: {
           '@type': 'DefinedRegion',
           addressCountry: 'CO',
+        },
+        shippingRate: {
+          '@type': 'MonetaryAmount',
+          value: 8000,
+          currency: 'COP',
+        },
+        freeShippingThreshold: {
+          '@type': 'MonetaryAmount',
+          value: 150000,
+          currency: 'COP',
         },
         deliveryTime: {
           '@type': 'ShippingDeliveryTime',
