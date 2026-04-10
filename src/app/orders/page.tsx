@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { getAuthHeaders } from '@/lib/auth';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -81,7 +82,9 @@ export default function OrdersPage() {
 
     const fetchOrders = async (email: string) => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/order/customer/${email}`);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/order/customer/${email}`, {
+                headers: { ...getAuthHeaders() },
+            });
             if (!response.ok) {
                 throw new Error('Error al cargar las órdenes');
             }

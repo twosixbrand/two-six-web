@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { getAuthHeaders } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -63,7 +64,9 @@ export default function ProfilePage() {
 
     const fetchCustomer = async (id: number) => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customer/${id}`);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customer/${id}`, {
+                headers: { ...getAuthHeaders() },
+            });
             if (!response.ok) {
                 throw new Error('Error al cargar datos del perfil');
             }
@@ -90,7 +93,9 @@ export default function ProfilePage() {
 
     const fetchAddresses = async (customerId: number) => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/address/customer/${customerId}`);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/address/customer/${customerId}`, {
+                headers: { ...getAuthHeaders() },
+            });
             if (response.ok) {
                 const data = await response.json();
                 setAddresses(data);
@@ -124,6 +129,7 @@ export default function ProfilePage() {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
+                    ...getAuthHeaders(),
                 },
                 body: JSON.stringify(formData),
             });
@@ -157,6 +163,7 @@ export default function ProfilePage() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    ...getAuthHeaders(),
                 },
                 body: JSON.stringify({ ...newAddress, id_customer: id }),
             });
@@ -196,6 +203,7 @@ export default function ProfilePage() {
         try {
             await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/address/${addressId}`, {
                 method: 'DELETE',
+                headers: { ...getAuthHeaders() },
             });
             await fetchAddresses(id);
         } catch (error) {

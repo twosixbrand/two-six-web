@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useWompiPayment } from "@/hooks/useWompiPayment";
 import { getDepartments, getCities, Department, City } from "@/services/locationApi";
+import { getAuthHeaders } from "@/lib/auth";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -120,7 +121,9 @@ export default function CheckoutForm() {
 
                     // Fetch saved addresses
                     try {
-                        const addrResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/address/customer/${customer.id}`);
+                        const addrResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/address/customer/${customer.id}`, {
+                            headers: { ...getAuthHeaders() },
+                        });
                         if (addrResponse.ok) {
                             const addresses = await addrResponse.json();
                             setSavedAddresses(addresses);

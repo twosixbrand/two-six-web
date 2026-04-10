@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 
+const isDev = process.env.NODE_ENV === 'development';
+const debugLog = (...args: unknown[]) => { if (isDev) console.log(...args); };
+
 export interface WompiTransaction {
     id: string;
     reference: string;
@@ -28,7 +31,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
     useEffect(() => {
         if (typeof window.WidgetCheckout !== 'undefined') {
             scriptReady.current = true;
-            console.log('[Wompi] Script ya estaba cargado.');
+            debugLog('[Wompi] Script ya estaba cargado.');
             return;
         }
 
@@ -37,7 +40,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
             const existingScript = document.getElementById("wompi-script") as HTMLScriptElement;
             existingScript.addEventListener('load', () => {
                 scriptReady.current = true;
-                console.log('[Wompi] Script cargado (existente).');
+                debugLog('[Wompi] Script cargado (existente).');
             });
             return;
         }
@@ -48,7 +51,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
         script.async = true;
         script.onload = () => {
             scriptReady.current = true;
-            console.log('[Wompi] Script cargado exitosamente.');
+            debugLog('[Wompi] Script cargado exitosamente.');
         };
         script.onerror = (err) => {
             console.error('[Wompi] Error cargando script:', err);
@@ -149,12 +152,12 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
 
     // 3. Iniciar flujo de pago
     const startPaymentFlow = async (checkoutData: unknown) => {
-        console.log('[Wompi] 1. Iniciando flujo de pago...');
+        debugLog('[Wompi] 1. Iniciando flujo de pago...');
         setLoadingPayment(true);
 
         try {
             // A. Iniciar en backend (Checkout)
-            console.log('[Wompi] 2. Enviando datos al backend:', JSON.stringify(checkoutData).substring(0, 200));
+            debugLog('[Wompi] 2. Enviando datos al backend...');
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/order/checkout`, {
                 method: "POST",
                 headers: {
@@ -163,7 +166,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
                 body: JSON.stringify(checkoutData),
             });
 
-            console.log('[Wompi] 3. Respuesta del backend:', response.status, response.statusText);
+            debugLog('[Wompi] 3. Respuesta del backend:', response.status);
 
             if (!response.ok) {
                 const errorData = await response.json();
@@ -172,7 +175,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
             }
 
             const data = await response.json();
-            console.log('[Wompi] 4. Datos recibidos del backend:', JSON.stringify(data).substring(0, 300));
+            debugLog('[Wompi] 4. Datos recibidos del backend.');
 
             const { wompi } = data;
 
@@ -187,7 +190,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
                 window.__startWompiPolling(wompi.reference);
             }
 
-            console.log('[Wompi] 5. Esperando a que el script de Wompi esté disponible...');
+            debugLog('[Wompi] 5. Esperando a que el script de Wompi esté disponible...');
 
             // Wait up to 5 seconds for script to load
             const waitForScript = async (maxWaitMs = 5000): Promise<boolean> => {
@@ -200,7 +203,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
             };
 
             const isReady = await waitForScript();
-            console.log('[Wompi] 5b. WidgetCheckout disponible:', isReady, '| Public Key:', wompi.publicKey ? 'Presente' : 'AUSENTE');
+            debugLog('[Wompi] 5b. WidgetCheckout disponible:', isReady);
 
             if (!wompi.publicKey || !isReady) {
                 throw new Error("La pasarela de pagos no está lista. Por favor recarga la página e intenta nuevamente.");
@@ -221,19 +224,19 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
                     : {}),
             };
 
-            console.log('[Wompi] 6. Configuración del widget:', JSON.stringify(checkoutConfig));
+            debugLog('[Wompi] 6. Widget configurado.');
 
             // C. Abrir widget
-            console.log('[Wompi] 7. Creando instancia WidgetCheckout...');
+            debugLog('[Wompi] 7. Creando instancia WidgetCheckout...');
             const checkout = new window.WidgetCheckout!(checkoutConfig);
 
-            console.log('[Wompi] 8. Abriendo widget...');
+            debugLog('[Wompi] 8. Abriendo widget...');
             checkout.open((result: { transaction: WompiTransaction }) => {
-                console.log('[Wompi] 9. Callback del widget:', JSON.stringify(result));
+                debugLog('[Wompi] 9. Callback del widget recibido.');
                 const transaction = result.transaction;
 
                 if (!transaction || !transaction.id || !transaction.status) {
-                    console.warn('[Wompi] 9b. Transacción inválida o incompleta:', result);
+                    console.warn('[Wompi] 9b. Transacción inválida o incompleta.');
                     return;
                 }
 
