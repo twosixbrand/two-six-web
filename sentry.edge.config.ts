@@ -14,7 +14,31 @@ Sentry.init({
   // Enable logs to be sent to Sentry
   enableLogs: true,
 
-  // Enable sending user PII (Personally Identifiable Information)
-  // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
-  sendDefaultPii: true,
+  // Disable sending user PII (Personally Identifiable Information) out of regulatory compliance (LOW-03)
+  sendDefaultPii: false,
+
+  beforeSend(event) {
+    if (event.request) {
+      delete event.request.cookies;
+      if (event.request.headers) {
+        delete event.request.headers['authorization'];
+        delete event.request.headers['cookie'];
+      }
+      if (event.request.data) {
+        // Redact potential PII from request body
+        try {
+          const bodyString = typeof event.request.data === 'string' 
+            ? event.request.data 
+            : JSON.stringify(event.request.data);
+          
+          if (bodyString.includes('email') || bodyString.includes('document')) {
+            event.request.data = '[REDACTED PII]';
+          }
+        } catch (e) {
+          // ignore serialization errors
+        }
+      }
+    }
+    return event;
+  }
 });

@@ -13,9 +13,9 @@ Sentry.init({
   // Enable logs to be sent to Sentry
   enableLogs: true,
 
-  // Enable sending user PII (Personally Identifiable Information)
+  // Disable sending user PII (Personally Identifiable Information)
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
-  sendDefaultPii: true,
+  sendDefaultPii: false,
 
   // Filter out noise from bots and Next.js internal control-flow errors
   beforeSend(event) {
@@ -46,6 +46,28 @@ Sentry.init({
         message.includes("JSON")
       ) {
         return null;
+      }
+    }
+    
+    // REDACT PII GLOBALLY (LOW-03)
+    if (event.request) {
+      delete event.request.cookies;
+      if (event.request.headers) {
+        delete event.request.headers['authorization'];
+        delete event.request.headers['cookie'];
+      }
+      if (event.request.data) {
+        try {
+          const bodyString = typeof event.request.data === 'string' 
+            ? event.request.data 
+            : JSON.stringify(event.request.data);
+          
+          if (bodyString.includes('email') || bodyString.includes('document')) {
+            event.request.data = '[REDACTED PII]';
+          }
+        } catch (e) {
+          // ignore serialization errors
+        }
       }
     }
 
