@@ -26,6 +26,7 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.wompi.co https://*.sentry.io https://www.googletagmanager.com https://www.google-analytics.com",
+              "worker-src 'self' blob:",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https://*.digitaloceanspaces.com https://images.unsplash.com",
@@ -60,6 +61,7 @@ const nextConfig = {
     return config;
   },
   images: {
+    qualities: [60, 65, 75, 90, 100],
     remotePatterns: [
       {
         protocol: 'https',

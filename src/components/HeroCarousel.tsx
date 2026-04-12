@@ -17,9 +17,9 @@ const heroSlides = [
     {
         id: 1,
         image: "https://twosix-catalog-storage.atl1.cdn.digitaloceanspaces.com/twosixweb.com/banner1.png",
-        title: "Nueva Colección",
+        title: "Calidad que impone",
         subtitle: "Define tu propio estándar.",
-        cta: "Explorar Novedades",
+        cta: "Ver Colección",
         link: "/woman?sort=new"
     },
     {
@@ -27,7 +27,7 @@ const heroSlides = [
         image: "https://twosix-catalog-storage.atl1.cdn.digitaloceanspaces.com/twosixweb.com/banner2.png",
         title: "Essentials Hombre",
         subtitle: "Clásicos reinventados para el día a día.",
-        cta: "Ver Colección",
+        cta: "Comprar Ahora",
         link: "/man"
     },
     {

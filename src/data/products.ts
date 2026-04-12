@@ -14,7 +14,7 @@ export const getProducts = async (options?: {
     if (options?.gender) params.gender = options.gender;
     if (options?.take) params.take = options.take;
     if (typeof options?.isOutlet === "boolean")
-      params.isOutlet = options.isOutlet;
+      params.is_outlet = options.isOutlet;
 
     return await apiClient<Product[]>("/products", { params });
   } catch (error) {

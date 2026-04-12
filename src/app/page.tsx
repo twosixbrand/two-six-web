@@ -149,7 +149,7 @@ export default async function HomePage() {
           <div className="flex justify-center mt-12">
             <Link
               href="/catalog"
-              className="inline-flex items-center justify-center px-8 py-4 text-sm font-medium uppercase tracking-widest text-primary border border-primary hover:bg-primary hover:text-white transition-colors duration-300"
+              className="inline-flex items-center justify-center px-8 py-4 text-sm font-medium uppercase tracking-widest bg-accent/90 text-primary hover:bg-accent hover:scale-105 transition-all duration-300"
             >
               Ver Todo el Catálogo
             </Link>
