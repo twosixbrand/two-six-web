@@ -4,6 +4,7 @@ date: "2026-04-12"
 excerpt: "En Two Six, el \"básico\" no es la ausencia de estilo, sino la máxima expresión de la confianza. Descubre por qué adoptar un uniforme de esenciales premium elevará tu juego diario y tu productividad."
 coverImage: "/blog_uniforme_exito.png"
 tags: ["esenciales", "streetwear", "minimalismo", "premium", "medellin"]
+ctaText: "Nuestras colecciones están diseñadas para ofrecerte la calidad de un básico premium que mencionamos en este artículo."
 ---
 
 Se dice que las mentes más brillantes no pierden tiempo eligiendo qué ponerse cada mañana. Desde genios de la tecnología hasta íconos del diseño, la simplificación del armario es una estrategia de alto rendimiento. En Two Six, entendemos que el "básico" no es la ausencia de estilo, sino la máxima expresión de la confianza.
@@ -34,16 +35,3 @@ Llevar el uniforme de Two Six es un recordatorio de tus principios. La resilienc
 Nuestros básicos están diseñados en Medellín para quienes entienden que el respeto se gana con coherencia, calidad y un estilo propio que no admite imitaciones.
 
 > **Tip de Experto:** Empieza tu uniforme con nuestra "Cápsula de Esenciales". Elige tres colores base (Negro, Blanco, Gris) y notarás cómo tu confianza y productividad aumentan al tener un look impecable garantizado todos los días.
-
----
-
-### Únete a la conversación
-¿Eres de los que prefiere un armario minimalista o te gusta variar cada día? Cuéntanos tu experiencia en nuestras redes sociales.
-
-[Comentar en Instagram](https://www.instagram.com/twosix.brand/)
-
-### ¿Listo para armar tu uniforme?
-Descubre las prendas que mencionamos en este artículo y comienza a simplificar tu éxito.
-
-- [Ver Esenciales Hombre](/man)
-- [Ver Esenciales Mujer](/woman)

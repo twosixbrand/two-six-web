@@ -4,6 +4,7 @@ date: "2026-04-12"
 excerpt: "Aprende a lavar y conservar tus prendas de algodón Catar y tela fría. Trucos de expertos para que tu ropa urbana dure años sin perder el color ni la horma."
 coverImage: "/blog_cuidado_ropa_premium.png"
 tags: ["cuidado de ropa premium", "lavar algodón catar", "cómo cuidar streetwear", "lavar ropa al revés", "evitar encogimiento de camisetas"]
+ctaText: "Ahora que sabes cómo hacer que el Algodón Catar y la Tela Fría duren toda la vida, es el momento de sumar un nuevo clásico a tu rotación."
 ---
 
 Sabemos que cuando recibes tu pedido de Two Six, lo primero que notas es el peso y la suavidad superior de la tela. Ya sea que hayas elegido el robusto Algodón Catar o nuestra tecnología de Tela Fría, has invertido en una pieza de ingeniería textil diseñada en Medellín.
@@ -33,16 +34,3 @@ Nuestras prendas de Tela Fría tienen la ventaja de ser casi "cero arrugas", per
 En Two Six, no creamos moda desechable. Al seguir esta guía, no solo proteges tu dinero, sino que contribuyes a un consumo más consciente. Una prenda bien cuidada es una prenda que cuenta una historia de resiliencia y autenticidad.
 
 > **Tip de Experto:** Si tienes una mancha difícil, trátala localmente con jabón neutro antes de meterla a la lavadora. No restriegues con fuerza; deja que el producto actúe sobre la fibra para no romper el tejido Catar.
-
----
-
-### Únete a la conversación
-¿Tienes algún otro truco infalible para mantener tu streetwear como nuevo? Cuéntanos en nuestras redes sociales y comparte tus mejores outfits.
-
-[Comentar en Instagram](https://www.instagram.com/twosix.brand/)
-
-### Elige tu próxima pieza clave
-Ahora que sabes cómo hacer que el Algodón Catar y la Tela Fría duren toda la vida, es el momento de sumar un nuevo clásico a tu rotación.
-
-- [Renovar Colección Hombre](/man)
-- [Renovar Colección Mujer](/woman)

@@ -15,6 +15,7 @@ export interface BlogPost {
   tags: string[];
   contentHtml: string;
   content: string;
+  ctaText?: string;
 }
 
 export function getPostSlugs() {
@@ -44,6 +45,7 @@ export async function getPostBySlug(slug: string): Promise<BlogPost> {
     tags: data.tags || [],
     contentHtml,
     content,
+    ctaText: data.ctaText || 'Nuestras colecciones están diseñadas para ofrecerte la mejor calidad y estilo urbano. Descubre tu próxima pieza clave.',
   };
 }
 

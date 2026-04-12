@@ -117,7 +117,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
       <div className="mt-12 mb-8 bg-neutral-50 rounded-2xl p-8 text-center border border-neutral-100">
         <h3 className="text-2xl font-serif font-bold text-gray-900 mb-4">¿Listo para elevar tu estilo?</h3>
-        <p className="text-gray-600 mb-6 max-w-xl mx-auto">Nuestras colecciones están diseñadas para ofrecerte la calidad de un básico premium que mencionamos en este artículo.</p>
+        <p className="text-gray-600 mb-6 max-w-xl mx-auto">{post.ctaText}</p>
         <div className="flex flex-wrap justify-center gap-4">
           <Link href="/man" className="bg-primary text-white font-bold py-3 px-8 rounded-lg hover:bg-primary/90 transition-colors duration-300">
             Ver Colección Hombre
