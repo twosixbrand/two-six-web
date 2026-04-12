@@ -27,12 +27,25 @@ jobs:
       - name: 3. Autenticarse en el Container Registry de DO
         run: doctl registry login --expiry-seconds 3600
 
-      - name: 4. Borrar tags antiguos para liberar espacio (Previene Quota Exceeded)
+      - name: 4. Borrar tags antiguos y ejecutar Garbage Collection
         run: |
           doctl registry repository list-manifests ${{ env.IMAGE_NAME }} --format Digest,Tags --no-header | grep -v "latest" | awk '{print $1}' | xargs -I {} doctl registry repository delete-manifest ${{ env.IMAGE_NAME }} {} --force || true
+          echo "Iniciando proceso de Garbage Collection en Digital Ocean para depurar almacenamiento físico..."
+          doctl registry garbage-collection start --force || true
 
       - name: 5. Construir la Imagen (Docker Build) usando la RAM de GitHub
         run: docker build --build-arg NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }} -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
 
-      - name: 6. Subir imagen al Registry
-        run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+      - name: 6. Esperar fin de GC y Subir imagen al Registry
+        run: |
+          echo "Verificando el estado del Garbage Collection antes de subir (Evita bloqueo y Quota Exceeded)..."
+          while :; do
+            STATUS=$(doctl registry garbage-collection get --format Status --no-header 2>/dev/null || echo "not_running")
+            if [ "$STATUS" = "successful" ] || [ "$STATUS" = "failed" ] || [ "$STATUS" = "cancelled" ] || [ -z "$STATUS" ] || [ "$STATUS" = "not_running" ]; then
+              break
+            fi
+            echo "GC en progreso ($STATUS)... Esperando 15 segundos."
+            sleep 15
+          done
+          echo "Garbage collection ha finalizado. Procediendo con el push de la nueva imagen."
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
