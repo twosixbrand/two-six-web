@@ -33,3 +33,16 @@ Nuestras prendas de Tela Fría tienen la ventaja de ser casi "cero arrugas", per
 En Two Six, no creamos moda desechable. Al seguir esta guía, no solo proteges tu dinero, sino que contribuyes a un consumo más consciente. Una prenda bien cuidada es una prenda que cuenta una historia de resiliencia y autenticidad.
 
 > **Tip de Experto:** Si tienes una mancha difícil, trátala localmente con jabón neutro antes de meterla a la lavadora. No restriegues con fuerza; deja que el producto actúe sobre la fibra para no romper el tejido Catar.
+
+---
+
+### Únete a la conversación
+¿Tienes algún otro truco infalible para mantener tu streetwear como nuevo? Cuéntanos en nuestras redes sociales y comparte tus mejores outfits.
+
+[Comentar en Instagram](https://www.instagram.com/twosix.brand/)
+
+### Elige tu próxima pieza clave
+Ahora que sabes cómo hacer que el Algodón Catar y la Tela Fría duren toda la vida, es el momento de sumar un nuevo clásico a tu rotación.
+
+- [Renovar Colección Hombre](/man)
+- [Renovar Colección Mujer](/woman)
