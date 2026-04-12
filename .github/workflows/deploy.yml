@@ -39,13 +39,9 @@ jobs:
       - name: 6. Esperar fin de GC y Subir imagen al Registry
         run: |
           echo "Verificando el estado del Garbage Collection antes de subir (Evita bloqueo y Quota Exceeded)..."
-          while :; do
-            STATUS=$(doctl registry garbage-collection get --format Status --no-header 2>/dev/null || echo "not_running")
-            if [ "$STATUS" = "successful" ] || [ "$STATUS" = "failed" ] || [ "$STATUS" = "cancelled" ] || [ -z "$STATUS" ] || [ "$STATUS" = "not_running" ]; then
-              break
-            fi
-            echo "GC en progreso ($STATUS)... Esperando 15 segundos."
+          while doctl registry garbage-collection get-active >/dev/null 2>&1; do
+            echo "GC en progreso... Esperando 15 segundos."
             sleep 15
           done
-          echo "Garbage collection ha finalizado. Procediendo con el push de la nueva imagen."
+          echo "Garbage collection ha finalizado o no hay ninguno activo. Procediendo con el push de la nueva imagen."
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
