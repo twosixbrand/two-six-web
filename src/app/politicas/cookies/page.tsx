@@ -1,4 +1,13 @@
 import React from "react";
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Política de Cookies | Two Six',
+  description: 'Información sobre el uso de cookies en el sitio web de Two Six para mejorar tu experiencia de navegación.',
+  alternates: {
+    canonical: '/politicas/cookies',
+  },
+};
 
 export default function CookiesPolicyPage() {
     return (

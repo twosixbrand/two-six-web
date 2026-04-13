@@ -1,16 +1,17 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Contáctanos',
-  description: 'Contáctanos en Two Six. Estamos para ayudarte con dudas sobre pedidos, tallas, envíos y más. Escríbenos desde Medellín, Colombia.',
-  alternates: { canonical: '/contact' },
-  openGraph: {
-    title: 'Contáctanos | Two Six',
-    description: 'Estamos para ayudarte. Escríbenos con cualquier duda.',
-    url: '/contact',
+  title: 'Contacto | Two Six',
+  description: '¿Tienes alguna duda o quieres saber más sobre tu pedido? Ponte en contacto con el equipo de Two Six. Estamos para ayudarte.',
+  alternates: {
+    canonical: '/contact',
   },
 };
 
-export default function ContactLayout({ children }: { children: React.ReactNode }) {
+export default function ContactLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return <>{children}</>;
 }

@@ -8,6 +8,20 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const nextConfig = {
   output: "standalone",
   poweredByHeader: false,
+  async redirects() {
+    return [
+      {
+        source: '/about',
+        destination: '/sobre-nosotros',
+        permanent: true,
+      },
+      {
+        source: '/guia-tallas',
+        destination: '/guia-tallas-camisetas',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

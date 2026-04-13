@@ -1,16 +1,17 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'PQR - Peticiones, Quejas y Reclamos',
-  description: 'Radica tus peticiones, quejas o reclamos en Two Six. Te responderemos en el menor tiempo posible.',
-  alternates: { canonical: '/pqr' },
-  openGraph: {
-    title: 'PQR | Two Six',
-    description: 'Radica tus peticiones, quejas o reclamos.',
-    url: '/pqr',
+  title: 'PQR | Radicar Petición, Queja o Reclamo',
+  description: 'Radica tus solicitudes, sugerencias o reclamos de forma oficial. En Two Six nos comprometemos a darte respuesta conforme a la ley.',
+  alternates: {
+    canonical: '/pqr',
   },
 };
 
-export default function PqrLayout({ children }: { children: React.ReactNode }) {
+export default function PqrLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return <>{children}</>;
 }

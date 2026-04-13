@@ -1,4 +1,13 @@
 import React from "react";
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Política de Privacidad | Two Six',
+  description: 'Conoce cómo tratamos y protegemos tus datos personales en Two Six. Transparencia y seguridad en cada paso.',
+  alternates: {
+    canonical: '/politicas/privacidad',
+  },
+};
 
 export default function PrivacyPolicyPage() {
     return (

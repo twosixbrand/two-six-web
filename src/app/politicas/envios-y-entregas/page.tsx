@@ -1,4 +1,13 @@
 import React from "react";
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Envíos y Entregas | Two Six',
+  description: 'Consulta nuestros tiempos de entrega, costos de envío y procesos de despacho para tus pedidos de Two Six en Colombia.',
+  alternates: {
+    canonical: '/politicas/envios-y-entregas',
+  },
+};
 
 export default function ShippingDeliveryPolicyPage() {
     return (

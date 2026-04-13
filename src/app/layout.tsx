@@ -61,9 +61,6 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  alternates: {
-    canonical: 'https://twosixweb.com',
-  },
   icons: {
     icon: [
       { url: '/logo-black.png' },

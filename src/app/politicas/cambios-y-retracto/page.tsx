@@ -1,4 +1,13 @@
 import React from "react";
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Cambios y Retracto | Two Six',
+  description: 'Consulta nuestras políticas de cambios, garantías y derecho al retracto. Queremos que tu experiencia con Two Six sea excepcional.',
+  alternates: {
+    canonical: '/politicas/cambios-y-retracto',
+  },
+};
 
 export default function ReversionRetractPolicyPage() {
     return (

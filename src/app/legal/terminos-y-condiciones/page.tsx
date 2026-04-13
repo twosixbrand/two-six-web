@@ -1,5 +1,14 @@
 import React from "react";
 import Link from "next/link";
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Términos y Condiciones | Two Six',
+  description: 'Consulta los términos y condiciones legales para el uso del sitio web y las compras en Two Six S.A.S.',
+  alternates: {
+    canonical: '/legal/terminos-y-condiciones',
+  },
+};
 
 export default function TermsAndConditionsPage() {
     return (

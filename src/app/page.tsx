@@ -3,6 +3,15 @@ import Catalog from "@/components/Catalog";
 import { getStoreDesigns } from "@/data/products";
 import Link from "next/link";
 import Image from "next/image";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Two Six | Ropa Colombiana con Estilo y Confort',
+  description: 'Descubre Two Six: ropa colombiana para hombre y mujer con actitud urbana. Camisetas, hoodies y más. Crafted for real ones.',
+  alternates: {
+    canonical: '/',
+  },
+};
 
 export const revalidate = 3600; // ISR: regenerate every hour
 

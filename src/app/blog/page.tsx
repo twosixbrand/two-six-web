@@ -4,8 +4,11 @@ import { getAllPosts } from '@/lib/blog';
 import Breadcrumbs from '@/components/Breadcrumbs';
 
 export const metadata = {
-  title: 'Blog de Moda Urbana | Two Six',
+  title: 'Blog de Moda Urbana | Two Six Journal',
   description: 'Descubre guías, tendencias y la cultura del streetwear en Medellín. Conoce cómo cuidar tus prendas y todo sobre el mundo Two Six.',
+  alternates: {
+    canonical: '/blog',
+  },
 };
 
 export default async function BlogIndexPage() {
