@@ -30,7 +30,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https://*.digitaloceanspaces.com https://images.unsplash.com",
-              "connect-src 'self' https://*.twosixweb.com https://api.twosixweb.com https://*.sentry.io https://checkout.wompi.co https://www.google-analytics.com https://production.wompi.co",
+              `connect-src 'self' ${process.env.NODE_ENV === 'development' ? 'http://localhost:3050' : ''} https://twosix-backend-z6y5k.ondigitalocean.app https://*.twosixweb.com https://api.twosixweb.com https://*.sentry.io https://checkout.wompi.co https://www.google-analytics.com https://production.wompi.co`,
               "frame-src https://maps.google.com https://checkout.wompi.co",
             ].join('; '),
           },
