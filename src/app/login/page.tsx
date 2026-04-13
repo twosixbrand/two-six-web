@@ -123,6 +123,7 @@ export default function LoginPage() {
                     throw new Error(data.message || 'Error al registrar tu cuenta');
                 }
 
+                sessionStorage.setItem('pendingOtpEmail', email.trim());
                 router.push(`/login/otp?email=${encodeURIComponent(email.trim())}`);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (err: any) {
@@ -149,6 +150,7 @@ export default function LoginPage() {
                     throw new Error(data.message || 'Error al iniciar sesión');
                 }
 
+                sessionStorage.setItem('pendingOtpEmail', email.trim());
                 router.push(`/login/otp?email=${encodeURIComponent(email.trim())}`);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (err: any) {
