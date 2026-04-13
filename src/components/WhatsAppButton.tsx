@@ -2,11 +2,18 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 const WhatsAppButton = () => {
+  const pathname = usePathname();
+  
   // Reemplaza este número con tu número de WhatsApp, incluyendo el código de país sin el '+'
   const phoneNumber = "573108777629";
-  const message = "Hola, estoy interesado en sus productos."; // Mensaje pre-llenado opcional
+  
+  let message = "Hola, estoy interesado en sus productos."; // Mensaje pre-llenado opcional
+  if (pathname === '/drop') {
+    message = "¡Hola Two Six! 🔥 Estoy viendo el nuevo DROP en la web y me encantó la referencia en [Tela Fría/Catar]. ¿Me podrían ayudar con la talla? Mi estatura es ___ y peso ___.";
+  }
 
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
     message

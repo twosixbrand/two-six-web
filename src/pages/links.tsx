@@ -123,6 +123,24 @@ export default function LinksPage() {
           boxSizing: 'border-box'
         }}>
           
+          {/* NUEVO DROP */}
+          <Link 
+            href="/drop" 
+            className="card-hover pulse-animation"
+            style={{ 
+              display: 'flex', alignItems: 'center', width: '100%', padding: '16px 18px', marginBottom: '12px',
+              borderRadius: '18px', textDecoration: 'none', backgroundColor: '#FF0000', color: colors.white,
+              boxShadow: '0 10px 20px rgba(255,0,0,0.2)', boxSizing: 'border-box'
+            }}
+          >
+            <div style={{ backgroundColor: 'rgba(255,255,255,0.2)', padding: '8px', borderRadius: '12px', marginRight: '14px', display: 'flex' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={colors.white} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <span style={{ flexGrow: 1, textAlign: 'center', marginRight: '32px', fontSize: '13px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+              Nuevo Drop Limitado
+            </span>
+          </Link>
+
           {/* TIENDA OFICIAL */}
           <Link 
             href="/" 
@@ -219,6 +237,14 @@ export default function LinksPage() {
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(15px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulseGlow {
+          0% { box-shadow: 0 0 10px rgba(255,0,0,0.3); }
+          50% { box-shadow: 0 0 30px rgba(255,0,0,0.6); }
+          100% { box-shadow: 0 0 10px rgba(255,0,0,0.3); }
+        }
+        .pulse-animation {
+          animation: pulseGlow 2s infinite ease-in-out;
         }
       `}</style>
     </div>

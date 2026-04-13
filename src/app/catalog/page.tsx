@@ -23,11 +23,19 @@ export default async function FullCatalogPage({
 }) {
     const resolvedParams = await searchParams;
     const category = typeof resolvedParams.category === 'string' ? resolvedParams.category : undefined;
+    const tag = typeof resolvedParams.tag === 'string' ? resolvedParams.tag : undefined;
     const pageParam = typeof resolvedParams.page === 'string' ? resolvedParams.page : '1';
     const pageNumber = parseInt(pageParam, 10) || 1;
 
     // Obtenemos todos los productos (sin filtrar por género)
-    const productsResponse = await getStoreDesigns({ isOutlet: false, category, page: pageNumber });
+    let productsResponse = await getStoreDesigns({ isOutlet: false, category, tag, page: pageNumber });
+
+    // Fallback inteligente: Si buscan por categoria 'nuevo-drop' (sistema antiguo) 
+    // y no hay resultados, intentamos buscarlo como etiqueta (tag).
+    if (category === 'nuevo-drop' && productsResponse.data.length === 0 && !tag) {
+         productsResponse = await getStoreDesigns({ isOutlet: false, tag: 'nuevo-drop', page: pageNumber });
+    }
+
     const products = productsResponse.data;
     const meta = productsResponse.meta;
 
@@ -57,6 +65,8 @@ export default async function FullCatalogPage({
                 imageSrc="https://twosix-catalog-storage.atl1.cdn.digitaloceanspaces.com/twosixweb.com/banner-catalogo.png"
                 title="Catálogo Completo"
                 subtitle="Explora todas nuestras colecciones."
+                buttonText="Ver Catalogo"
+                buttonHref="/catalog"
             />
             <div className="container mx-auto px-6 py-12">
                 <Catalog products={products} meta={meta} />

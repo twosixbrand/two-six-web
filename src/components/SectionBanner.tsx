@@ -1,12 +1,16 @@
 import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 interface SectionBannerProps {
     title: string;
     imageSrc: string;
     subtitle?: string;
+    buttonText?: string;
+    buttonHref?: string;
 }
 
-export function SectionBanner({ title, imageSrc, subtitle }: SectionBannerProps) {
+export function SectionBanner({ title, imageSrc, subtitle, buttonText, buttonHref }: SectionBannerProps) {
     return (
         <div className="relative w-full h-[50vh] min-h-[400px] flex items-center justify-center overflow-hidden mb-12">
             {/* Background Image with slight scale for "premium" feeling */}
@@ -31,6 +35,18 @@ export function SectionBanner({ title, imageSrc, subtitle }: SectionBannerProps)
                     <p className="text-secondary/90 text-lg md:text-xl font-light tracking-widest max-w-2xl animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-150">
                         {subtitle}
                     </p>
+                )}
+
+                {buttonText && buttonHref && (
+                    <div className="mt-8">
+                        <Button
+                            asChild
+                            size="lg"
+                            className="bg-accent/90 text-primary hover:bg-accent hover:scale-105 transition-all duration-300 px-8 py-6 text-lg animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300"
+                        >
+                            <Link href={buttonHref}>{buttonText}</Link>
+                        </Button>
+                    </div>
                 )}
             </div>
 

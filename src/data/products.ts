@@ -110,6 +110,7 @@ export const getStoreDesigns = async (options?: {
   gender?: string;
   isOutlet?: boolean;
   category?: string;
+  tag?: string;
   page?: number;
   limit?: number;
 }): Promise<PaginatedStoreDesigns> => {
@@ -118,6 +119,7 @@ export const getStoreDesigns = async (options?: {
     if (options?.gender) params.gender = options.gender;
     if (typeof options?.isOutlet === "boolean") params.is_outlet = options.isOutlet;
     if (options?.category) params.category = options.category;
+    if (options?.tag) params.tag = options.tag;
     if (options?.page) params.page = options.page;
     if (options?.limit) params.limit = options.limit;
 
