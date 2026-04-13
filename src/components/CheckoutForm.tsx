@@ -36,7 +36,7 @@ export default function CheckoutForm() {
 
     // Discount Code
     const [discountCode, setDiscountCode] = useState("");
-    const [appliedDiscount, setAppliedDiscount] = useState<{ code: string; percentage: number } | null>(null);
+    const [appliedDiscount, setAppliedDiscount] = useState<{ code: string; percentage: number; freeShipping?: boolean } | null>(null);
     const [discountError, setDiscountError] = useState<string | null>(null);
     const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
 
@@ -57,7 +57,7 @@ export default function CheckoutForm() {
     // Global calculations
     const globalDiscountAmount = appliedDiscount ? cartTotal * (appliedDiscount.percentage / 100) : 0;
     const globalFinalCartTotal = cartTotal - globalDiscountAmount;
-    const isFreeShipping = globalFinalCartTotal >= 150000;
+    const isFreeShipping = globalFinalCartTotal >= 150000 || !!appliedDiscount?.freeShipping;
 
     // Reset COD if pickup selected or if free shipping applies
     useEffect(() => {
@@ -332,7 +332,12 @@ export default function CheckoutForm() {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/order/validate-discount`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ code: discountCode, email: formData.email }),
+                body: JSON.stringify({ 
+                    code: discountCode, 
+                    email: formData.email,
+                    cartTotal: cartTotal,
+                    itemCount: cartItems.reduce((acc, item) => acc + item.quantity, 0)
+                }),
             });
             const data = await response.json();
 
@@ -340,7 +345,7 @@ export default function CheckoutForm() {
                 setDiscountError(data.message || "Código inválido");
                 setAppliedDiscount(null);
             } else {
-                setAppliedDiscount({ code: data.code, percentage: data.percentage });
+                setAppliedDiscount({ code: data.code, percentage: data.percentage, freeShipping: data.freeShipping });
             }
         } catch (error) {
             setDiscountError("Error al verificar el código");
@@ -360,7 +365,7 @@ export default function CheckoutForm() {
 
         const discountAmount = appliedDiscount ? cartTotal * (appliedDiscount.percentage / 100) : 0;
         const finalCartTotal = cartTotal - discountAmount;
-        const isFreeShipping = finalCartTotal >= 150000;
+        const isFreeShipping = finalCartTotal >= 150000 || !!appliedDiscount?.freeShipping;
         const effectiveShippingCost = (deliveryMethod === "PICKUP" || isFreeShipping) ? 0 : (shippingCost || 0);
         
         const totalWithShipping = finalCartTotal + effectiveShippingCost;
@@ -752,7 +757,7 @@ export default function CheckoutForm() {
                             </Button>
                         </div>
                         {discountError && <p className="text-sm text-destructive mt-2">{discountError}</p>}
-                        {appliedDiscount && <p className="text-sm text-green-600 mt-2 font-medium">¡Código {appliedDiscount.code} aplicado! (-{appliedDiscount.percentage}%)</p>}
+                        {appliedDiscount && <p className="text-sm text-green-600 mt-2 font-medium">¡Código {appliedDiscount.code} aplicado! {appliedDiscount.percentage > 0 ? `(-${appliedDiscount.percentage}%)` : ''}{appliedDiscount.freeShipping ? ' + Envío Gratis' : ''}</p>}
                     </div>
 
                     <div className="mt-8 border-t pt-8">
@@ -833,7 +838,7 @@ export default function CheckoutForm() {
                         {(() => {
                             const discountAmount = appliedDiscount ? cartTotal * (appliedDiscount.percentage / 100) : 0;
                             const finalCartTotal = cartTotal - discountAmount;
-                            const isFreeShipping = finalCartTotal >= 150000;
+                            const isFreeShipping = finalCartTotal >= 150000 || !!appliedDiscount?.freeShipping;
                             const rawShip = shippingCost || 0;
                             
                             if (deliveryMethod === "PICKUP") {
@@ -855,7 +860,7 @@ export default function CheckoutForm() {
                         {(() => {
                             const discountAmount = appliedDiscount ? cartTotal * (appliedDiscount.percentage / 100) : 0;
                             const finalCartTotal = cartTotal - discountAmount;
-                            const isFreeShipping = finalCartTotal >= 150000;
+                            const isFreeShipping = finalCartTotal >= 150000 || !!appliedDiscount?.freeShipping;
                             const effectiveShippingCost = (deliveryMethod === "PICKUP" || isFreeShipping) ? 0 : (shippingCost || 0);
 
                             const totalWithShipping = paymentMethod === 'WOMPI_COD' ? effectiveShippingCost : (finalCartTotal + effectiveShippingCost);
