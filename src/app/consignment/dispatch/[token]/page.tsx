@@ -69,7 +69,7 @@ export default function DispatchConfirmPage() {
         setReceptionRows(
           data.items.map((it) => ({
             id: it.id,
-            received_ok: true,
+            received_ok: false,
             received_qty: it.quantity,
             observation: '',
           })),
@@ -336,9 +336,15 @@ export default function DispatchConfirmPage() {
         >
           <h2 style={{ marginTop: 0, fontSize: '1.05rem' }}>Confirmar recepción</h2>
           <p style={{ fontSize: '0.9rem', color: '#4a5568' }}>
-            Verifica que recibiste todas las prendas listadas arriba. Al confirmar, Two Six marcará este
-            despacho como recibido en su sistema.
+            Marca con el check cada prenda que recibiste completa. Si alguna tiene diferencia,
+            desmárcala, ajusta la cantidad y agrega una observación.
           </p>
+          {receptionRows.length > 0 && (
+            <p style={{ fontSize: '0.85rem', fontWeight: 600, color: receptionRows.every((r) => r.received_ok || r.observation.trim()) ? '#065f46' : '#92400e', margin: '0.5rem 0' }}>
+              {receptionRows.filter((r) => r.received_ok).length} de {receptionRows.length} prendas verificadas
+              {!receptionRows.every((r) => r.received_ok || r.observation.trim()) && ' — verifica todas para poder confirmar'}
+            </p>
+          )}
           <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.25rem' }}>
             Tu nombre *
           </label>
@@ -362,7 +368,7 @@ export default function DispatchConfirmPage() {
           )}
           <button
             type="submit"
-            disabled={submitting || !receivedBy.trim()}
+            disabled={submitting || !receivedBy.trim() || !receptionRows.every((r) => r.received_ok || r.observation.trim())}
             style={{
               width: '100%',
               padding: '0.85rem',
