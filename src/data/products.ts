@@ -87,11 +87,17 @@ export async function getProductsBySlug(
   try {
     return await apiClient<{ products: Product[], colorId: number | null }>(`/products/by-slug/${slug}`);
   } catch (error) {
-    console.error(`Error al obtener productos por slug ${slug}:`, error);
-    await logError({
-      message: `Fallo en getProductsBySlug para el slug: ${slug}`,
-      stack: error instanceof Error ? error.stack : String(error),
-    });
+    // Si el slug es numérico (ej: /product/50) es un caso esperado de
+    // redirect — no loguear como error, el fallback en page.tsx lo maneja.
+    const isNumericSlug = /^\d+$/.test(slug);
+    const is404 = error instanceof Error && error.message.includes('404');
+    if (!isNumericSlug || !is404) {
+      console.error(`Error al obtener productos por slug ${slug}:`, error);
+      await logError({
+        message: `Fallo en getProductsBySlug para el slug: ${slug}`,
+        stack: error instanceof Error ? error.stack : String(error),
+      });
+    }
     return { products: [], colorId: null };
   }
 }
