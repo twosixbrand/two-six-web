@@ -12,6 +12,7 @@ interface DispatchItem {
   description?: string | null;
   color: string;
   size: string;
+  image_url?: string | null;
 }
 
 interface DispatchView {
@@ -157,10 +158,21 @@ export default function DispatchConfirmPage() {
             {dispatch.items.map((it) => (
               <tr key={it.id} style={{ borderBottom: '1px solid #edf2f7' }}>
                 <td style={{ padding: '0.5rem' }}>
-                  <strong>{it.reference}</strong> — {it.color} · {it.size}
-                  {it.description && (
-                    <div style={{ fontSize: '0.8rem', color: '#718096' }}>{it.description}</div>
-                  )}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    {it.image_url && (
+                      <img
+                        src={it.image_url}
+                        alt={it.reference}
+                        style={{ width: 48, height: 48, borderRadius: 6, objectFit: 'cover', background: '#f1f1f3' }}
+                      />
+                    )}
+                    <div>
+                      <strong>{it.reference}</strong> — {it.color} · {it.size}
+                      {it.description && (
+                        <div style={{ fontSize: '0.8rem', color: '#718096' }}>{it.description}</div>
+                      )}
+                    </div>
+                  </div>
                 </td>
                 <td style={{ textAlign: 'right', padding: '0.5rem' }}>{it.quantity}</td>
               </tr>
