@@ -58,8 +58,10 @@ export default function DispatchConfirmPage() {
       setLoading(true);
       const res = await fetch(`${API_URL}/api/consignment/dispatches/by-token/${token}`);
       if (!res.ok) {
-        const body = await res.text();
-        throw new Error(body || `Error ${res.status}`);
+        if (res.status === 404) {
+          throw new Error('Despacho no encontrado. Verifica que el enlace sea correcto.');
+        }
+        throw new Error('No se pudo cargar el despacho. Intenta de nuevo más tarde.');
       }
       const data = (await res.json()) as DispatchView;
       setDispatch(data);
