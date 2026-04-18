@@ -12,6 +12,7 @@ interface StoredCustomer {
     id: number;
     name: string;
     email: string;
+    is_consignment_ally?: boolean;
 }
 
 interface AuthContextType {
@@ -19,6 +20,7 @@ interface AuthContextType {
     userName: string | null;
     customerId: number | null;
     customerEmail: string | null;
+    isConsignmentAlly: boolean;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     login: (token: string, customerData: any) => void;
     logout: () => void;
@@ -58,6 +60,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [userName, setUserName] = useState<string | null>(null);
     const [customerId, setCustomerId] = useState<number | null>(null);
     const [customerEmail, setCustomerEmail] = useState<string | null>(null);
+    const [isConsignmentAlly, setIsConsignmentAlly] = useState(false);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
@@ -85,6 +88,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setUserName(customer.name || "Usuario");
                 setCustomerId(customer.id || null);
                 setCustomerEmail(customer.email || null);
+                setIsConsignmentAlly(!!customer.is_consignment_ally);
             } catch {
                 setUserName("Usuario");
             }
@@ -102,7 +106,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             id: customerData.id,
             name: customerData.name || "Usuario",
             email: customerData.email || "",
+            is_consignment_ally: !!customerData.is_consignment_ally,
         };
+        setIsConsignmentAlly(!!customerData.is_consignment_ally);
         localStorage.setItem('customerData', JSON.stringify(minimalData));
 
         setIsLoggedIn(true);
@@ -122,7 +128,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, userName, customerId, customerEmail, login, logout, loading }}>
+        <AuthContext.Provider value={{ isLoggedIn, userName, customerId, customerEmail, isConsignmentAlly, login, logout, loading }}>
             {children}
         </AuthContext.Provider>
     );

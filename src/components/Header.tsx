@@ -53,7 +53,7 @@ interface HeaderProps {
 const Header = ({ showOutletLink }: HeaderProps) => {
   // Estado para controlar la visibilidad del menú móvil
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isLoggedIn, userName, logout } = useAuth();
+  const { isLoggedIn, userName, isConsignmentAlly, logout } = useAuth();
   const { itemCount } = useCart();
   const [expandedMobileMenu, setExpandedMobileMenu] = useState<string | null>(null);
 
@@ -271,6 +271,14 @@ const Header = ({ showOutletLink }: HeaderProps) => {
                 >
                   Mis Pedidos
                 </Link>
+                {isConsignmentAlly && (
+                  <Link
+                    href="/consignment/my-sales"
+                    className="block px-4 py-2 text-sm text-amber-700 hover:bg-amber-50 font-medium"
+                  >
+                    Consignación
+                  </Link>
+                )}
                 <button
                   onClick={logout}
                   className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
