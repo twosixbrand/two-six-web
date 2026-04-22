@@ -56,9 +56,11 @@ export default function MySalesPage() {
   const { isLoggedIn, isConsignmentAlly, userName, loading: authLoading } = useAuth();
   const router = useRouter();
 
-  const [tab, setTab] = useState<'stock' | 'report' | 'history'>('stock');
+  const [tab, setTab] = useState<'stock' | 'report' | 'history' | 'payments'>('stock');
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
   const [reports, setReports] = useState<SellReport[]>([]);
+  const [unpaidOrders, setUnpaidOrders] = useState<any[]>([]);
+  const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Formulario de reporte
@@ -67,6 +69,16 @@ export default function MySalesPage() {
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // Payment form
+  const [payOrderId, setPayOrderId] = useState('');
+  const [payAmount, setPayAmount] = useState('');
+  const [payMethod, setPayMethod] = useState<'TRANSFERENCIA' | 'EFECTIVO' | 'OTRO'>('TRANSFERENCIA');
+  const [payRef, setPayRef] = useState('');
+  const [payNotes, setPayNotes] = useState('');
+  const [payFile, setPayFile] = useState<File | null>(null);
+  const [paySubmitting, setPaySubmitting] = useState(false);
+  const [payMessage, setPayMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const token = typeof window !== 'undefined' ? localStorage.getItem('customerToken') : null;
 
@@ -81,12 +93,16 @@ export default function MySalesPage() {
     try {
       setLoading(true);
       const headers = { Authorization: `Bearer ${token}` };
-      const [stockRes, reportsRes] = await Promise.all([
+      const [stockRes, reportsRes, unpaidRes, paymentsRes] = await Promise.all([
         fetch(`${API_URL}/api/consignment/sell-reports/my-stock`, { headers }),
         fetch(`${API_URL}/api/consignment/sell-reports/my-reports`, { headers }),
+        fetch(`${API_URL}/api/consignment/payments/my-unpaid`, { headers }),
+        fetch(`${API_URL}/api/consignment/payments/my-payments`, { headers }),
       ]);
       if (stockRes.ok) setWarehouses(await stockRes.json());
       if (reportsRes.ok) setReports(await reportsRes.json());
+      if (unpaidRes.ok) setUnpaidOrders(await unpaidRes.json());
+      if (paymentsRes.ok) setPayments(await paymentsRes.json());
     } catch (err) {
       console.error(err);
     } finally {
@@ -190,6 +206,7 @@ export default function MySalesPage() {
           { key: 'stock', label: 'Mi Stock' },
           { key: 'report', label: 'Reportar Venta' },
           { key: 'history', label: `Mis Reportes (${reports.length})` },
+          { key: 'payments', label: `Mis Pagos${unpaidOrders.length > 0 ? ` (${unpaidOrders.length} pend.)` : ''}` },
         ].map((t) => (
           <button
             key={t.key}
@@ -400,6 +417,224 @@ export default function MySalesPage() {
                           <span className="ml-auto font-medium">{it.quantity}</span>
                         </div>
                       ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Tab: Mis Pagos */}
+      {tab === 'payments' && (
+        <div>
+          {/* Órdenes pendientes de pago */}
+          {unpaidOrders.length > 0 && (
+            <div className="mb-6">
+              <h3 className="font-semibold text-lg mb-2">Facturas pendientes de pago</h3>
+              <div className="space-y-2">
+                {unpaidOrders.map((o: any) => {
+                  const paidAmount = (o.consignmentPayments || [])
+                    .filter((p: any) => p.status === 'APPROVED')
+                    .reduce((s: number, p: any) => s + p.amount, 0);
+                  const pending = o.total_payment - paidAmount;
+                  return (
+                    <div key={o.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                      <div>
+                        <p className="font-medium text-sm">{o.order_reference}</p>
+                        <p className="text-xs text-gray-400">
+                          {o.status === 'MERMA' ? 'Merma' : 'Sell-out'} · {new Date(o.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold">${pending.toLocaleString('es-CO')}</p>
+                        <p className="text-xs text-gray-400">de ${o.total_payment.toLocaleString('es-CO')}</p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setPayOrderId(String(o.id));
+                          setPayAmount(String(pending));
+                          setPayMethod('TRANSFERENCIA');
+                          setPayRef('');
+                          setPayNotes('');
+                          setPayFile(null);
+                          setPayMessage(null);
+                        }}
+                        className="ml-3 px-3 py-1.5 bg-amber-500 text-white text-sm font-medium rounded-lg hover:bg-amber-600 transition"
+                      >
+                        Pagar
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Formulario de pago (visible cuando selecciona una orden) */}
+          {payOrderId && (
+            <div className="mb-6 p-4 border border-amber-300 rounded-lg bg-amber-50">
+              <h3 className="font-semibold mb-3">Registrar pago — Orden {unpaidOrders.find((o: any) => String(o.id) === payOrderId)?.order_reference}</h3>
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  setPayMessage(null);
+                  if (!payAmount || parseFloat(payAmount) <= 0) {
+                    setPayMessage({ type: 'error', text: 'Monto inválido.' });
+                    return;
+                  }
+                  if (payMethod === 'TRANSFERENCIA' && !payFile) {
+                    setPayMessage({ type: 'error', text: 'Adjunta el comprobante de transferencia.' });
+                    return;
+                  }
+                  try {
+                    setPaySubmitting(true);
+                    const formData = new FormData();
+                    formData.append('id_order', payOrderId);
+                    formData.append('amount', payAmount);
+                    formData.append('payment_method', payMethod);
+                    if (payRef) formData.append('reference_number', payRef);
+                    if (payNotes) formData.append('notes', payNotes);
+                    if (payFile) formData.append('proof', payFile);
+
+                    const res = await fetch(`${API_URL}/api/consignment/payments/upload`, {
+                      method: 'POST',
+                      headers: { Authorization: `Bearer ${token}` },
+                      body: formData,
+                    });
+                    if (!res.ok) {
+                      const body = await res.json().catch(() => ({}));
+                      throw new Error(body.message || 'Error al registrar el pago.');
+                    }
+                    setPayMessage({ type: 'success', text: 'Pago registrado. Two Six lo verificará pronto.' });
+                    setPayOrderId('');
+                    fetchData();
+                  } catch (err: any) {
+                    setPayMessage({ type: 'error', text: err.message });
+                  } finally {
+                    setPaySubmitting(false);
+                  }
+                }}
+                className="space-y-3"
+              >
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700">Monto (COP)</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={payAmount}
+                      onChange={(e) => setPayAmount(e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700">Medio de pago</label>
+                    <select
+                      value={payMethod}
+                      onChange={(e) => setPayMethod(e.target.value as any)}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                    >
+                      <option value="TRANSFERENCIA">Transferencia bancaria</option>
+                      <option value="EFECTIVO">Efectivo</option>
+                      <option value="OTRO">Otro</option>
+                    </select>
+                  </div>
+                </div>
+
+                {payMethod === 'TRANSFERENCIA' && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium mb-1 text-gray-700">Número de referencia</label>
+                      <input
+                        type="text"
+                        value={payRef}
+                        onChange={(e) => setPayRef(e.target.value)}
+                        placeholder="Ej: 2026041700123"
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1 text-gray-700">Comprobante de transferencia *</label>
+                      <input
+                        type="file"
+                        accept="image/*,.pdf"
+                        onChange={(e) => setPayFile(e.target.files?.[0] || null)}
+                        className="w-full text-sm"
+                      />
+                      {payFile && (
+                        <p className="text-xs text-green-600 mt-1">{payFile.name} ({(payFile.size / 1024).toFixed(0)} KB)</p>
+                      )}
+                    </div>
+                  </>
+                )}
+
+                <div>
+                  <label className="block text-sm font-medium mb-1 text-gray-700">Notas (opcional)</label>
+                  <input
+                    type="text"
+                    value={payNotes}
+                    onChange={(e) => setPayNotes(e.target.value)}
+                    placeholder="Observaciones adicionales"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                  />
+                </div>
+
+                {payMessage && (
+                  <p className={`text-sm font-medium ${payMessage.type === 'error' ? 'text-red-600' : 'text-green-600'}`}>
+                    {payMessage.text}
+                  </p>
+                )}
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setPayOrderId('')}
+                    className="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={paySubmitting}
+                    className="flex-1 bg-amber-500 text-white font-semibold py-2 rounded-lg hover:bg-amber-600 disabled:opacity-50 transition"
+                  >
+                    {paySubmitting ? 'Enviando...' : 'Registrar pago'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* Historial de pagos */}
+          <h3 className="font-semibold text-lg mb-2">Historial de pagos</h3>
+          {payments.length === 0 ? (
+            <p className="text-gray-400 text-center py-8">No has registrado pagos aún.</p>
+          ) : (
+            <div className="space-y-2">
+              {payments.map((p: any) => {
+                const st = STATUS_LABELS[p.status] || { label: p.status, color: '#000', bg: '#eee' };
+                return (
+                  <div key={p.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                    <div>
+                      <p className="font-medium text-sm">
+                        {p.order?.order_reference} — {p.payment_method === 'TRANSFERENCIA' ? 'Transferencia' : p.payment_method === 'EFECTIVO' ? 'Efectivo' : 'Otro'}
+                      </p>
+                      <p className="text-xs text-gray-400">{new Date(p.createdAt).toLocaleDateString()}</p>
+                      {p.status === 'REJECTED' && p.rejected_reason && (
+                        <p className="text-xs text-red-500 italic mt-0.5">Motivo: {p.rejected_reason}</p>
+                      )}
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold">${p.amount.toLocaleString('es-CO')}</p>
+                      <span
+                        className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                        style={{ color: st.color, background: st.bg }}
+                      >
+                        {st.label}
+                      </span>
                     </div>
                   </div>
                 );
