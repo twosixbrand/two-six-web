@@ -9,8 +9,10 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 interface StockItem {
   id_clothing_size: number;
   quantity: number;
+  unit_price?: number;
   clothingSize: {
     size: { name: string };
+    product?: { id: number; price: number };
     clothingColor: {
       color: { name: string };
       imageClothing?: { image_url: string }[];
@@ -18,6 +20,9 @@ interface StockItem {
     };
   };
 }
+
+const formatCOP = (n: number) =>
+  (n ?? 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
 
 interface Warehouse {
   id: number;
@@ -65,7 +70,7 @@ export default function MySalesPage() {
 
   // Formulario de reporte
   const [selectedWarehouse, setSelectedWarehouse] = useState<string>('');
-  const [sellItems, setSellItems] = useState<{ id_clothing_size: number; quantity: number; label: string; max: number }[]>([]);
+  const [sellItems, setSellItems] = useState<{ id_clothing_size: number; quantity: number; label: string; max: number; unit_price: number }[]>([]);
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -128,9 +133,10 @@ export default function MySalesPage() {
 
   const addSellItem = (stock: StockItem) => {
     if (sellItems.some((s) => s.id_clothing_size === stock.id_clothing_size)) return;
+    const price = (stock as any).unit_price ?? stock.clothingSize?.product?.price ?? 0;
     setSellItems([
       ...sellItems,
-      { id_clothing_size: stock.id_clothing_size, quantity: 1, label: getLabel(stock), max: stock.quantity },
+      { id_clothing_size: stock.id_clothing_size, quantity: 1, label: getLabel(stock), max: stock.quantity, unit_price: price },
     ]);
   };
 
@@ -234,8 +240,11 @@ export default function MySalesPage() {
                 {wh.stocks.length === 0 ? (
                   <p className="text-gray-400 text-sm">Sin stock en esta bodega.</p>
                 ) : (
-                  <div className="grid gap-2">
-                    {wh.stocks.map((s) => (
+                  <div className="grid gap-2 mb-2">
+                    {wh.stocks.map((s) => {
+                      const price = (s as any).unit_price ?? s.clothingSize?.product?.price ?? 0;
+                      const total = price * s.quantity;
+                      return (
                       <div
                         key={s.id_clothing_size}
                         className="flex items-center gap-3 p-3 border border-gray-100 rounded-lg"
@@ -245,10 +254,15 @@ export default function MySalesPage() {
                         )}
                         <div className="flex-1">
                           <p className="font-medium text-sm">{getLabel(s)}</p>
+                          <p className="text-xs text-gray-400">Precio: {formatCOP(price)}</p>
                         </div>
-                        <span className="font-bold text-lg">{s.quantity}</span>
+                        <div className="text-right">
+                          <span className="font-bold text-lg">{s.quantity}</span>
+                          <p className="text-xs text-gray-500">{formatCOP(total)}</p>
+                        </div>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -307,7 +321,7 @@ export default function MySalesPage() {
                           <img src={getImg(s)!} alt="" className="w-8 h-8 rounded object-cover bg-gray-100" />
                         )}
                         <span className="flex-1">{getLabel(s)}</span>
-                        <span className="text-gray-400 text-xs">Stock: {s.quantity}</span>
+                        <span className="text-gray-400 text-xs">{formatCOP((s as any).unit_price ?? 0)} · Stock: {s.quantity}</span>
                         {added && <span className="text-amber-600 text-xs font-medium">Agregado</span>}
                       </button>
                     );
@@ -321,6 +335,7 @@ export default function MySalesPage() {
                     {sellItems.map((item, idx) => (
                       <div key={item.id_clothing_size} className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
                         <span className="flex-1 text-sm">{item.label}</span>
+                        <span className="text-xs text-gray-400">{formatCOP(item.unit_price)}</span>
                         <input
                           type="number"
                           min={1}
@@ -329,7 +344,7 @@ export default function MySalesPage() {
                           onChange={(e) => updateSellQty(idx, parseInt(e.target.value) || 0)}
                           className="w-16 border border-gray-300 rounded px-2 py-1 text-center text-sm"
                         />
-                        <span className="text-xs text-gray-400">/ {item.max}</span>
+                        <span className="text-xs text-gray-500 w-20 text-right">{formatCOP(item.unit_price * item.quantity)}</span>
                         <button
                           type="button"
                           onClick={() => removeSellItem(idx)}
@@ -339,6 +354,12 @@ export default function MySalesPage() {
                         </button>
                       </div>
                     ))}
+                    {sellItems.length > 0 && (
+                      <div className="flex justify-between items-center pt-2 border-t border-gray-200 mt-2">
+                        <span className="text-sm font-medium">Subtotal</span>
+                        <span className="font-bold">{formatCOP(sellItems.reduce((s, i) => s + i.unit_price * i.quantity, 0))}</span>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -366,7 +387,9 @@ export default function MySalesPage() {
               disabled={submitting || sellItems.length === 0}
               className="w-full bg-amber-500 text-white font-semibold py-3 rounded-lg hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
-              {submitting ? 'Enviando...' : `Enviar reporte (${sellItems.reduce((s, i) => s + i.quantity, 0)} uds)`}
+              {submitting
+                ? 'Enviando...'
+                : `Enviar reporte (${sellItems.reduce((s, i) => s + i.quantity, 0)} uds · ${formatCOP(sellItems.reduce((s, i) => s + i.unit_price * i.quantity, 0))})`}
             </button>
           </div>
         </form>
