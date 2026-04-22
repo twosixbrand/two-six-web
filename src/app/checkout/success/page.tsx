@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import Script from "next/script";
 import { useEffect, useState, Suspense } from "react";
 import { useCart } from "@/context/CartContext";
 
@@ -153,6 +154,25 @@ function SuccessContent() {
 
             {status === 'success' && order && (
                 <div>
+                    <Script src="https://apis.google.com/js/platform.js?onload=renderOptIn" strategy="afterInteractive" />
+                    <Script id="google-customer-reviews-opt-in" strategy="afterInteractive">
+                        {\`
+                            window.renderOptIn = function() {
+                                window.gapi.load('surveyoptin', function() {
+                                    var deliveryDate = new Date();
+                                    deliveryDate.setDate(deliveryDate.getDate() + 4);
+                                    window.gapi.surveyoptin.render({
+                                        "merchant_id": 5761826573,
+                                        "order_id": "\${order.order_reference || order.id}",
+                                        "email": "\${order.customer.email}",
+                                        "delivery_country": "CO",
+                                        "estimated_delivery_date": deliveryDate.toISOString().split('T')[0],
+                                        "products": \${JSON.stringify(order.orderItems.map(item => ({ gtin: item.id.toString() })))}
+                                    });
+                                });
+                            }
+                        \`}
+                    </Script>
                     <div className="text-center mb-8">
                         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <svg className="w-8 h-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
