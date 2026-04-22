@@ -187,19 +187,46 @@ const Header = ({ showOutletLink }: HeaderProps) => {
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-transparent text-sm font-medium uppercase tracking-wider text-primary hover:text-accent")}>
-                  <Link href="/tracking">
-                    Rastrear Pedido
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-transparent text-sm font-medium uppercase tracking-wider text-primary hover:text-accent")}>
-                  <Link href="/blog">
-                    Blog
-                  </Link>
-                </NavigationMenuLink>
+                <NavigationMenuTrigger className="text-sm font-medium uppercase tracking-wider text-primary bg-transparent hover:bg-transparent hover:text-accent">Blog</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[600px] lg:grid-cols-[.75fr_1fr]">
+                    <li className="row-span-4">
+                      <NavigationMenuLink asChild>
+                        <Link
+                          className="flex h-full w-full select-none flex-col justify-center rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                          href="/blog"
+                        >
+                          <div className="mb-2 mt-4 text-lg font-serif">Two Six Journal</div>
+                          <p className="text-sm leading-tight text-muted-foreground">
+                            Explora nuestras guías de estilo, historias de la marca y consejos para prendas premium.
+                          </p>
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                    <ListItem title="El Uniforme del Éxito" href="/blog/el-uniforme-del-exito">
+                      Descubre cómo vestir para triunfar en el día a día.
+                    </ListItem>
+                    <ListItem title="ADN del Streetwear" href="/blog/el-adn-del-streetwear-basica">
+                      Prendas básicas que dicen mucho más que la moda.
+                    </ListItem>
+                    <ListItem title="Ciencia y Confort" href="/blog/ciencia-confort-catar-tela-fria">
+                      Entendiendo la tecnología detrás de la tela fría.
+                    </ListItem>
+                    <ListItem title="Guía de Cuidado" href="/blog/guia-cuidado-ropa-streetwear-premium">
+                      Mantén tus prendas intactas por años.
+                    </ListItem>
+                    <li className="md:col-span-2 mt-2">
+                      <NavigationMenuLink asChild>
+                        <Link
+                          href="/blog"
+                          className="block w-full rounded-md bg-accent/10 px-4 py-3 text-center text-sm font-medium text-accent transition-colors hover:bg-accent hover:text-white"
+                        >
+                          Ver Todos los Artículos
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                  </ul>
+                </NavigationMenuContent>
               </NavigationMenuItem>
 
             </NavigationMenuList>
@@ -579,13 +606,62 @@ const Header = ({ showOutletLink }: HeaderProps) => {
           <div className="w-full h-[1px] bg-gray-200"></div>
 
           <li className="w-full">
-            <Link
-              href="/blog"
-              onClick={() => setIsMenuOpen(false)}
-              className="py-5 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent block text-center w-full"
-            >
-              Blog
-            </Link>
+            <div className="flex flex-col items-center w-full">
+              <button
+                onClick={() => toggleMobileSubmenu('blog')}
+                className="flex items-center justify-center w-full py-5 text-lg font-medium uppercase tracking-wider text-primary hover:text-accent"
+              >
+                <span className="relative flex items-center justify-center">
+                  <span>Blog</span>
+                  <ChevronDown className={`absolute left-full ml-2 w-5 h-5 transition-transform duration-300 ${expandedMobileMenu === 'blog' ? 'rotate-180 text-accent' : ''}`} />
+                </span>
+              </button>
+
+              <div className={`flex flex-col items-center overflow-hidden transition-all duration-300 w-full ${expandedMobileMenu === 'blog' ? 'max-h-[600px] opacity-100 pb-5' : 'max-h-0 opacity-0'}`}>
+                <Link
+                  href="/blog/el-uniforme-del-exito"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="py-2.5 text-base text-gray-500 hover:text-accent w-full text-center"
+                >
+                  El Uniforme del Éxito
+                </Link>
+                <Link
+                  href="/blog/el-adn-del-streetwear-basica"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="py-2.5 text-base text-gray-500 hover:text-accent w-full text-center"
+                >
+                  El ADN del Streetwear
+                </Link>
+                <Link
+                  href="/blog/ciencia-confort-catar-tela-fria"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="py-2.5 text-base text-gray-500 hover:text-accent w-full text-center"
+                >
+                  Ciencia y Confort (Tela Fría)
+                </Link>
+                <Link
+                  href="/blog/guia-cuidado-ropa-streetwear-premium"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="py-2.5 text-base text-gray-500 hover:text-accent w-full text-center"
+                >
+                  Guía de Cuidado Premium
+                </Link>
+                <Link
+                  href="/blog/revolucion-made-in-medellin"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="py-2.5 text-base text-gray-500 hover:text-accent w-full text-center"
+                >
+                  Revolución Made in Medellín
+                </Link>
+                <Link
+                  href="/blog"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="py-2.5 mt-2 text-base font-medium text-accent hover:text-primary w-full text-center"
+                >
+                  Ver Todos los Artículos
+                </Link>
+              </div>
+            </div>
           </li>
 
           {showOutletLink && (
