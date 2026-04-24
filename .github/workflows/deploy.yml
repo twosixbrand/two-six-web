@@ -1,19 +1,61 @@
-name: Construir y Subir Imagen Docker a DigitalOcean
+name: CI/CD — Web (Tests → Build → Deploy)
 
 on:
   push:
     branches:
-      - main # O la rama que uses para producción
+      - main
+  pull_request:
+    branches:
+      - main
 
 env:
-  # REEMPLAZA 'twosix-registry' CON EL NOMBRE DE TU REGISTRY EN DIGITALOCEAN
   REGISTRY: registry.digitalocean.com/twosix-registry
   IMAGE_NAME: two-six-web
+  NODE_VERSION: '20'
 
 jobs:
-  build_and_push:
+  # ──────────────────────────────────────────────────────────────
+  # JOB 1: Gate de Calidad — Tests deben pasar antes del deploy
+  # ──────────────────────────────────────────────────────────────
+  test:
+    name: 🧪 Tests Unitarios
     runs-on: ubuntu-latest
-    
+
+    steps:
+      - name: 1. Checkout del código
+        uses: actions/checkout@v4
+
+      - name: 2. Configurar Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 3. Instalar dependencias
+        run: npm ci
+
+      - name: 4. Ejecutar Tests con Cobertura
+        run: npm test -- --forceExit --passWithNoTests
+        env:
+          NODE_ENV: test
+
+      - name: 5. Subir Reporte de Cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-web
+          path: coverage/
+          retention-days: 14
+
+  # ──────────────────────────────────────────────────────────────
+  # JOB 2: Build & Push — Solo se ejecuta si los tests pasaron
+  # ──────────────────────────────────────────────────────────────
+  build_and_push:
+    name: 🐳 Build & Push Docker
+    runs-on: ubuntu-latest
+    needs: test  # ← Bloqueo: No deploya si los tests fallan
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
     steps:
       - name: 1. Checkout del código
         uses: actions/checkout@v4
@@ -21,7 +63,6 @@ jobs:
       - name: 2. Instalar doctl (DigitalOcean CLI)
         uses: digitalocean/action-doctl@v2
         with:
-          # TOKEN CREADO EN DIGITAL OCEAN Y GUARDADO EN GITHUB SECRETS
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: 3. Autenticarse en el Container Registry de DO
