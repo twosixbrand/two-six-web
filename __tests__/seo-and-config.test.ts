@@ -4,6 +4,15 @@ jest.mock('../src/lib/blog', () => ({
     getPostBySlug: jest.fn().mockResolvedValue({ slug: 'test' })
 }));
 
+// Mock data/products to prevent api-client from loading (it throws when
+// NEXT_PUBLIC_API_URL is missing, which is the case on CI).
+jest.mock('../src/data/products', () => ({
+    getStoreDesigns: jest.fn().mockResolvedValue({
+        data: [{ slug: 'camiseta-test', id_product: 1 }],
+        meta: { total: 1, page: 1, totalPages: 1, limit: 12 }
+    }),
+}));
+
 import robots from '../src/app/robots';
 import sitemap from '../src/app/sitemap';
 
