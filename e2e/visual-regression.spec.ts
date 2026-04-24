@@ -1,12 +1,11 @@
 import { test, expect } from '@playwright/test';
 
-// Ignoramos imágenes dinámicas (ej. productos que cambian) para no fallar el snapshot por contenido
-const maskImages = {
+const getMasks = (page: import('@playwright/test').Page) => ({
   mask: [
-    { selector: 'img' }, 
-    { selector: 'video' },
+    page.locator('img'), 
+    page.locator('video'),
   ],
-};
+});
 
 test.describe('Visual Regression Testing - Two Six Web', () => {
   test('Home Page - Desktop', async ({ page }) => {
@@ -19,7 +18,7 @@ test.describe('Visual Regression Testing - Two Six Web', () => {
     // Allow a small threshold for font rendering differences across CI environments
     await expect(page).toHaveScreenshot('home-desktop.png', {
       maxDiffPixelRatio: 0.05,
-      ...maskImages
+      ...getMasks(page)
     });
   });
 
@@ -31,7 +30,7 @@ test.describe('Visual Regression Testing - Two Six Web', () => {
 
     await expect(page).toHaveScreenshot('catalog-desktop.png', {
       maxDiffPixelRatio: 0.05,
-      ...maskImages
+      ...getMasks(page)
     });
   });
 
@@ -44,7 +43,7 @@ test.describe('Visual Regression Testing - Two Six Web', () => {
 
     await expect(page).toHaveScreenshot('home-mobile.png', {
       maxDiffPixelRatio: 0.05,
-      ...maskImages
+      ...getMasks(page)
     });
   });
 });

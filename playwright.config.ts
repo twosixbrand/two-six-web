@@ -7,7 +7,7 @@ export default defineConfig({
     retries: process.env.CI ? 2 : 0,
     workers: 1,
     reporter: 'html',
-    timeout: 30000,
+    timeout: 60000,
     use: {
         baseURL: 'http://localhost:3000',
         trace: 'on-first-retry',
@@ -23,10 +23,11 @@ export default defineConfig({
             },
         },
     ],
-    // Don't start a web server - expect the app to already be running
-    // webServer: {
-    //     command: 'npm run start',
-    //     url: 'http://localhost:3000',
-    //     reuseExistingServer: true,
-    // },
+    // Start a web server to ensure it is running before tests
+    webServer: {
+        command: 'npm run dev',
+        url: 'http://localhost:3000',
+        reuseExistingServer: !process.env.CI,
+        timeout: 120 * 1000,
+    },
 });

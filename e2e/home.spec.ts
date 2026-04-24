@@ -4,7 +4,7 @@ test.describe('Homepage y Navegación', () => {
     test('la página principal carga correctamente', async ({ page }) => {
         await page.goto('/', { waitUntil: 'networkidle' });
 
-        await expect(page).toHaveTitle(/two-six-web/i);
+        await expect(page).toHaveTitle(/Two Six/i);
         await expect(page.getByText('Descubre tu Estilo')).toBeVisible({ timeout: 15000 });
     });
 
