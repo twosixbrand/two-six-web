@@ -169,7 +169,7 @@ describe('DispatchConfirmPage', () => {
         await waitFor(() => {
             expect(screen.getByRole('heading', { name: 'Error' })).toBeInTheDocument();
         });
-        expect(screen.getByText('Despacho no encontrado')).toBeInTheDocument();
+        expect(screen.getByText(/Despacho no encontrado/)).toBeInTheDocument();
     });
 
     it('disables submit button when received_by is empty', async () => {
@@ -200,6 +200,12 @@ describe('DispatchConfirmPage', () => {
 
         const input = await screen.findByPlaceholderText('Nombre de quien recibe');
         await user.type(input, 'Ana Gómez');
+
+        // Check all item checkboxes to verify reception
+        const checkboxes = screen.getAllByRole('checkbox');
+        for (const cb of checkboxes) {
+            await user.click(cb);
+        }
 
         const button = screen.getByRole('button', { name: /confirmar recepción/i });
         expect(button).not.toBeDisabled();

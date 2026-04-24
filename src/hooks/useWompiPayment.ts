@@ -205,26 +205,30 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
             const isReady = await waitForScript();
             debugLog('[Wompi] 5b. WidgetCheckout disponible:', isReady);
 
-            if (!wompi.publicKey || !isReady) {
+            const resolvedPublicKey = wompi.publicKey || wompi.public_key;
+            
+            if (!resolvedPublicKey || !isReady) {
                 throw new Error("La pasarela de pagos no está lista. Por favor recarga la página e intenta nuevamente.");
             }
 
             // B. Configurar el widget
-            const checkoutConfig = {
-                currency: wompi.currency,
-                amountInCents: wompi.amountInCents,
+            const checkoutConfig: any = {
+                currency: wompi.currency || 'COP',
+                amountInCents: wompi.amountInCents || wompi.amount_in_cents,
                 reference: wompi.reference,
-                publicKey: wompi.publicKey,
-                signature: { integrity: wompi.integritySignature },
+                publicKey: resolvedPublicKey,
                 // Wompi rechaza redirectUrl con localhost (403).
-                // En producción, usar NEXT_PUBLIC_SITE_URL para redirección post-pago (PSE/banco).
-                // En localhost, el widget callback maneja la respuesta directamente.
                 ...(process.env.NEXT_PUBLIC_SITE_URL
                     ? { redirectUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout` }
                     : {}),
             };
 
-            debugLog('[Wompi] 6. Widget configurado.');
+            const integritySignature = wompi.integritySignature || wompi.integrity_signature;
+            if (integritySignature) {
+                checkoutConfig.signature = { integrity: integritySignature };
+            }
+
+            debugLog('[Wompi] 6. Widget configurado:', checkoutConfig);
 
             // C. Abrir widget
             debugLog('[Wompi] 7. Creando instancia WidgetCheckout...');

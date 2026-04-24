@@ -7,15 +7,18 @@ test.describe('Carrito de Compras', () => {
         const firstProduct = page.locator('a[href^="/product/"]').first();
         await expect(firstProduct).toBeVisible({ timeout: 15000 });
         await firstProduct.click();
-        await page.waitForURL(/\/product\/\d+/);
+        await page.waitForURL(/\/product\/.+/);
         await page.waitForLoadState('networkidle');
 
-        const addBtn = page.getByText('Añadir a la Bolsa');
-        const isAddable = await addBtn.isVisible({ timeout: 5000 }).catch(() => false);
-        if (isAddable) {
-            await addBtn.click();
-            await page.waitForTimeout(1000);
-            return true;
+        const addBtn = page.getByRole('button', { name: /Añadir a la Bolsa|Agotado/i });
+        const isVisible = await addBtn.isVisible({ timeout: 5000 }).catch(() => false);
+        if (isVisible) {
+            const text = await addBtn.textContent();
+            if (text && text.includes('Añadir')) {
+                await addBtn.click();
+                await page.waitForTimeout(1000);
+                return true;
+            }
         }
         return false;
     }
@@ -32,15 +35,12 @@ test.describe('Carrito de Compras', () => {
 
         // Navigate to product detail
         await firstProduct.click();
-        await page.waitForURL(/\/product\/\d+/);
+        await page.waitForURL(/\/product\/.+/);
         await page.waitForLoadState('networkidle');
 
         // Check that Añadir a la Bolsa button or Agotado exists
-        const addBtn = page.getByText('Añadir a la Bolsa');
-        const outBtn = page.getByText('Agotado');
-        const hasAdd = await addBtn.isVisible().catch(() => false);
-        const hasOut = await outBtn.isVisible().catch(() => false);
-        expect(hasAdd || hasOut).toBeTruthy();
+        const addBtn = page.getByRole('button', { name: /Añadir a la Bolsa|Agotado/i });
+        await expect(addBtn).toBeVisible({ timeout: 10000 });
     });
 
     test('el carrito muestra el resumen del pedido', async ({ page }) => {

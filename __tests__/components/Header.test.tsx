@@ -28,10 +28,13 @@ class ResizeObserver {
 }
 window.ResizeObserver = ResizeObserver;
 
-const renderWithProviders = (ui: React.ReactElement, initialAuthState = { isLoggedIn: false, userName: null }) => {
+const renderWithProviders = (ui: React.ReactElement, initialAuthState: { isLoggedIn: boolean, userName: string | null } = { isLoggedIn: false, userName: null }) => {
+    const validPayload = { exp: Math.floor(Date.now() / 1000) + 3600 };
+    const mockToken = `header.${btoa(JSON.stringify(validPayload))}.signature`;
+
     // Pre-populate localStorage for AuthContext if needed
     if (initialAuthState.isLoggedIn) {
-        window.localStorage.setItem('customerToken', 'fake-token');
+        window.localStorage.setItem('customerToken', mockToken);
         window.localStorage.setItem('customerData', JSON.stringify({ name: initialAuthState.userName || 'Test User' }));
     } else {
         window.localStorage.clear();

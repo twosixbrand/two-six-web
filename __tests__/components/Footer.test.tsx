@@ -23,9 +23,9 @@ describe('Footer component', () => {
         expect(screen.getByText(/Redefiniendo el minimalismo moderno/i)).toBeInTheDocument();
 
         // Social links
-        expect(screen.getByAltText('Instagram')).toBeInTheDocument();
-        expect(screen.getByAltText('Tiktok')).toBeInTheDocument();
-        expect(screen.getByAltText('WhatsApp')).toBeInTheDocument();
+        expect(screen.getByLabelText('Instagram')).toBeInTheDocument();
+        expect(screen.getByLabelText('TikTok')).toBeInTheDocument();
+        expect(screen.getByLabelText('WhatsApp')).toBeInTheDocument();
     });
 
     it('renders navigation links', () => {

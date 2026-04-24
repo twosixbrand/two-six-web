@@ -55,12 +55,10 @@ test.describe('Catálogo y Detalle de Producto', () => {
         await firstProduct.click();
 
         // Verify we're on the product detail page
-        await page.waitForURL(/\/product\/\d+/);
+        await page.waitForURL(/\/product\/.+/);
 
         // Verify product name is displayed
-        if (productName) {
-            await expect(page.getByText(productName).first()).toBeVisible();
-        }
+        await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     });
 
     test('la página de detalle muestra colores, tallas y precio', async ({ page }) => {
@@ -71,15 +69,18 @@ test.describe('Catálogo y Detalle de Producto', () => {
         const firstProduct = page.locator('a[href^="/product/"]').first();
         await expect(firstProduct).toBeVisible({ timeout: 10000 });
         await firstProduct.click();
-        await page.waitForURL(/\/product\/\d+/);
+        await page.waitForURL(/\/product\/.+/);
         await page.waitForLoadState('networkidle');
 
         // Verify Color section
-        await expect(page.getByText('Color', { exact: true }).first()).toBeVisible({ timeout: 10000 });
+        await expect(page.getByText('Color').first()).toBeVisible();
 
-        // Verify Talla (Size) section
-        await expect(page.getByText('Talla', { exact: true })).toBeVisible();
+        // Verify Size section 
+        await expect(page.getByText('Talla').first()).toBeVisible();
 
+        // Verify Price is displayed (contains $)
+        await expect(page.getByText('$').first()).toBeVisible();
+        
         // Verify "Añadir a la Bolsa" or "Agotado" button
         const addToCartBtn = page.getByText('Añadir a la Bolsa');
         const outOfStockBtn = page.getByText('Agotado');
@@ -95,7 +96,7 @@ test.describe('Catálogo y Detalle de Producto', () => {
         const firstProduct = page.locator('a[href^="/product/"]').first();
         await expect(firstProduct).toBeVisible({ timeout: 10000 });
         await firstProduct.click();
-        await page.waitForURL(/\/product\/\d+/);
+        await page.waitForURL(/\/product\/.+/);
         await page.waitForLoadState('networkidle');
 
         // Verify accordion sections

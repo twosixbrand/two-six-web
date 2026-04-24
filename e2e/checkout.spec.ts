@@ -7,14 +7,19 @@ test.describe('Flujo de Checkout', () => {
         const firstProduct = page.locator('a[href^="/product/"]').first();
         await expect(firstProduct).toBeVisible({ timeout: 15000 });
         await firstProduct.click();
-        await page.waitForURL(/\/product\/\d+/);
+        await page.waitForURL(/\/product\/.+/);
         await page.waitForLoadState('networkidle');
 
-        const addBtn = page.getByText('Añadir a la Bolsa');
-        const added = await addBtn.isVisible({ timeout: 5000 }).catch(() => false);
-        if (added) {
-            await addBtn.click();
-            await page.waitForTimeout(1000);
+        const addBtn = page.getByRole('button', { name: /Añadir a la Bolsa|Agotado/i });
+        const isVisible = await addBtn.isVisible({ timeout: 5000 }).catch(() => false);
+        let added = false;
+        if (isVisible) {
+            const text = await addBtn.textContent();
+            if (text && text.includes('Añadir')) {
+                await addBtn.click();
+                await page.waitForTimeout(1000);
+                added = true;
+            }
         }
 
         await page.goto('/checkout', { waitUntil: 'domcontentloaded' });
