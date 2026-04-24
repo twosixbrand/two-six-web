@@ -50,3 +50,4 @@ blob-report/
 
 # Sentry Config File
 .env.sentry-build-plugin
+test_output.txt
