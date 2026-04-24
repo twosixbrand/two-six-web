@@ -6,12 +6,15 @@ describe('useWompiPayment', () => {
     let mockOnError: jest.Mock;
     let mockOnCancel: jest.Mock;
 
+    let originalFetch: typeof global.fetch;
+
     beforeEach(() => {
         mockOnSuccess = jest.fn();
         mockOnError = jest.fn();
         mockOnCancel = jest.fn();
 
         // Mock fetch
+        originalFetch = global.fetch;
         global.fetch = jest.fn().mockImplementation(() =>
             Promise.resolve({
                 ok: true,
@@ -45,6 +48,7 @@ describe('useWompiPayment', () => {
 
     afterEach(() => {
         jest.clearAllMocks();
+        global.fetch = originalFetch;
         delete window.WidgetCheckout;
     });
 
