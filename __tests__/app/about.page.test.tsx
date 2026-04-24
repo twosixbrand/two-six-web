@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import AboutPage from '../../src/app/about/page';
+import SobreNosotrosPage from '../../src/app/sobre-nosotros/page';
 
 jest.mock('next/image', () => ({
     __esModule: true,
@@ -18,18 +18,18 @@ jest.mock('@/components/Banner', () => ({
 }));
 
 describe('AboutPage', () => {
-    it('renders the banner with correct title', () => {
-        render(<AboutPage />);
-        expect(screen.getByText('Nosotros')).toBeInTheDocument();
+    it('renders the main heading', () => {
+        render(<SobreNosotrosPage />);
+        expect(screen.getByText('Nuestra Identidad')).toBeInTheDocument();
     });
 
-    it('renders the mission section', () => {
-        render(<AboutPage />);
-        expect(screen.getByText('Nuestra Misión')).toBeInTheDocument();
+    it('renders the local pride section', () => {
+        render(<SobreNosotrosPage />);
+        expect(screen.getByText('Orgullo Local: Hecho en Medellín')).toBeInTheDocument();
     });
 
     it('renders body text about the brand', () => {
-        render(<AboutPage />);
-        expect(screen.getAllByText(/Two Six Brand/).length).toBeGreaterThan(0);
+        render(<SobreNosotrosPage />);
+        expect(screen.getAllByText(/Two Six/).length).toBeGreaterThan(0);
     });
 });

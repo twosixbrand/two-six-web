@@ -28,6 +28,9 @@ const TestComponent = ({ action }: { action?: (auth: any) => void }) => {
 };
 
 describe('AuthContext', () => {
+    const validPayload = { exp: Math.floor(Date.now() / 1000) + 3600 };
+    const mockToken = `header.${btoa(JSON.stringify(validPayload))}.signature`;
+
     beforeEach(() => {
         window.localStorage.clear();
         jest.clearAllMocks();
@@ -47,7 +50,7 @@ describe('AuthContext', () => {
     });
 
     it('loads user from localStorage if token and data exist', () => {
-        window.localStorage.setItem('customerToken', 'fake-token');
+        window.localStorage.setItem('customerToken', mockToken);
         window.localStorage.setItem('customerData', JSON.stringify({ name: 'John Doe' }));
 
         const { getByTestId } = render(
@@ -61,7 +64,7 @@ describe('AuthContext', () => {
     });
 
     it('handles invalid JSON in localStorage gracefully', () => {
-        window.localStorage.setItem('customerToken', 'fake-token');
+        window.localStorage.setItem('customerToken', mockToken);
         window.localStorage.setItem('customerData', 'invalid-json');
 
         const { getByTestId } = render(
@@ -94,7 +97,7 @@ describe('AuthContext', () => {
     });
 
     it('logs out a user successfully and redirects to login', () => {
-        window.localStorage.setItem('customerToken', 'target-token');
+        window.localStorage.setItem('customerToken', mockToken);
         window.localStorage.setItem('customerData', JSON.stringify({ name: 'Bob' }));
 
         let currentAuth: any;

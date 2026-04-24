@@ -21,8 +21,7 @@ import OtpPage from '../../src/app/login/otp/page';
 describe('OtpPage', () => {
     beforeEach(() => {
         jest.clearAllMocks();
-        // Reset search params
-        mockSearchParams.delete('email');
+        jest.clearAllMocks();
         // Mock sessionStorage
         Object.defineProperty(window, 'sessionStorage', {
             value: {
@@ -35,19 +34,20 @@ describe('OtpPage', () => {
     });
 
     it('renders the OTP form when email is present', () => {
-        mockSearchParams.set('email', 'test@example.com');
+        (window.sessionStorage.getItem as jest.Mock).mockImplementation((key) => key === 'pendingOtpEmail' ? 'test@example.com' : null);
         render(<OtpPage />);
         expect(screen.getByText('Verificar Código')).toBeInTheDocument();
         expect(screen.getByText(/test@example.com/)).toBeInTheDocument();
     });
 
-    it('shows missing email message when no email param', () => {
+    it('redirects to /login when no email param', () => {
+        (window.sessionStorage.getItem as jest.Mock).mockReturnValue(null);
         render(<OtpPage />);
-        expect(screen.getByText('Falta el correo electrónico.')).toBeInTheDocument();
+        expect(mockPush).toHaveBeenCalledWith('/login');
     });
 
-    it.skip('renders 6 individual OTP digit inputs', () => {
-        mockSearchParams.set('email', 'test@example.com');
+    it('renders 6 individual OTP digit inputs', () => {
+        (window.sessionStorage.getItem as jest.Mock).mockImplementation((key) => key === 'pendingOtpEmail' ? 'test@example.com' : null);
         render(<OtpPage />);
         // The OTP form now has 6 individual text inputs
         const inputs = screen.getAllByRole('textbox');
@@ -57,8 +57,8 @@ describe('OtpPage', () => {
         });
     });
 
-    it.skip('calls API on form submit', async () => {
-        mockSearchParams.set('email', 'test@example.com');
+    it('calls API on form submit', async () => {
+        (window.sessionStorage.getItem as jest.Mock).mockImplementation((key) => key === 'pendingOtpEmail' ? 'test@example.com' : null);
         global.fetch = jest.fn().mockResolvedValue({
             ok: true,
             json: async () => ({ accessToken: 'token', customer: { name: 'Test' } }),
@@ -82,8 +82,8 @@ describe('OtpPage', () => {
         });
     });
 
-    it.skip('shows error on API failure', async () => {
-        mockSearchParams.set('email', 'test@example.com');
+    it('shows error on API failure', async () => {
+        (window.sessionStorage.getItem as jest.Mock).mockImplementation((key) => key === 'pendingOtpEmail' ? 'test@example.com' : null);
         global.fetch = jest.fn().mockResolvedValue({
             ok: false,
             json: async () => ({ message: 'Código inválido' }),
@@ -102,8 +102,8 @@ describe('OtpPage', () => {
         });
     });
 
-    it.skip('shows generic error on network failure', async () => {
-        mockSearchParams.set('email', 'test@example.com');
+    it('shows generic error on network failure', async () => {
+        (window.sessionStorage.getItem as jest.Mock).mockImplementation((key) => key === 'pendingOtpEmail' ? 'test@example.com' : null);
         global.fetch = jest.fn().mockRejectedValue(new Error('Network error'));
 
         render(<OtpPage />);

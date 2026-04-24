@@ -4,10 +4,8 @@ import OtpPage from '../../src/app/login/otp/page';
 
 // Mock next/navigation
 const mockPush = jest.fn();
-const mockSearchParams = new URLSearchParams();
 jest.mock('next/navigation', () => ({
     useRouter: () => ({ push: mockPush }),
-    useSearchParams: () => mockSearchParams,
 }));
 
 // Mock AuthContext
@@ -23,7 +21,6 @@ describe('OtpPage', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-        mockSearchParams.delete('email');
         originalFetch = global.fetch;
         global.fetch = jest.fn();
         // Mock sessionStorage
@@ -42,7 +39,7 @@ describe('OtpPage', () => {
     });
 
     it('renders 6 digit inputs when email is present', () => {
-        mockSearchParams.set('email', 'test@example.com');
+        (window.sessionStorage.getItem as jest.Mock).mockImplementation((key) => key === 'pendingOtpEmail' ? 'test@example.com' : null);
         render(<OtpPage />);
 
         // There should be 6 individual input fields for OTP digits
@@ -55,32 +52,23 @@ describe('OtpPage', () => {
         });
     });
 
-    it('gets email from URL params and displays it', () => {
-        mockSearchParams.set('email', 'user@domain.com');
+    it('gets email from sessionStorage and displays it', () => {
+        (window.sessionStorage.getItem as jest.Mock).mockReturnValue('user@domain.com');
         render(<OtpPage />);
 
         expect(screen.getByText('Verificar Código')).toBeInTheDocument();
         expect(screen.getByText('user@domain.com')).toBeInTheDocument();
     });
 
-    it('shows error when email is missing', () => {
-        // email param not set
+    it('redirects to /login when email is missing', () => {
+        (window.sessionStorage.getItem as jest.Mock).mockReturnValue(null);
         render(<OtpPage />);
 
-        expect(screen.getByText('Sesión Caducada')).toBeInTheDocument();
-        expect(screen.getByText('Falta el correo electrónico.')).toBeInTheDocument();
-        expect(screen.getByText('Volver a Solicitar')).toBeInTheDocument();
-    });
-
-    it('redirects to /login when "Volver a Solicitar" is clicked with no email', () => {
-        render(<OtpPage />);
-
-        fireEvent.click(screen.getByText('Volver a Solicitar'));
         expect(mockPush).toHaveBeenCalledWith('/login');
     });
 
-    it('submits OTP with email (not document_number)', async () => {
-        mockSearchParams.set('email', 'test@example.com');
+    it('submits OTP with email', async () => {
+        (window.sessionStorage.getItem as jest.Mock).mockImplementation((key) => key === 'pendingOtpEmail' ? 'test@example.com' : null);
         (global.fetch as jest.Mock).mockResolvedValueOnce({
             ok: true,
             json: async () => ({ accessToken: 'tok-123', customer: { name: 'John' } }),
@@ -117,7 +105,7 @@ describe('OtpPage', () => {
     });
 
     it('redirects to home after successful OTP verification', async () => {
-        mockSearchParams.set('email', 'test@example.com');
+        (window.sessionStorage.getItem as jest.Mock).mockImplementation((key) => key === 'pendingOtpEmail' ? 'test@example.com' : null);
         (global.fetch as jest.Mock).mockResolvedValueOnce({
             ok: true,
             json: async () => ({ accessToken: 'tok', customer: { name: 'A' } }),
@@ -138,7 +126,7 @@ describe('OtpPage', () => {
     });
 
     it('handles incorrect OTP error', async () => {
-        mockSearchParams.set('email', 'test@example.com');
+        (window.sessionStorage.getItem as jest.Mock).mockImplementation((key) => key === 'pendingOtpEmail' ? 'test@example.com' : null);
         (global.fetch as jest.Mock).mockResolvedValueOnce({
             ok: false,
             json: async () => ({ message: 'El código es incorrecto o ha expirado' }),
@@ -159,7 +147,7 @@ describe('OtpPage', () => {
     });
 
     it('shows error when submitting incomplete OTP', async () => {
-        mockSearchParams.set('email', 'test@example.com');
+        (window.sessionStorage.getItem as jest.Mock).mockImplementation((key) => key === 'pendingOtpEmail' ? 'test@example.com' : null);
         render(<OtpPage />);
 
         // Only fill 3 of 6 digits
@@ -179,7 +167,7 @@ describe('OtpPage', () => {
     });
 
     it('handles network error gracefully', async () => {
-        mockSearchParams.set('email', 'test@example.com');
+        (window.sessionStorage.getItem as jest.Mock).mockImplementation((key) => key === 'pendingOtpEmail' ? 'test@example.com' : null);
         (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network failure'));
 
         render(<OtpPage />);

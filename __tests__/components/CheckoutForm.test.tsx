@@ -215,13 +215,21 @@ describe('CheckoutForm component', () => {
 
         window.localStorage.setItem('customerData', JSON.stringify(mockCustomer));
 
-        // Mock fetch for addresses (empty for simplicity in this test)
-        global.fetch = jest.fn(() =>
-            Promise.resolve({
-                ok: true,
-                json: () => Promise.resolve([]),
-            })
-        ) as jest.Mock;
+        global.fetch = jest.fn((url: string) => {
+            if (url.includes('/api/customer/')) {
+                return Promise.resolve({
+                    ok: true,
+                    json: () => Promise.resolve(mockCustomer),
+                });
+            }
+            if (url.includes('/api/address/')) {
+                return Promise.resolve({
+                    ok: true,
+                    json: () => Promise.resolve([]),
+                });
+            }
+            return Promise.resolve({ ok: false });
+        }) as jest.Mock;
 
         render(<CheckoutForm />);
 

@@ -58,15 +58,15 @@ describe('HeroCarousel component', () => {
         render(<HeroCarousel />);
 
         // Check if main slide titles are present
-        expect(screen.getByText('Nueva Colección')).toBeInTheDocument();
+        expect(screen.getByText('Calidad que impone')).toBeInTheDocument();
         expect(screen.getByText('Essentials Hombre')).toBeInTheDocument();
         expect(screen.getByText('Edición Limitada')).toBeInTheDocument();
 
         // Check if CTA links are present and have correct hrefs
-        const linkWo = screen.getByRole('link', { name: 'Explorar Novedades' });
+        const linkWo = screen.getByRole('link', { name: 'Ver Colección' });
         expect(linkWo).toHaveAttribute('href', '/woman?sort=new');
 
-        const linkMan = screen.getByRole('link', { name: 'Ver Colección' });
+        const linkMan = screen.getByRole('link', { name: 'Comprar Ahora' });
         expect(linkMan).toHaveAttribute('href', '/man');
 
         const linkUni = screen.getByRole('link', { name: 'Descubrir' });

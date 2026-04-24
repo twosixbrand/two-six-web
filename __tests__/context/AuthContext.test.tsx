@@ -28,6 +28,9 @@ const TestComponent = ({ action }: { action?: (auth: any) => void }) => {
 };
 
 describe('AuthContext', () => {
+    const validPayload = { exp: Math.floor(Date.now() / 1000) + 3600 };
+    const mockToken = `header.${btoa(JSON.stringify(validPayload))}.signature`;
+
     beforeEach(() => {
         window.localStorage.clear();
         jest.clearAllMocks();
@@ -71,7 +74,7 @@ describe('AuthContext', () => {
     });
 
     it('logout() clears localStorage and redirects', () => {
-        window.localStorage.setItem('customerToken', 'existing-token');
+        window.localStorage.setItem('customerToken', mockToken);
         window.localStorage.setItem('customerData', JSON.stringify({ name: 'Bob' }));
 
         let currentAuth: any;
@@ -127,7 +130,7 @@ describe('AuthContext', () => {
     });
 
     it('userName is extracted from customerData', () => {
-        window.localStorage.setItem('customerToken', 'tok');
+        window.localStorage.setItem('customerToken', mockToken);
         window.localStorage.setItem('customerData', JSON.stringify({ name: 'Carlos Gomez' }));
 
         const { getByTestId } = render(
@@ -140,7 +143,7 @@ describe('AuthContext', () => {
     });
 
     it('userName defaults to "Usuario" when name is missing', () => {
-        window.localStorage.setItem('customerToken', 'tok');
+        window.localStorage.setItem('customerToken', mockToken);
         window.localStorage.setItem('customerData', JSON.stringify({ email: 'no-name@test.com' }));
 
         const { getByTestId } = render(
@@ -153,7 +156,7 @@ describe('AuthContext', () => {
     });
 
     it('handles invalid JSON in localStorage gracefully', () => {
-        window.localStorage.setItem('customerToken', 'tok');
+        window.localStorage.setItem('customerToken', mockToken);
         window.localStorage.setItem('customerData', 'invalid-json');
 
         const { getByTestId } = render(
