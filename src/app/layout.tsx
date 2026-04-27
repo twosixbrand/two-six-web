@@ -10,6 +10,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getProducts } from "@/data/products";
 import CookieConsent from "@/components/CookieConsent";
+import MetaPixel from "@/components/MetaPixel";
 
 const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: '--font-playfair' });
@@ -27,6 +28,9 @@ export const metadata: Metadata = {
   publisher: 'Two Six Brand',
   verification: {
     google: '85VmCrMCj1nHCVp_Dcz75C0Gug_eZzRbskS3U5CX_BA',
+    other: {
+      'facebook-domain-verification': ['pzujiegjnhypcwv8saaftmx0v14yjd'],
+    },
   },
   openGraph: {
     type: 'website',
@@ -133,6 +137,7 @@ export default async function RootLayout({
             <WhatsAppButton />
             <Footer showOutletLink={showOutletLink} />
             <CookieConsent />
+            <MetaPixel />
           </AuthProvider>
         </CartProvider>
       </body>

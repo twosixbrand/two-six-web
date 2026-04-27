@@ -82,6 +82,16 @@ export default function ProductDetail({
       });
     }
 
+    // Meta Pixel Tracking: ViewContent
+    if (typeof window !== "undefined" && window.fbq) {
+      window.fbq("track", "ViewContent", {
+        content_ids: [initialProduct.sku || `TS-${initialProduct.id}`],
+        content_type: "product",
+        currency: "COP",
+        value: initialProduct.price,
+      });
+    }
+
     const images = getImages(initialProduct);
     setCurrentImages(images);
 
