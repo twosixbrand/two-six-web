@@ -29,9 +29,6 @@ export const metadata: Metadata = {
   publisher: 'Two Six Brand',
   verification: {
     google: '85VmCrMCj1nHCVp_Dcz75C0Gug_eZzRbskS3U5CX_BA',
-    other: {
-      'facebook-domain-verification': ['pzujiegjnhypcwv8saaftmx0v14yjd'],
-    },
   },
   openGraph: {
     type: 'website',
@@ -112,6 +109,7 @@ export default async function RootLayout({
   return (
     <html lang="es">
       <head>
+        <meta name="facebook-domain-verification" content="pzujiegjnhypcwv8saaftmx0v14yjd" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
