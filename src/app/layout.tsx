@@ -11,6 +11,7 @@ import Footer from "@/components/Footer";
 import { getProducts } from "@/data/products";
 import CookieConsent from "@/components/CookieConsent";
 import MetaPixel from "@/components/MetaPixel";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: '--font-playfair' });
@@ -137,7 +138,9 @@ export default async function RootLayout({
             <WhatsAppButton />
             <Footer showOutletLink={showOutletLink} />
             <CookieConsent />
-            <MetaPixel />
+            <Suspense fallback={null}>
+              <MetaPixel />
+            </Suspense>
           </AuthProvider>
         </CartProvider>
       </body>
