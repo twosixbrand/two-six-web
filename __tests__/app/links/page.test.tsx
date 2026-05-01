@@ -1,12 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import LinksPage from '../../src/pages/links';
-
-// Mock next/head
-jest.mock('next/head', () => ({
-    __esModule: true,
-    default: ({ children }: { children: Array<React.ReactElement> }) => <>{children}</>,
-}));
+import LinksPage from '../../../src/app/links/page';
 
 describe('LinksPage', () => {
     it('renders the links page with official links', () => {
