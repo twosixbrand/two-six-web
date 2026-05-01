@@ -1,5 +1,5 @@
-// src/pages/links.tsx
-import Head from 'next/head';
+"use client";
+
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
@@ -30,15 +30,11 @@ export default function LinksPage() {
       alignItems: 'center', 
       justifyContent: 'center', 
       padding: '40px 20px',
-      fontFamily: "'Inter', sans-serif",
+      fontFamily: "var(--font-inter), sans-serif",
       boxSizing: 'border-box',
       WebkitTapHighlightColor: 'transparent'
     }}>
-      <Head>
-        <title>Two Six | Official Links</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
-      </Head>
+      <title>Two Six | Official Links</title>
 
       {/* WRAPPER PRINCIPAL */}
       <div style={{ 
