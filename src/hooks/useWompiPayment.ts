@@ -141,7 +141,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
             }, 5000); // Consultar cada 5 segundos
         };
 
-        // Exponer la función de inicio de polling en el objeto window para llamarla desde startPaymentFlow
+        // Exponer la función de inicio de polling en el objeto window para llamarla desde startWompiFlow
         window.__startWompiPolling = startPolling;
 
         return () => {
@@ -150,39 +150,18 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
         };
     }, [loadingPayment, onError]);
 
-    // 3. Iniciar flujo de pago
-    const startPaymentFlow = async (checkoutData: unknown) => {
+    // 3. Iniciar flujo de pago con datos provistos
+    const startWompiFlow = async (wompiData: any) => {
         debugLog('[Wompi] 1. Iniciando flujo de pago...');
         setLoadingPayment(true);
 
         try {
-            // A. Iniciar en backend (Checkout)
-            debugLog('[Wompi] 2. Enviando datos al backend...');
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/order/checkout`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(checkoutData),
-            });
-
-            debugLog('[Wompi] 3. Respuesta del backend:', response.status);
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error('[Wompi] 3b. Error del backend:', errorData);
-                throw new Error(errorData.message || "Error al iniciar el pago");
-            }
-
-            const data = await response.json();
-            debugLog('[Wompi] 4. Datos recibidos del backend.');
-
-            const { wompi } = data;
-
-            if (!wompi) {
-                console.error('[Wompi] 4b. No se recibió objeto wompi en la respuesta:', data);
+            if (!wompiData) {
+                console.error('[Wompi] 4b. No se recibió objeto wompi en la respuesta:', wompiData);
                 throw new Error("No se recibieron datos de Wompi del servidor.");
             }
+
+            const wompi = wompiData;
 
             // Iniciar polling con la referencia generada
             transactionReference.current = wompi.reference;
@@ -222,6 +201,11 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
                     ? { redirectUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout` }
                     : {}),
             };
+
+            // Restringir a solo tarjetas de crédito si la variable de entorno está activa
+            if (process.env.NEXT_PUBLIC_WOMPI_SOLO_TARJETAS_CREDITO === 'true') {
+                checkoutConfig.paymentMethods = ['CARD'];
+            }
 
             const integritySignature = wompi.integritySignature || wompi.integrity_signature;
             if (integritySignature) {
@@ -265,7 +249,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
     };
 
     return {
-        startPaymentFlow,
+        startWompiFlow,
         loadingPayment
     };
 };

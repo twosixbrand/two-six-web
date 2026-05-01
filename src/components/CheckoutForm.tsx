@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useWompiPayment } from "@/hooks/useWompiPayment";
+import { useBelvoPayment } from "@/hooks/useBelvoPayment";
+import { useCheckout } from "@/hooks/useCheckout";
 import { getDepartments, getCities, Department, City } from "@/services/locationApi";
 import { getAuthHeaders } from "@/lib/auth";
 import { Input } from "@/components/ui/input";
@@ -46,7 +48,7 @@ export default function CheckoutForm() {
     const [selectedAddressId, setSelectedAddressId] = useState<string>("");
 
     // Payment Method
-    const [paymentMethod, setPaymentMethod] = useState<"WOMPI_FULL" | "WOMPI_COD">("WOMPI_FULL");
+    const [paymentMethod, setPaymentMethod] = useState<"WOMPI_FULL" | "WOMPI_COD" | "BELVO_A2A">("WOMPI_FULL");
 
     // Delivery Method
     const [deliveryMethod, setDeliveryMethod] = useState<"SHIPPING" | "PICKUP">("SHIPPING");
@@ -276,7 +278,17 @@ export default function CheckoutForm() {
         onCancel: () => { }
     }), [router]);
 
-    const { startPaymentFlow, loadingPayment } = useWompiPayment(paymentHandlers);
+    const { createOrder, isProcessingCheckout } = useCheckout();
+    const { startWompiFlow, loadingPayment } = useWompiPayment(paymentHandlers);
+    const { startBelvoFlow, isStartingBelvo } = useBelvoPayment({
+        onSuccess: (ref) => {
+            // Cuando Belvo tenga un flujo completo:
+            // router.push(`/checkout/success?orderId=${ref}`);
+        },
+        onError: (msg) => setError(msg)
+    });
+
+    const isProcessing = isProcessingCheckout || loadingPayment || isStartingBelvo;
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -388,7 +400,19 @@ export default function CheckoutForm() {
             deliveryMethod: deliveryMethod,
         };
 
-        await startPaymentFlow(checkoutData);
+        try {
+            const data = await createOrder(checkoutData);
+
+            if (data.wompi) {
+                await startWompiFlow(data.wompi);
+            } else if (data.belvo) {
+                await startBelvoFlow(data.belvo);
+            } else {
+                setError("No se recibieron datos de la pasarela de pagos.");
+            }
+        } catch (error: any) {
+            setError(error.message || "Error al procesar la orden.");
+        }
     };
 
     if (itemCount === 0) {
@@ -764,7 +788,7 @@ export default function CheckoutForm() {
                         <Label className="block mb-4 font-serif font-bold text-primary text-xl">Método de Pago</Label>
                         <div className="space-y-4">
                             {/* Standard Online Payment */}
-                            <label className={`relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none ${paymentMethod === 'WOMPI_FULL' ? 'border-primary ring-1 ring-primary' : 'border-gray-300'}`}>
+                            <label className={`relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none transition-all duration-300 ${paymentMethod === 'WOMPI_FULL' ? 'border-primary ring-1 ring-primary bg-primary/5' : 'border-gray-300 hover:border-gray-400'}`}>
                                 <input
                                     type="radio"
                                     name="payment_method"
@@ -775,12 +799,43 @@ export default function CheckoutForm() {
                                 />
                                 <span className="flex flex-1">
                                     <span className="flex flex-col">
-                                        <span className="block text-sm font-medium text-gray-900">Pago en Línea Completo</span>
+                                        <span className={`block text-sm font-medium ${paymentMethod === 'WOMPI_FULL' ? 'text-primary' : 'text-gray-900'}`}>
+                                            Pago en Línea Completo
+                                            {process.env.NEXT_PUBLIC_WOMPI_SOLO_TARJETAS_CREDITO === 'true' && (
+                                                <span className="ml-2 text-[10px] uppercase tracking-wider bg-gray-200 text-gray-700 px-2 py-0.5 rounded">Solo Tarjetas de Crédito</span>
+                                            )}
+                                        </span>
                                         <span className="mt-1 flex items-center text-sm text-gray-500">Paga el total del pedido de forma segura a través de Wompi.</span>
                                     </span>
                                 </span>
-                                <div className={`mt-2 h-5 w-5 rounded-full border flex items-center justify-center ${paymentMethod === 'WOMPI_FULL' ? 'border-primary bg-primary text-white' : 'border-gray-300 bg-white'}`}>
+                                <div className={`mt-2 h-5 w-5 rounded-full border flex items-center justify-center shrink-0 transition-colors ${paymentMethod === 'WOMPI_FULL' ? 'border-primary bg-primary text-white' : 'border-gray-300 bg-white'}`}>
                                     {paymentMethod === 'WOMPI_FULL' && (
+                                        <svg className="h-3 w-3 fill-current" viewBox="0 0 12 12"><path d="M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z" /></svg>
+                                    )}
+                                </div>
+                            </label>
+
+                            {/* Belvo Open Banking */}
+                            <label className={`relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none transition-all duration-300 ${paymentMethod === 'BELVO_A2A' ? 'border-primary ring-1 ring-primary bg-primary/5' : 'border-gray-300 hover:border-gray-400'}`}>
+                                <input
+                                    type="radio"
+                                    name="payment_method"
+                                    value="BELVO_A2A"
+                                    className="sr-only"
+                                    checked={paymentMethod === 'BELVO_A2A'}
+                                    onChange={() => setPaymentMethod('BELVO_A2A')}
+                                />
+                                <span className="flex flex-1">
+                                    <span className="flex flex-col">
+                                        <span className={`block text-sm font-medium flex items-center gap-2 ${paymentMethod === 'BELVO_A2A' ? 'text-primary' : 'text-gray-900'}`}>
+                                            Transferencia Bancaria Directa (PSE/Open Banking)
+                                            <span className="px-2 py-0.5 bg-blue-100 text-blue-700 border border-blue-200 rounded-full text-[10px] uppercase tracking-wider font-bold">Recomendado</span>
+                                        </span>
+                                        <span className="mt-1 flex items-center text-sm text-gray-500">Paga de forma rápida y segura directamente desde la app de tu banco usando Belvo.</span>
+                                    </span>
+                                </span>
+                                <div className={`mt-2 h-5 w-5 rounded-full border flex items-center justify-center shrink-0 transition-colors ${paymentMethod === 'BELVO_A2A' ? 'border-primary bg-primary text-white' : 'border-gray-300 bg-white'}`}>
+                                    {paymentMethod === 'BELVO_A2A' && (
                                         <svg className="h-3 w-3 fill-current" viewBox="0 0 12 12"><path d="M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z" /></svg>
                                     )}
                                 </div>
@@ -906,10 +961,10 @@ export default function CheckoutForm() {
                     <Button
                         type="submit"
                         size="lg"
-                        disabled={loadingPayment}
+                        disabled={isProcessing}
                         className="w-full py-7 text-lg uppercase tracking-widest bg-primary text-secondary hover:bg-primary/90 transition-all shadow-xl"
                     >
-                        {loadingPayment ? "Procesando de forma segura..." : "Realizar Pago"}
+                        {isProcessing ? "Procesando de forma segura..." : "Realizar Pago"}
                     </Button>
                     <p className="text-xs text-center text-muted-foreground mt-4">Tus datos están protegidos y encriptados de forma segura.</p>
                 </form>
