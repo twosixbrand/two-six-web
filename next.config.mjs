@@ -39,7 +39,7 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.wompi.co https://*.sentry.io https://www.googletagmanager.com https://www.google-analytics.com https://apis.google.com https://connect.facebook.net https://www.facebook.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.wompi.co https://*.sentry.io https://www.googletagmanager.com https://www.google-analytics.com https://apis.google.com https://connect.facebook.net https://www.facebook.com https://challenges.cloudflare.com https://static.cloudflareinsights.com",
               "worker-src 'self' blob:",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
