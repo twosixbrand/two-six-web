@@ -53,6 +53,7 @@ EXPOSE 3000
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
+ENV NODE_OPTIONS="--max-old-space-size=512"
 
 # Este server.js es generado por la opción 'standalone' de Next.js
 CMD ["node", "server.js"]
