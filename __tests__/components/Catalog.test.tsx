@@ -2,16 +2,6 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Catalog from '../../src/components/Catalog';
 
-jest.mock('next/image', () => ({
-    __esModule: true,
-    default: (props: any) => <img {...props} fill={undefined} />,
-}));
-
-jest.mock('next/link', () => ({
-    __esModule: true,
-    default: ({ children, href }: any) => <a href={href}>{children}</a>,
-}));
-
 describe('Catalog component', () => {
     const mockProducts = [
         { id_design: 1, id_product: 10, name: 'Camiseta Alpha', price: 50000, image_url: '/img1.jpg' },

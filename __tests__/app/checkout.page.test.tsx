@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 
 // Mock next/navigation
 const mockPush = jest.fn();
@@ -13,7 +13,7 @@ jest.mock('next/navigation', () => ({
 const mockClearCart = jest.fn();
 jest.mock('@/context/CartContext', () => ({
     useCart: () => ({
-        cartItems: [{ id: 1, name: 'Test Product', price: 50000, quantity: 2, image: '/img.jpg' }],
+        cartItems: [{ id: 1, name: 'Test Product', price: 50000, quantity: 2, image: '/img.jpg', gender: 'man' }],
         itemCount: 2,
         cartTotal: 100000,
         clearCart: mockClearCart,
@@ -44,9 +44,14 @@ describe('CheckoutPage', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         mockSearchParams.delete('id');
+        jest.useFakeTimers();
     });
 
-    it('renders the checkout form and heading when cart has items', () => {
+    afterEach(() => {
+        jest.useRealTimers();
+    });
+
+    it('renders the checkout form and heading when cart has items', async () => {
         render(<CheckoutPage />);
         expect(screen.getByText('Finalizar Compra')).toBeInTheDocument();
         expect(screen.getByTestId('checkout-form')).toBeInTheDocument();
@@ -54,15 +59,22 @@ describe('CheckoutPage', () => {
 
     it('renders verifying state when transaction ID is present', async () => {
         mockSearchParams.set('id', 'txn_123');
-        global.fetch = jest.fn().mockResolvedValue({
-            ok: true,
-            json: async () => ({ status: 'APPROVED', orderId: 1 }),
-        });
+        global.fetch = jest.fn().mockImplementation(() => 
+            new Promise((resolve) => setTimeout(() => resolve({
+                ok: true,
+                json: async () => ({ status: 'APPROVED', orderId: 1 }),
+            }), 100))
+        );
 
         render(<CheckoutPage />);
 
         // Should show verifying state initially
         expect(screen.getByText('Verificando pago...')).toBeInTheDocument();
+        
+        // Let the verification finish to avoid act warnings
+        await act(async () => {
+            jest.advanceTimersByTime(150);
+        });
     });
 
     it('shows approved result after verification', async () => {

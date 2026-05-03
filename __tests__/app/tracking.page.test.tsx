@@ -9,10 +9,6 @@ jest.mock('next/navigation', () => ({
 }));
 
 // Mock next/image
-jest.mock('next/image', () => ({
-    __esModule: true,
-    default: (props: any) => <img {...props} />,
-}));
 
 // Mock TrackingTimeline component to keep tests focused on tracking page logic
 jest.mock('@/components/TrackingTimeline', () => ({

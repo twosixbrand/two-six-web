@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { apiClient } from '@/lib/api-client';
+import { debugError } from '@/lib/utils';
 
 // Revalidate every hour — Google fetches every 24h, this ensures fresh data
 export const revalidate = 3600;
@@ -153,7 +154,7 @@ ${itemsXml}
       },
     });
   } catch (error) {
-    console.error('Error generating Google Merchant Center feed:', error);
+    debugError('Error generating Google Merchant Center feed:', error);
 
     // Return a valid but empty feed on error
     const errorXml = `<?xml version="1.0" encoding="UTF-8"?>

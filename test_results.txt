@@ -1,0 +1,252 @@
+
+> two-six-web@0.1.0 test
+> jest __tests__/hooks/useWompiPayment.test.ts
+
+  console.error
+    [Wompi] 3b. Error del backend: { message: 'Invalid data' }
+
+      171 |             if (!response.ok) {
+      172 |                 const errorData = await response.json();
+    > 173 |                 console.error('[Wompi] 3b. Error del backend:', errorData);
+          |                         ^
+      174 |                 throw new Error(errorData.message || "Error al iniciar el pago");
+      175 |             }
+      176 |
+
+      at Object.error [as startPaymentFlow] (src/hooks/useWompiPayment.ts:173:25)
+      at __tests__/hooks/useWompiPayment.test.ts:150:13
+
+  console.error
+    [Wompi] ERROR en startPaymentFlow: Error: Invalid data
+        at Object.startPaymentFlow (/Users/jmanrique/Documents/apps/two-six-web/src/hooks/useWompiPayment.ts:174:23)
+        at /Users/jmanrique/Documents/apps/two-six-web/__tests__/hooks/useWompiPayment.test.ts:150:13
+
+      258 |
+      259 |         } catch (error: unknown) {
+    > 260 |             console.error("[Wompi] ERROR en startPaymentFlow:", error);
+          |                     ^
+      261 |             const errorMessage = error instanceof Error ? error.message : "Error al iniciar el pago.";
+      262 |             onError?.(errorMessage);
+      263 |             setLoadingPayment(false);
+
+      at Object.error [as startPaymentFlow] (src/hooks/useWompiPayment.ts:260:21)
+      at __tests__/hooks/useWompiPayment.test.ts:150:13
+
+  console.error
+    [Wompi] 4b. No se recibió objeto wompi en la respuesta: { some: 'other data' }
+
+      181 |
+      182 |             if (!wompi) {
+    > 183 |                 console.error('[Wompi] 4b. No se recibió objeto wompi en la respuesta:', data);
+          |                         ^
+      184 |                 throw new Error("No se recibieron datos de Wompi del servidor.");
+      185 |             }
+      186 |
+
+      at Object.error [as startPaymentFlow] (src/hooks/useWompiPayment.ts:183:25)
+      at __tests__/hooks/useWompiPayment.test.ts:170:13
+
+  console.error
+    [Wompi] ERROR en startPaymentFlow: Error: No se recibieron datos de Wompi del servidor.
+        at Object.startPaymentFlow (/Users/jmanrique/Documents/apps/two-six-web/src/hooks/useWompiPayment.ts:184:23)
+        at /Users/jmanrique/Documents/apps/two-six-web/__tests__/hooks/useWompiPayment.test.ts:170:13
+
+      258 |
+      259 |         } catch (error: unknown) {
+    > 260 |             console.error("[Wompi] ERROR en startPaymentFlow:", error);
+          |                     ^
+      261 |             const errorMessage = error instanceof Error ? error.message : "Error al iniciar el pago.";
+      262 |             onError?.(errorMessage);
+      263 |             setLoadingPayment(false);
+
+      at Object.error [as startPaymentFlow] (src/hooks/useWompiPayment.ts:260:21)
+      at __tests__/hooks/useWompiPayment.test.ts:170:13
+
+FAIL __tests__/hooks/useWompiPayment.test.ts (5.86 s)
+  useWompiPayment
+    ✓ should initialize correctly and load script (10 ms)
+    ✓ should handle wompi object with camelCase properties (4 ms)
+    ✓ should handle wompi object with snake_case properties (3 ms)
+    ✓ should handle API error (response not ok) (28 ms)
+    ✓ should handle missing wompi object in response (3 ms)
+    ✕ should handle timeout waiting for script (5015 ms)
+    ✕ should handle DECLINED status from widget (5 ms)
+    ✕ should handle widget-closed message and verify status (4 ms)
+    ✕ should handle ESC pressed and call onCancel (7 ms)
+
+  ● useWompiPayment › should handle timeout waiting for script
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      174 |     });
+      175 |
+    > 176 |     it('should handle timeout waiting for script', async () => {
+          |     ^
+      177 |         // Remove WidgetCheckout to trigger waitForScript
+      178 |         delete window.WidgetCheckout;
+      179 |
+
+      at it (__tests__/hooks/useWompiPayment.test.ts:176:5)
+      at Object.describe (__tests__/hooks/useWompiPayment.test.ts:4:1)
+
+  ● useWompiPayment › should handle DECLINED status from widget
+
+    TypeError: Cannot read properties of null (reading 'startPaymentFlow')
+
+      208 |
+      209 |         await act(async () => {
+    > 210 |             const flowPromise = result.current.startPaymentFlow({});
+          |                                                ^
+      211 |             jest.advanceTimersByTime(1000);
+      212 |             await flowPromise;
+      213 |         });
+
+      at startPaymentFlow (__tests__/hooks/useWompiPayment.test.ts:210:48)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:24
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at Object.<anonymous> (__tests__/hooks/useWompiPayment.test.ts:209:18)
+
+  ● useWompiPayment › should handle widget-closed message and verify status
+
+    TypeError: Cannot read properties of null (reading 'startPaymentFlow')
+
+      225 |         // Trigger startPaymentFlow to set transactionReference
+      226 |         await act(async () => {
+    > 227 |             const flowPromise = result.current.startPaymentFlow({});
+          |                                                ^
+      228 |             jest.advanceTimersByTime(1000);
+      229 |             await flowPromise;
+      230 |         });
+
+      at startPaymentFlow (__tests__/hooks/useWompiPayment.test.ts:227:48)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:24
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at Object.<anonymous> (__tests__/hooks/useWompiPayment.test.ts:226:18)
+
+  ● useWompiPayment › should handle ESC pressed and call onCancel
+
+    expect(jest.fn()).toHaveBeenCalled()
+
+    Expected number of calls: >= 1
+    Received number of calls:    0
+
+      262 |         });
+      263 |
+    > 264 |         expect(mockOnCancel).toHaveBeenCalled();
+          |                              ^
+      265 |     });
+      266 | });
+      267 |
+
+      at Object.toHaveBeenCalled (__tests__/hooks/useWompiPayment.test.ts:264:30)
+
+--------------------------------------|---------|----------|---------|---------|----------------------------------------------------------------------
+File                                  | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                                                    
+--------------------------------------|---------|----------|---------|---------|----------------------------------------------------------------------
+All files                             |    1.96 |    30.61 |    7.57 |    1.96 |                                                                      
+ src                                  |       0 |        0 |       0 |       0 |                                                                      
+  instrumentation-client.ts           |       0 |        0 |       0 |       0 | 1-31                                                                 
+  instrumentation.ts                  |       0 |        0 |       0 |       0 | 1-28                                                                 
+  middleware.ts                       |       0 |        0 |       0 |       0 | 1-34                                                                 
+ src/app                              |       0 |        0 |       0 |       0 |                                                                      
+  error.tsx                           |       0 |        0 |       0 |       0 | 1-29                                                                 
+  global-error.tsx                    |       0 |        0 |       0 |       0 | 1-27                                                                 
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-170                                                                
+  robots.ts                           |       0 |        0 |       0 |       0 | 1-27                                                                 
+  sitemap.ts                          |       0 |        0 |       0 |       0 | 1-136                                                                
+ src/app/api/catalog/google-feed      |       0 |        0 |       0 |       0 |                                                                      
+  route.ts                            |       0 |        0 |       0 |       0 | 1-176                                                                
+ src/app/blog                         |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-74                                                                 
+ src/app/blog/[slug]                  |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-135                                                                
+ src/app/cart                         |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-98                                                                 
+ src/app/catalog                      |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-76                                                                 
+ src/app/checkout                     |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-133                                                                
+ src/app/checkout/success             |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-387                                                                
+ src/app/consignment/dispatch/[token] |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-392                                                                
+ src/app/consignment/my-sales         |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-671                                                                
+ src/app/contact                      |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-138                                                                
+ src/app/drop                         |       0 |        0 |       0 |       0 |                                                                      
+  TrackingButton.tsx                  |       0 |        0 |       0 |       0 | 1-30                                                                 
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-174                                                                
+ src/app/guia-tallas-camisetas        |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-173                                                                
+ src/app/legal/terminos-y-condiciones |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-79                                                                 
+ src/app/links                        |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-248                                                                
+ src/app/login                        |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-386                                                                
+ src/app/login/otp                    |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-214                                                                
+ src/app/man                          |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-74                                                                 
+ src/app/mantenimiento                |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-63                                                                 
+ src/app/politicas/cambios-y-retracto |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-79                                                                 
+ src/app/politicas/cookies            |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-57                                                                 
+ src/app/politicas/envios-y-entregas  |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-62                                                                 
+ src/app/politicas/privacidad         |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-78                                                                 
+ src/app/pqr                          |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-299                                                                
+ src/app/product/[slug]               |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-268                                                                
+ src/app/sobre-nosotros               |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-97                                                                 
+ src/app/unisex                       |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-73                                                                 
+ src/app/unsubscribe                  |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-64                                                                 
+ src/app/woman                        |       0 |        0 |       0 |       0 |                                                                      
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-73                                                                 
+ src/components                       |       0 |        0 |       0 |       0 |                                                                      
+  Banner.tsx                          |       0 |        0 |       0 |       0 | 1-33                                                                 
+  Breadcrumbs.tsx                     |       0 |        0 |       0 |       0 | 1-29                                                                 
+  CartItem.tsx                        |       0 |        0 |       0 |       0 | 1-99                                                                 
+  Catalog.tsx                         |       0 |        0 |       0 |       0 | 1-68                                                                 
+  CheckoutForm.tsx                    |       0 |        0 |       0 |       0 | 1-995                                                                
+  CheckoutSummaryItem.tsx             |       0 |        0 |       0 |       0 | 1-53                                                                 
+  CookieConsent.tsx                   |       0 |        0 |       0 |       0 | 1-77                                                                 
+  Footer.tsx                          |       0 |        0 |       0 |       0 | 1-211                                                                
+  Header.tsx                          |       0 |        0 |       0 |       0 | 1-687                                                                
+  HeroCarousel.tsx                    |       0 |        0 |       0 |       0 | 1-95                                                                 
+  MetaPixel.tsx                       |       0 |        0 |       0 |       0 | 1-45                                                                 
+  PaginationControls.tsx              |       0 |        0 |       0 |       0 | 1-66                                                                 
+  ProductCard.tsx                     |       0 |        0 |       0 |       0 | 1-48                                                                 
+  ProductDetail.tsx                   |       0 |        0 |       0 |       0 | 1-436                                                                
+  SectionBanner.tsx                   |       0 |        0 |       0 |       0 | 1-57                                                                 
+  SubmitButton.tsx                    |       0 |        0 |       0 |       0 | 1-22                                                                 
+  TrackingTimeline.tsx                |       0 |        0 |       0 |       0 | 1-284                                                                
+  WhatsAppButton.tsx                  |       0 |        0 |       0 |       0 | 1-41                                                                 
+ src/context                          |       0 |        0 |       0 |       0 |                                                                      
+  AuthContext.tsx                     |       0 |        0 |       0 |       0 | 1-143                                                                
+  CartContext.tsx                     |       0 |        0 |       0 |       0 | 1-99                                                                 
+ src/hooks                            |   67.52 |       75 |    62.5 |   67.52 |                                                                      
+  useWompiPayment.ts                  |   67.52 |       75 |    62.5 |   67.52 | 39-46,53-55,57-58,67-103,118-140,201-203,211-212,222,243-245,251-256 
+ src/utils                            |       0 |        0 |       0 |       0 |                                                                      
+  seoDictionary.ts                    |       0 |        0 |       0 |       0 | 1-110                                                                
+--------------------------------------|---------|----------|---------|---------|----------------------------------------------------------------------
+Jest: "global" coverage threshold for statements (80%) not met: 1.96%
+Jest: "global" coverage threshold for branches (65%) not met: 30.61%
+Jest: "global" coverage threshold for lines (80%) not met: 1.96%
+Jest: "global" coverage threshold for functions (65%) not met: 7.57%
+Test Suites: 1 failed, 1 total
+Tests:       4 failed, 5 passed, 9 total
+Snapshots:   0 total
+Time:        6.406 s
+Ran all test suites matching __tests__/hooks/useWompiPayment.test.ts.

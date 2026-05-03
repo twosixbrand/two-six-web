@@ -1,0 +1,724 @@
+
+> two-six-web@0.1.0 test
+> jest --coverage
+
+PASS __tests__/dummy.test.ts
+PASS __tests__/api/google-feed.test.ts
+  ● Console
+
+    console.error
+      Error generating Google Merchant Center feed: Error: API Down
+          at Object.<anonymous> (/Users/jmanrique/Documents/apps/two-six-web/__tests__/api/google-feed.test.ts:66:52)
+          at Promise.finally.completed (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)
+          at _callCircusTest (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)
+          at processTicksAndRejections (node:internal/process/task_queues:105:5)
+          at _runTest (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:947:3)
+          at /Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:849:7
+          at _runTestsForDescribeBlock (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:862:11)
+          at _runTestsForDescribeBlock (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at run (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:761:3)
+          at runAndTransformResultsToJestFormat (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)
+          at jestAdapter (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/runner.js:101:19)
+          at runTestInternal (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-runner/build/testWorker.js:275:16)
+          at runTest (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-runner/build/testWorker.js:343:7)
+          at Object.worker (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-runner/build/testWorker.js:497:12)
+
+      154 |     });
+      155 |   } catch (error) {
+    > 156 |     console.error('Error generating Google Merchant Center feed:', error);
+          |             ^
+      157 |
+      158 |     // Return a valid but empty feed on error
+      159 |     const errorXml = `<?xml version="1.0" encoding="UTF-8"?>
+
+      at error (src/app/api/catalog/google-feed/route.ts:156:13)
+      at Object.<anonymous> (__tests__/api/google-feed.test.ts:68:26)
+
+PASS __tests__/app/unisex.page.test.tsx
+PASS __tests__/app/catalog.page.test.tsx
+PASS __tests__/app/woman.page.test.tsx
+PASS __tests__/components/Banner.test.tsx
+PASS __tests__/app/checkout/success.page.test.tsx
+  ● Console
+
+    console.error
+      Received `true` for a non-boolean attribute `fill`.
+      
+      If you want to write it to the DOM, pass a string instead: fill="true" or fill={value.toString()}.
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:3078:27)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3154:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:17117:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17741:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at performWorkUntilDeadline (node_modules/scheduler/cjs/scheduler.development.js:45:48)
+      at Timeout.task [as _onTimeout] (node_modules/jsdom/lib/jsdom/browser/Window.js:579:19)
+
+    console.error
+      Received `true` for a non-boolean attribute `unoptimized`.
+      
+      If you want to write it to the DOM, pass a string instead: unoptimized="true" or unoptimized={value.toString()}.
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:3078:27)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3154:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:17117:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17741:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at performWorkUntilDeadline (node_modules/scheduler/cjs/scheduler.development.js:45:48)
+      at Timeout.task [as _onTimeout] (node_modules/jsdom/lib/jsdom/browser/Window.js:579:19)
+
+PASS __tests__/app/checkout.page.test.tsx
+  ● Console
+
+    console.error
+      Error verifying payment: Error: Network error
+          at Object.<anonymous> (/Users/jmanrique/Documents/apps/two-six-web/__tests__/app/checkout.page.test.tsx:110:52)
+          at Promise.finally.completed (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)
+          at _callCircusTest (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)
+          at _runTest (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:947:3)
+          at /Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:849:7
+          at _runTestsForDescribeBlock (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:862:11)
+          at _runTestsForDescribeBlock (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at run (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:761:3)
+          at runAndTransformResultsToJestFormat (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)
+          at jestAdapter (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/runner.js:101:19)
+          at runTestInternal (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-runner/build/testWorker.js:275:16)
+          at runTest (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-runner/build/testWorker.js:343:7)
+          at Object.worker (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-runner/build/testWorker.js:497:12)
+
+      44 |             }
+      45 |         } catch (error) {
+    > 46 |             console.error("Error verifying payment:", error);
+         |                     ^
+      47 |             setVerificationResult({ status: "ERROR", message: "Error al verificar el pago." });
+      48 |         } finally {
+      49 |             setVerifying(false);
+
+      at error (src/app/checkout/page.tsx:46:21)
+
+PASS __tests__/components/SubmitButton.test.tsx
+PASS __tests__/components/CheckoutSummaryItem.test.tsx
+PASS __tests__/components/ProductDetail.test.tsx
+  ● Console
+
+    console.error
+      Received `true` for a non-boolean attribute `unoptimized`.
+      
+      If you want to write it to the DOM, pass a string instead: unoptimized="true" or unoptimized={value.toString()}.
+
+      109 |
+      110 |     it('renders product name and price', () => {
+    > 111 |         render(<ProductDetail initialProduct={initialProduct} variants={variants} />);
+          |               ^
+      112 |         expect(screen.getByText('Camiseta Test')).toBeInTheDocument();
+      113 |         expect(screen.getByText(/75/)).toBeInTheDocument();
+      114 |     });
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:3078:27)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3154:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:17117:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17741:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (__tests__/components/ProductDetail.test.tsx:111:15)
+
+PASS __tests__/app/man.page.test.tsx
+PASS __tests__/components/CheckoutForm.test.tsx
+  ● Console
+
+    console.error
+      An update to CheckoutForm inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      112 |             try {
+      113 |                 const data = await getDepartments();
+    > 114 |                 setDepartments(data);
+          |                 ^
+      115 |
+      116 |                 // Check for logged-in user
+      117 |                 const customerData = localStorage.getItem('customerData');
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setDepartments (src/components/CheckoutForm.tsx:114:17)
+
+    console.error
+      An update to CheckoutForm inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      167 |                 setError("Error al cargar los departamentos. Por favor recarga la página.");
+      168 |             } finally {
+    > 169 |                 setLoadingLocations(false);
+          |                 ^
+      170 |             }
+      171 |         };
+      172 |         fetchDepartments();
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setLoadingLocations (src/components/CheckoutForm.tsx:169:17)
+
+PASS __tests__/components/Footer.test.tsx
+PASS __tests__/app/login.page.test.tsx
+PASS __tests__/app/tracking.page.test.tsx
+  ● Console
+
+    console.error
+      Received `true` for a non-boolean attribute `fill`.
+      
+      If you want to write it to the DOM, pass a string instead: fill="true" or fill={value.toString()}.
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:3078:27)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3154:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:17117:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17741:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at performWorkUntilDeadline (node_modules/scheduler/cjs/scheduler.development.js:45:48)
+      at Timeout.task [as _onTimeout] (node_modules/jsdom/lib/jsdom/browser/Window.js:579:19)
+
+PASS __tests__/components/ui/Tabs.test.tsx
+PASS src/app/consignment/dispatch/[token]/page.test.tsx
+PASS __tests__/app/login-otp.page.test.tsx
+PASS __tests__/middleware.test.ts
+PASS __tests__/app/utility-pages.test.tsx
+PASS __tests__/components/Breadcrumbs.test.tsx
+PASS __tests__/app/support-pages.test.tsx
+PASS __tests__/components/CartItem.test.tsx
+  ● Console
+
+    console.error
+      Received `true` for a non-boolean attribute `fill`.
+      
+      If you want to write it to the DOM, pass a string instead: fill="true" or fill={value.toString()}.
+
+      43 |     it('renders cart item details correctly', () => {
+      44 |         const item = createMockItem();
+    > 45 |         render(
+         |               ^
+      46 |             <CartItem
+      47 |                 item={item}
+      48 |                 updateQuantity={mockUpdateQuantity}
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:3078:27)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3154:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:17117:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17741:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (__tests__/components/CartItem.test.tsx:45:15)
+
+PASS __tests__/app/page.test.tsx
+PASS __tests__/components/ProductCard.test.tsx
+PASS __tests__/app/global-error.test.tsx
+  ● Console
+
+    console.error
+      In HTML, <html> cannot be a child of <div>.
+      This will cause a hydration error.
+
+      22 |         error.digest = 'test-digest';
+      23 |
+    > 24 |         render(<GlobalError error={error} />);
+         |               ^
+      25 |
+      26 |         expect(Sentry.captureException).toHaveBeenCalledWith(error);
+      27 |     });
+
+      at validateDOMNesting (node_modules/react-dom/cjs/react-dom-client.development.js:2606:19)
+      at resolveSingletonInstance (node_modules/react-dom/cjs/react-dom-client.development.js:19684:9)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11268:29)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (__tests__/app/global-error.test.tsx:24:15)
+
+PASS __tests__/app/otp.page.test.tsx
+PASS __tests__/useWompiPayment.test.ts
+  ● Console
+
+    console.error
+      [Wompi] 3b. Error del backend: { message: 'API Error Message' }
+
+      171 |             if (!response.ok) {
+      172 |                 const errorData = await response.json();
+    > 173 |                 console.error('[Wompi] 3b. Error del backend:', errorData);
+          |                         ^
+      174 |                 throw new Error(errorData.message || "Error al iniciar el pago");
+      175 |             }
+      176 |
+
+      at Object.error [as startPaymentFlow] (src/hooks/useWompiPayment.ts:173:25)
+      at __tests__/useWompiPayment.test.ts:124:13
+
+    console.error
+      [Wompi] ERROR en startPaymentFlow: Error: API Error Message
+          at Object.startPaymentFlow (/Users/jmanrique/Documents/apps/two-six-web/src/hooks/useWompiPayment.ts:174:23)
+          at /Users/jmanrique/Documents/apps/two-six-web/__tests__/useWompiPayment.test.ts:124:13
+
+      258 |
+      259 |         } catch (error: unknown) {
+    > 260 |             console.error("[Wompi] ERROR en startPaymentFlow:", error);
+          |                     ^
+      261 |             const errorMessage = error instanceof Error ? error.message : "Error al iniciar el pago.";
+      262 |             onError?.(errorMessage);
+      263 |             setLoadingPayment(false);
+
+      at Object.error [as startPaymentFlow] (src/hooks/useWompiPayment.ts:260:21)
+      at __tests__/useWompiPayment.test.ts:124:13
+
+PASS __tests__/app/links/page.test.tsx
+PASS __tests__/components/HeroCarousel.test.tsx
+PASS __tests__/components/SectionBanner.test.tsx
+PASS __tests__/app/error.page.test.tsx
+PASS __tests__/hooks/useWompiPayment.test.ts (6.481 s)
+  ● Console
+
+    console.error
+      [Wompi] 3b. Error del backend: { message: 'Invalid data' }
+
+      171 |             if (!response.ok) {
+      172 |                 const errorData = await response.json();
+    > 173 |                 console.error('[Wompi] 3b. Error del backend:', errorData);
+          |                         ^
+      174 |                 throw new Error(errorData.message || "Error al iniciar el pago");
+      175 |             }
+      176 |
+
+      at Object.error [as startPaymentFlow] (src/hooks/useWompiPayment.ts:173:25)
+      at __tests__/hooks/useWompiPayment.test.ts:142:13
+
+    console.error
+      [Wompi] ERROR en startPaymentFlow: Error: Invalid data
+          at Object.startPaymentFlow (/Users/jmanrique/Documents/apps/two-six-web/src/hooks/useWompiPayment.ts:174:23)
+          at /Users/jmanrique/Documents/apps/two-six-web/__tests__/hooks/useWompiPayment.test.ts:142:13
+
+      258 |
+      259 |         } catch (error: unknown) {
+    > 260 |             console.error("[Wompi] ERROR en startPaymentFlow:", error);
+          |                     ^
+      261 |             const errorMessage = error instanceof Error ? error.message : "Error al iniciar el pago.";
+      262 |             onError?.(errorMessage);
+      263 |             setLoadingPayment(false);
+
+      at Object.error [as startPaymentFlow] (src/hooks/useWompiPayment.ts:260:21)
+      at __tests__/hooks/useWompiPayment.test.ts:142:13
+
+    console.error
+      [Wompi] 4b. No se recibió objeto wompi en la respuesta: { some: 'other data' }
+
+      181 |
+      182 |             if (!wompi) {
+    > 183 |                 console.error('[Wompi] 4b. No se recibió objeto wompi en la respuesta:', data);
+          |                         ^
+      184 |                 throw new Error("No se recibieron datos de Wompi del servidor.");
+      185 |             }
+      186 |
+
+      at Object.error [as startPaymentFlow] (src/hooks/useWompiPayment.ts:183:25)
+      at __tests__/hooks/useWompiPayment.test.ts:162:13
+
+    console.error
+      [Wompi] ERROR en startPaymentFlow: Error: No se recibieron datos de Wompi del servidor.
+          at Object.startPaymentFlow (/Users/jmanrique/Documents/apps/two-six-web/src/hooks/useWompiPayment.ts:184:23)
+          at /Users/jmanrique/Documents/apps/two-six-web/__tests__/hooks/useWompiPayment.test.ts:162:13
+
+      258 |
+      259 |         } catch (error: unknown) {
+    > 260 |             console.error("[Wompi] ERROR en startPaymentFlow:", error);
+          |                     ^
+      261 |             const errorMessage = error instanceof Error ? error.message : "Error al iniciar el pago.";
+      262 |             onError?.(errorMessage);
+      263 |             setLoadingPayment(false);
+
+      at Object.error [as startPaymentFlow] (src/hooks/useWompiPayment.ts:260:21)
+      at __tests__/hooks/useWompiPayment.test.ts:162:13
+
+    console.error
+      [Wompi] ERROR en startPaymentFlow: Error: La pasarela de pagos no está lista. Por favor recarga la página e intenta nuevamente.
+          at Object.startPaymentFlow (/Users/jmanrique/Documents/apps/two-six-web/src/hooks/useWompiPayment.ts:211:23)
+          at /Users/jmanrique/Documents/apps/two-six-web/__tests__/hooks/useWompiPayment.test.ts:186:13
+
+      258 |
+      259 |         } catch (error: unknown) {
+    > 260 |             console.error("[Wompi] ERROR en startPaymentFlow:", error);
+          |                     ^
+      261 |             const errorMessage = error instanceof Error ? error.message : "Error al iniciar el pago.";
+      262 |             onError?.(errorMessage);
+      263 |             setLoadingPayment(false);
+
+      at Object.error [as startPaymentFlow] (src/hooks/useWompiPayment.ts:260:21)
+      at __tests__/hooks/useWompiPayment.test.ts:186:13
+
+    console.warn
+      [Wompi] 9b. Transacción inválida o incompleta.
+
+      241 |
+      242 |                 if (!transaction || !transaction.id || !transaction.status) {
+    > 243 |                     console.warn('[Wompi] 9b. Transacción inválida o incompleta.');
+          |                             ^
+      244 |                     return;
+      245 |                 }
+      246 |
+
+      at warn (src/hooks/useWompiPayment.ts:243:29)
+      at Object.callback (__tests__/hooks/useWompiPayment.test.ts:266:17)
+      at Object.open [as startPaymentFlow] (src/hooks/useWompiPayment.ts:238:22)
+      at __tests__/hooks/useWompiPayment.test.ts:277:13
+
+PASS __tests__/app/checkout-success.page.test.tsx
+  ● Console
+
+    console.error
+      Received `true` for a non-boolean attribute `unoptimized`.
+      
+      If you want to write it to the DOM, pass a string instead: unoptimized="true" or unoptimized={value.toString()}.
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:3078:27)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3154:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:17117:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17741:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at performWorkUntilDeadline (node_modules/scheduler/cjs/scheduler.development.js:45:48)
+      at Timeout.task [as _onTimeout] (node_modules/jsdom/lib/jsdom/browser/Window.js:579:19)
+
+    console.error
+      Error: Server Error
+          at Object.<anonymous> (/Users/jmanrique/Documents/apps/two-six-web/__tests__/app/checkout-success.page.test.tsx:95:52)
+          at Promise.finally.completed (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)
+          at _callCircusTest (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)
+          at _runTest (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:947:3)
+          at /Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:849:7
+          at _runTestsForDescribeBlock (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:862:11)
+          at _runTestsForDescribeBlock (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at run (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:761:3)
+          at runAndTransformResultsToJestFormat (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)
+          at jestAdapter (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-circus/build/runner.js:101:19)
+          at runTestInternal (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-runner/build/testWorker.js:275:16)
+          at runTest (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-runner/build/testWorker.js:343:7)
+          at Object.worker (/Users/jmanrique/Documents/apps/two-six-web/node_modules/jest-runner/build/testWorker.js:497:12)
+
+      101 |                 }
+      102 |             } catch (error) {
+    > 103 |                 console.error(error);
+          |                         ^
+      104 |                 setStatus('error');
+      105 |                 setMessage('No pudimos cargar los detalles de tu orden, pero tu pago fue procesado.');
+      106 |             }
+
+      at error (src/app/checkout/success/page.tsx:103:25)
+
+PASS __tests__/components/Header.test.tsx
+PASS __tests__/components/ui/Button.test.tsx
+PASS __tests__/components/TrackingTimeline.test.tsx
+PASS __tests__/components/WhatsAppButton.test.tsx
+PASS __tests__/CartContext.test.tsx
+  ● Console
+
+    console.log
+      Producto añadido: Test Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+    console.log
+      Producto añadido: Test Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+    console.log
+      Producto añadido: Test Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+    console.log
+      Producto añadido: Test Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+    console.log
+      Producto añadido: Test Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+    console.log
+      Producto añadido: Test Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+    console.log
+      Producto añadido: Test Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+    console.log
+      Producto añadido: Test Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+PASS __tests__/components/ui/Input.test.tsx
+PASS __tests__/app/contact.page.test.tsx
+PASS __tests__/components/UIComponents.test.tsx
+PASS __tests__/app/blog.page.test.tsx
+PASS __tests__/components/Catalog.test.tsx
+PASS __tests__/context/AuthContext.test.tsx
+PASS __tests__/app/cart.page.test.tsx
+PASS __tests__/app/sobre-nosotros.page.test.tsx
+PASS __tests__/seo-and-config.test.ts
+PASS __tests__/app/product.page.test.tsx
+PASS __tests__/utils/seoDictionary.test.ts
+PASS __tests__/AuthContext.test.tsx
+PASS __tests__/context/CartContext.test.tsx
+  ● Console
+
+    console.log
+      Producto añadido: Test Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+    console.log
+      Producto añadido: Test Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+    console.log
+      Producto añadido: Test Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+    console.log
+      Producto añadido: Test Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+    console.log
+      Producto añadido: Another Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+    console.log
+      Producto añadido: Test Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+    console.log
+      Producto añadido: Test Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+    console.log
+      Producto añadido: Test Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+    console.log
+      Producto añadido: Another Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+    console.log
+      Producto añadido: Test Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+    console.log
+      Producto añadido: Another Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+    console.log
+      Producto añadido: Test Product
+
+      at Object.log [as addToCart] (src/context/CartContext.tsx:55:13)
+
+--------------------------------------|---------|----------|---------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+File                                  | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                                                                                                                                                                       
+--------------------------------------|---------|----------|---------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+All files                             |   83.35 |    70.92 |    68.1 |   83.35 |                                                                                                                                                                                         
+ src                                  |   29.03 |     12.5 |   33.33 |   29.03 |                                                                                                                                                                                         
+  instrumentation-client.ts           |       0 |        0 |       0 |       0 | 1-31                                                                                                                                                                                    
+  instrumentation.ts                  |       0 |        0 |       0 |       0 | 1-28                                                                                                                                                                                    
+  middleware.ts                       |   79.41 |    16.66 |     100 |   79.41 | 16-19,24-26                                                                                                                                                                             
+ src/app                              |    98.2 |    76.92 |     100 |    98.2 |                                                                                                                                                                                         
+  error.tsx                           |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+  global-error.tsx                    |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+  page.tsx                            |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+  robots.ts                           |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+  sitemap.ts                          |   94.85 |       50 |     100 |   94.85 | 121-122,129-133                                                                                                                                                                         
+ src/app/api/catalog/google-feed      |   98.29 |       32 |     100 |   98.29 |                                                                                                                                                                                         
+  route.ts                            |   98.29 |       32 |     100 |   98.29 | 27-28,85                                                                                                                                                                                
+ src/app/blog                         |     100 |       75 |     100 |     100 |                                                                                                                                                                                         
+  page.tsx                            |     100 |       75 |     100 |     100 | 40                                                                                                                                                                                      
+ src/app/blog/[slug]                  |   77.77 |       50 |   33.33 |   77.77 |                                                                                                                                                                                         
+  page.tsx                            |   77.77 |       50 |   33.33 |   77.77 | 8-12,15-37,46-47                                                                                                                                                                        
+ src/app/cart                         |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+  page.tsx                            |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+ src/app/catalog                      |   97.36 |       50 |     100 |   97.36 |                                                                                                                                                                                         
+  page.tsx                            |   97.36 |       50 |     100 |   97.36 | 36-37                                                                                                                                                                                   
+ src/app/checkout                     |   87.96 |     90.9 |   66.66 |   87.96 |                                                                                                                                                                                         
+  page.tsx                            |   87.96 |     90.9 |   66.66 |   87.96 | 38,43-44,88-90,101-110                                                                                                                                                                  
+ src/app/checkout/success             |   94.57 |    79.48 |     100 |   94.57 |                                                                                                                                                                                         
+  page.tsx                            |   94.57 |    79.48 |     100 |   94.57 | 70,83-101,202                                                                                                                                                                           
+ src/app/consignment/dispatch/[token] |   95.91 |    85.48 |   71.42 |   95.91 |                                                                                                                                                                                         
+  page.tsx                            |   95.91 |    85.48 |   71.42 |   95.91 | 64-65,111-113,117,208-209,255-258,271-274                                                                                                                                               
+ src/app/consignment/my-sales         |       0 |        0 |       0 |       0 |                                                                                                                                                                                         
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-671                                                                                                                                                                                   
+ src/app/contact                      |     100 |       75 |     100 |     100 |                                                                                                                                                                                         
+  page.tsx                            |     100 |       75 |     100 |     100 | 129                                                                                                                                                                                     
+ src/app/drop                         |       0 |        0 |       0 |       0 |                                                                                                                                                                                         
+  TrackingButton.tsx                  |       0 |        0 |       0 |       0 | 1-30                                                                                                                                                                                    
+  page.tsx                            |       0 |        0 |       0 |       0 | 1-174                                                                                                                                                                                   
+ src/app/guia-tallas-camisetas        |   96.53 |    85.71 |     100 |   96.53 |                                                                                                                                                                                         
+  page.tsx                            |   96.53 |    85.71 |     100 |   96.53 | 137-142                                                                                                                                                                                 
+ src/app/legal/terminos-y-condiciones |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+  page.tsx                            |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+ src/app/links                        |     100 |      100 |      50 |     100 |                                                                                                                                                                                         
+  page.tsx                            |     100 |      100 |      50 |     100 |                                                                                                                                                                                         
+ src/app/login                        |   92.74 |    79.54 |   66.66 |   92.74 |                                                                                                                                                                                         
+  page.tsx                            |   92.74 |    79.54 |   66.66 |   92.74 | 48,62-78,81-85,100-103,150                                                                                                                                                              
+ src/app/login/otp                    |   84.57 |    84.84 |      60 |   84.57 |                                                                                                                                                                                         
+  page.tsx                            |   84.57 |    84.84 |      60 |   84.57 | 44-56,59-70,85-88,110-111,119-120                                                                                                                                                       
+ src/app/man                          |   94.59 |    42.85 |     100 |   94.59 |                                                                                                                                                                                         
+  page.tsx                            |   94.59 |    42.85 |     100 |   94.59 | 37-40                                                                                                                                                                                   
+ src/app/mantenimiento                |   98.41 |      100 |     100 |   98.41 |                                                                                                                                                                                         
+  page.tsx                            |   98.41 |      100 |     100 |   98.41 | 12                                                                                                                                                                                      
+ src/app/politicas/cambios-y-retracto |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+  page.tsx                            |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+ src/app/politicas/cookies            |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+  page.tsx                            |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+ src/app/politicas/envios-y-entregas  |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+  page.tsx                            |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+ src/app/politicas/privacidad         |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+  page.tsx                            |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+ src/app/pqr                          |   85.28 |    68.42 |      80 |   85.28 |                                                                                                                                                                                         
+  page.tsx                            |   85.28 |    68.42 |      80 |   85.28 | 33-58,60-61,67-70,85-87,102-103,111-112,117-121                                                                                                                                         
+ src/app/product/[slug]               |   91.04 |    73.49 |   66.66 |   91.04 |                                                                                                                                                                                         
+  page.tsx                            |   91.04 |    73.49 |   66.66 |   91.04 | 12-20,35-36,74-79,104-109,198                                                                                                                                                           
+ src/app/sobre-nosotros               |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+  page.tsx                            |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+ src/app/unisex                       |   95.89 |    42.85 |     100 |   95.89 |                                                                                                                                                                                         
+  page.tsx                            |   95.89 |    42.85 |     100 |   95.89 | 37-39                                                                                                                                                                                   
+ src/app/unsubscribe                  |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+  page.tsx                            |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+ src/app/woman                        |   95.89 |    42.85 |     100 |   95.89 |                                                                                                                                                                                         
+  page.tsx                            |   95.89 |    42.85 |     100 |   95.89 | 37-39                                                                                                                                                                                   
+ src/components                       |   91.09 |    65.62 |   54.87 |   91.09 |                                                                                                                                                                                         
+  Banner.tsx                          |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+  Breadcrumbs.tsx                     |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+  CartItem.tsx                        |     100 |    84.61 |     100 |     100 | 54-55                                                                                                                                                                                   
+  Catalog.tsx                         |     100 |       80 |     100 |     100 | 61                                                                                                                                                                                      
+  CheckoutForm.tsx                    |   83.11 |    47.18 |   43.47 |   83.11 | 65-66,72-85,133-134,149-150,156-158,160-163,167,193-194,201-215,234-264,268-274,299-300,302-303,315-316,320-355,362-364,451-453,527-529,828-835,845-846,848-854,943-950,957-958,960-966 
+  CheckoutSummaryItem.tsx             |     100 |    85.71 |     100 |     100 | 19                                                                                                                                                                                      
+  CookieConsent.tsx                   |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+  Footer.tsx                          |    98.1 |    84.61 |     100 |    98.1 | 48-51                                                                                                                                                                                   
+  Header.tsx                          |   96.06 |    58.82 |   11.53 |   96.06 | 25-45,61-66                                                                                                                                                                             
+  HeroCarousel.tsx                    |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+  MetaPixel.tsx                       |       0 |        0 |       0 |       0 | 1-45                                                                                                                                                                                    
+  PaginationControls.tsx              |     100 |     92.3 |     100 |     100 | 22                                                                                                                                                                                      
+  ProductCard.tsx                     |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+  ProductDetail.tsx                   |   89.67 |    70.96 |     100 |   89.67 | 69-83,87-93,114-115,139-140,146-148,165-180                                                                                                                                             
+  SectionBanner.tsx                   |     100 |       50 |     100 |     100 | 40                                                                                                                                                                                      
+  SubmitButton.tsx                    |     100 |      100 |     100 |     100 |                                                                                                                                                                                         
+  TrackingTimeline.tsx                |   97.53 |    74.71 |     100 |   97.53 | 63,65-70                                                                                                                                                                                
+  WhatsAppButton.tsx                  |   95.12 |       50 |     100 |   95.12 | 15-16                                                                                                                                                                                   
+ src/context                          |   94.62 |       88 |     100 |   94.62 |                                                                                                                                                                                         
+  AuthContext.tsx                     |    91.6 |    76.19 |     100 |    91.6 | 43-44,74-83                                                                                                                                                                             
+  CartContext.tsx                     |   98.98 |    96.55 |     100 |   98.98 | 47                                                                                                                                                                                      
+ src/hooks                            |   83.39 |    78.94 |      75 |   83.39 |                                                                                                                                                                                         
+  useWompiPayment.ts                  |   83.39 |    78.94 |      75 |   83.39 | 39-46,53-55,57-58,87-94,96-97,119-137,139-140,222                                                                                                                                       
+ src/utils                            |   87.27 |    63.15 |     100 |   87.27 |                                                                                                                                                                                         
+  seoDictionary.ts                    |   87.27 |    63.15 |     100 |   87.27 | 46-49,66-67,100-107                                                                                                                                                                     
+--------------------------------------|---------|----------|---------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Test Suites: 53 passed, 53 total
+Tests:       279 passed, 279 total
+Snapshots:   0 total
+Time:        12.729 s
+Ran all test suites.

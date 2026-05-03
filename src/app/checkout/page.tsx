@@ -8,6 +8,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 
 import { Suspense } from "react";
+import { debugError } from "@/lib/utils";
 
 function CheckoutContent() {
     const { cartItems, itemCount, cartTotal, clearCart } = useCart();
@@ -43,7 +44,7 @@ function CheckoutContent() {
                 setVerificationResult({ status: "PENDING", message: "El pago está en proceso de validación." });
             }
         } catch (error) {
-            console.error("Error verifying payment:", error);
+            debugError("Error verifying payment:", error);
             setVerificationResult({ status: "ERROR", message: "Error al verificar el pago." });
         } finally {
             setVerifying(false);

@@ -1,7 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 
 const isDev = process.env.NODE_ENV === 'development';
+const isTest = process.env.NODE_ENV === 'test';
 const debugLog = (...args: unknown[]) => { if (isDev) console.log(...args); };
+const debugError = (...args: unknown[]) => { if (isDev || (isTest && process.env.VERBOSE_TEST_LOGS)) console.error(...args); };
+const debugWarn = (...args: unknown[]) => { if (isDev || (isTest && process.env.VERBOSE_TEST_LOGS)) console.warn(...args); };
 
 export interface WompiTransaction {
     id: string;
@@ -54,7 +57,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
             debugLog('[Wompi] Script cargado exitosamente.');
         };
         script.onerror = (err) => {
-            console.error('[Wompi] Error cargando script:', err);
+            debugError('[Wompi] Error cargando script:', err);
         };
         document.body.appendChild(script);
     }, []);
@@ -107,48 +110,64 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
     }, [onCancel, onSuccess, onError]);
 
     // 4. Polling para verificar estado (Fallback para PSE)
-    useEffect(() => {
-        let intervalId: NodeJS.Timeout;
-        let referenceToCheck: string | null = null;
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const pollingReferenceRef = useRef<string | null>(null);
+    const loadingPaymentRef = useRef(loadingPayment);
 
+    // Sincronizar el Ref con el estado
+    useEffect(() => {
+        loadingPaymentRef.current = loadingPayment;
+    }, [loadingPayment]);
+
+    useEffect(() => {
         // Función auxiliar para iniciar el polling
         const startPolling = (reference: string) => {
-            referenceToCheck = reference;
-            intervalId = setInterval(async () => {
-                if (!loadingPayment || !referenceToCheck) return;
+            pollingReferenceRef.current = reference;
+            
+            if (intervalRef.current) clearInterval(intervalRef.current);
+            
+            intervalRef.current = setInterval(async () => {
+                if (!loadingPaymentRef.current || !pollingReferenceRef.current) return;
 
                 try {
                     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/order/check-status`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ reference: referenceToCheck }),
+                        body: JSON.stringify({ reference: pollingReferenceRef.current }),
                     });
 
                     const data = await response.json();
 
                     if (data.status === 'APPROVED') {
-                        clearInterval(intervalId);
-                        // No llamamos a onSuccess aquí para no cerrar el modal automáticamente.
-                        // El evento 'widget-closed' manejará la transición.
+                        if (intervalRef.current) {
+                            clearInterval(intervalRef.current);
+                            intervalRef.current = null;
+                        }
                     } else if (data.status === 'DECLINED' || data.status === 'ERROR') {
-                        clearInterval(intervalId);
+                        if (intervalRef.current) {
+                            clearInterval(intervalRef.current);
+                            intervalRef.current = null;
+                        }
                         onError?.(`El pago finalizó con estado: ${data.status}`);
                         setLoadingPayment(false);
                     }
                 } catch (error) {
-                    console.error("Error polling status:", error);
+                    debugError("Error polling status:", error);
                 }
-            }, 5000); // Consultar cada 5 segundos
+            }, 5000);
         };
 
-        // Exponer la función de inicio de polling en el objeto window para llamarla desde startPaymentFlow
         window.__startWompiPolling = startPolling;
 
         return () => {
-            if (intervalId) clearInterval(intervalId);
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = null;
+            }
             delete window.__startWompiPolling;
         };
-    }, [loadingPayment, onError]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [onError]); // Solo depende de onError para evitar reinicios innecesarios
 
     // 3. Iniciar flujo de pago
     const startPaymentFlow = async (checkoutData: unknown) => {
@@ -170,7 +189,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
 
             if (!response.ok) {
                 const errorData = await response.json();
-                console.error('[Wompi] 3b. Error del backend:', errorData);
+                debugError('[Wompi] 3b. Error del backend:', errorData);
                 throw new Error(errorData.message || "Error al iniciar el pago");
             }
 
@@ -180,7 +199,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
             const { wompi } = data;
 
             if (!wompi) {
-                console.error('[Wompi] 4b. No se recibió objeto wompi en la respuesta:', data);
+                debugError('[Wompi] 4b. No se recibió objeto wompi en la respuesta:', data);
                 throw new Error("No se recibieron datos de Wompi del servidor.");
             }
 
@@ -240,7 +259,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
                 const transaction = result.transaction;
 
                 if (!transaction || !transaction.id || !transaction.status) {
-                    console.warn('[Wompi] 9b. Transacción inválida o incompleta.');
+                    debugWarn('[Wompi] 9b. Transacción inválida o incompleta.');
                     return;
                 }
 
@@ -257,7 +276,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
             });
 
         } catch (error: unknown) {
-            console.error("[Wompi] ERROR en startPaymentFlow:", error);
+            debugError("[Wompi] ERROR en startPaymentFlow:", error);
             const errorMessage = error instanceof Error ? error.message : "Error al iniciar el pago.";
             onError?.(errorMessage);
             setLoadingPayment(false);

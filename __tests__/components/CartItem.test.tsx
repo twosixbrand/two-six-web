@@ -4,13 +4,6 @@ import userEvent from '@testing-library/user-event';
 import CartItem from '../../src/components/CartItem';
 
 // Mock next/image
-jest.mock('next/image', () => ({
-    __esModule: true,
-    default: (props: any) => {
-        // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
-        return <img {...props} priority={undefined} fetchPriority={undefined} />;
-    },
-}));
 
 const mockFormatPrice = (price: number) => `$${price.toLocaleString()}`;
 

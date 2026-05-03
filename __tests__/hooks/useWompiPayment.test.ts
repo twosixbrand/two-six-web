@@ -50,6 +50,9 @@ describe('useWompiPayment', () => {
         jest.clearAllMocks();
         global.fetch = originalFetch;
         delete window.WidgetCheckout;
+        // Clean up scripts added during tests
+        const script = document.getElementById("wompi-script");
+        if (script) script.remove();
     });
 
     it('should initialize correctly and load script', () => {
@@ -71,11 +74,10 @@ describe('useWompiPayment', () => {
 
         await act(async () => {
             await result.current.startPaymentFlow({
-                orderData: { customer: { email: 'test@example.com', name: 'Test' } }
-            } as any);
+                customer: { email: 'test@example.com', name: 'Test' }
+            });
         });
 
-        // The widget should have been called
         expect(window.WidgetCheckout).toHaveBeenCalledWith(expect.objectContaining({
             currency: 'COP',
             amountInCents: 50000,
@@ -84,7 +86,6 @@ describe('useWompiPayment', () => {
             signature: { integrity: 'integrity_123' }
         }));
         
-        // onSuccess should be called by the mock callback
         expect(mockOnSuccess).toHaveBeenCalledWith(expect.objectContaining({
             status: 'APPROVED'
         }));
@@ -113,9 +114,7 @@ describe('useWompiPayment', () => {
         );
 
         await act(async () => {
-            await result.current.startPaymentFlow({
-                orderData: { customer: { email: 'test2@example.com', name: 'Test 2' } }
-            } as any);
+            await result.current.startPaymentFlow({});
         });
 
         expect(window.WidgetCheckout).toHaveBeenCalledWith(expect.objectContaining({
@@ -127,35 +126,179 @@ describe('useWompiPayment', () => {
         }));
     });
 
-    it('should handle wompi object without integrity signature safely', async () => {
+    it('should handle API error (response not ok)', async () => {
         const { result } = renderHook(() => useWompiPayment({
             onSuccess: mockOnSuccess,
             onError: mockOnError,
             onCancel: mockOnCancel
         }));
 
-        (global.fetch as jest.Mock).mockImplementationOnce(() =>
-            Promise.resolve({
-                ok: true,
-                json: () => Promise.resolve({ 
-                    wompi: {
-                        publicKey: 'pub_test_no_sig',
-                        amountInCents: 10000,
-                        currency: 'COP',
-                        reference: 'ref_no_sig'
-                    }
-                }),
-            })
-        );
-
-        await act(async () => {
-            await result.current.startPaymentFlow({
-                orderData: { customer: { email: 'test3@example.com' } }
-            } as any);
+        (global.fetch as jest.Mock).mockResolvedValueOnce({
+            ok: false,
+            json: async () => ({ message: 'Invalid data' }),
         });
 
-        const callArgs = (window.WidgetCheckout as jest.Mock).mock.calls[0][0];
-        expect(callArgs.publicKey).toBe('pub_test_no_sig');
-        expect(callArgs.signature).toBeUndefined();
+        await act(async () => {
+            await result.current.startPaymentFlow({});
+        });
+
+        expect(mockOnError).toHaveBeenCalledWith('Invalid data');
+        expect(result.current.loadingPayment).toBe(false);
+    });
+
+    it('should handle missing wompi object in response', async () => {
+        const { result } = renderHook(() => useWompiPayment({
+            onSuccess: mockOnSuccess,
+            onError: mockOnError,
+            onCancel: mockOnCancel
+        }));
+
+        (global.fetch as jest.Mock).mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({ some: 'other data' }),
+        });
+
+        await act(async () => {
+            await result.current.startPaymentFlow({});
+        });
+
+        expect(mockOnError).toHaveBeenCalledWith('No se recibieron datos de Wompi del servidor.');
+    });
+
+    it('should handle timeout waiting for script', async () => {
+        // Remove WidgetCheckout to trigger waitForScript
+        const originalWidget = window.WidgetCheckout;
+        delete (window as any).WidgetCheckout;
+
+        const { result } = renderHook(() => useWompiPayment({
+            onSuccess: mockOnSuccess,
+            onError: mockOnError,
+            onCancel: mockOnCancel
+        }));
+
+        // We use real timers but a shorter timeout in the hook?
+        // No, the hook has 5000ms hardcoded.
+        // I'll mock setTimeout for this test only.
+        const originalSetTimeout = global.setTimeout;
+        (global as any).setTimeout = (fn: any, ms: any) => originalSetTimeout(fn, 1);
+
+        await act(async () => {
+            await result.current.startPaymentFlow({});
+        });
+
+        expect(mockOnError).toHaveBeenCalledWith(expect.stringContaining('La pasarela de pagos no está lista'));
+        
+        global.setTimeout = originalSetTimeout;
+        window.WidgetCheckout = originalWidget;
+    }, 10000); // Higher timeout for this test
+
+    it('should handle DECLINED status from widget', async () => {
+        window.WidgetCheckout = jest.fn().mockImplementation(() => ({
+            open: jest.fn((callback) => {
+                callback({ transaction: { id: 'txn-456', status: 'DECLINED' } });
+            })
+        }));
+
+        const { result } = renderHook(() => useWompiPayment({
+            onSuccess: mockOnSuccess,
+            onError: mockOnError,
+            onCancel: mockOnCancel
+        }));
+
+        await act(async () => {
+            await result.current.startPaymentFlow({});
+        });
+
+        expect(mockOnError).toHaveBeenCalledWith('La transacción fue rechazada por el banco.');
+    });
+
+    it('should handle widget-closed message and verify status', async () => {
+        const { result } = renderHook(() => useWompiPayment({
+            onSuccess: mockOnSuccess,
+            onError: mockOnError,
+            onCancel: mockOnCancel
+        }));
+
+        // Trigger startPaymentFlow to set transactionReference
+        await act(async () => {
+            await result.current.startPaymentFlow({});
+        });
+
+        // Mock check-status call
+        (global.fetch as jest.Mock).mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({ status: 'APPROVED', transactionId: 'txn-789' }),
+        });
+
+        // Simulate message event from Wompi widget closing
+        await act(async () => {
+            window.dispatchEvent(new MessageEvent('message', {
+                data: { from: 'widget-checkout', type: 'widget-closed' }
+            }));
+        });
+
+        expect(mockOnSuccess).toHaveBeenCalledWith(expect.objectContaining({
+            id: 'txn-789',
+            status: 'APPROVED'
+        }));
+    });
+
+    it('should handle ESC pressed and call onCancel', async () => {
+        const { result } = renderHook(() => useWompiPayment({
+            onSuccess: mockOnSuccess,
+            onError: mockOnError,
+            onCancel: mockOnCancel
+        }));
+
+        await act(async () => {
+            window.dispatchEvent(new MessageEvent('message', {
+                data: { event: 'escpressed' }
+            }));
+        });
+
+        expect(mockOnCancel).toHaveBeenCalled();
+    });
+
+    it('should handle invalid transaction result from widget', async () => {
+        window.WidgetCheckout = jest.fn().mockImplementation(() => ({
+            open: jest.fn((callback) => {
+                // Missing status and id
+                callback({ transaction: { reference: 'ref_123' } } as any);
+            })
+        }));
+
+        const { result } = renderHook(() => useWompiPayment({
+            onSuccess: mockOnSuccess,
+            onError: mockOnError,
+            onCancel: mockOnCancel
+        }));
+
+        await act(async () => {
+            await result.current.startPaymentFlow({});
+        });
+
+        expect(mockOnSuccess).not.toHaveBeenCalled();
+        expect(mockOnError).not.toHaveBeenCalled();
+    });
+
+    it('should handle ERROR status from widget', async () => {
+        window.WidgetCheckout = jest.fn().mockImplementation(() => ({
+            open: jest.fn((callback) => {
+                callback({ transaction: { id: 'txn-err', status: 'ERROR' } });
+            })
+        }));
+
+        const { result } = renderHook(() => useWompiPayment({
+            onSuccess: mockOnSuccess,
+            onError: mockOnError,
+            onCancel: mockOnCancel
+        }));
+
+        await act(async () => {
+            await result.current.startPaymentFlow({});
+        });
+
+        expect(mockOnError).toHaveBeenCalledWith('Ocurrió un error en la transacción.');
+        expect(result.current.loadingPayment).toBe(false);
     });
 });

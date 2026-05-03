@@ -7,18 +7,6 @@ jest.mock('next/navigation', () => ({
     useSearchParams: () => mockSearchParams,
 }));
 
-// Mock next/link
-jest.mock('next/link', () => ({
-    __esModule: true,
-    default: ({ children, href }: any) => <a href={href}>{children}</a>,
-}));
-
-// Mock next/image
-jest.mock('next/image', () => ({
-    __esModule: true,
-    default: (props: any) => <img {...props} fill={undefined} />,
-}));
-
 // Mock CartContext
 const mockClearCart = jest.fn();
 jest.mock('@/context/CartContext', () => ({

@@ -3,24 +3,11 @@ import { render, screen } from '@testing-library/react';
 import HomePage from '../../src/app/page';
 
 // 1. Mock Next Image
-jest.mock('next/image', () => ({
-    __esModule: true,
-    default: (props: any) => {
-        // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
-        return <img {...props} priority={undefined} fetchPriority={undefined} fill={undefined} />;
-    },
-}));
 
-// 2. Mock next/link
-jest.mock('next/link', () => {
-    return ({ children, href }: { children: React.ReactNode; href: string }) => (
-        <a href={href}>{children}</a>
-    );
-});
-
-// 3. Mock HeroCarousel so we don't need to mount Embla Carousel
+// 3. Mock HeroCarousel
 jest.mock('../../src/components/HeroCarousel', () => ({
-    HeroCarousel: () => <div data-testid="mock-hero-carousel">Hero Carousel Mock</div>
+    __esModule: true,
+    HeroCarousel: () => <div data-testid="mock-hero-carousel">HeroCarousel Mock</div>
 }));
 
 // 4. Mock Catalog so we don't need to mount the whole product list
