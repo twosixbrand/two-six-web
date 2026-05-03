@@ -3,10 +3,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import ProductDetail from '../../src/components/ProductDetail';
 
 // Mock next/image
-jest.mock('next/image', () => ({
-    __esModule: true,
-    default: (props: any) => <img {...props} fill={undefined} priority={undefined} />,
-}));
 
 // Mock CartContext
 const mockAddToCart = jest.fn();

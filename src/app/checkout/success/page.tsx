@@ -6,6 +6,7 @@ import Image from "next/image";
 import Script from "next/script";
 import { useEffect, useState, Suspense } from "react";
 import { useCart } from "@/context/CartContext";
+import { debugError } from "@/lib/utils";
 
 interface OrderItem {
     id: number;
@@ -100,7 +101,7 @@ function SuccessContent() {
                     }
                 }
             } catch (error) {
-                console.error(error);
+                debugError(error);
                 setStatus('error');
                 setMessage('No pudimos cargar los detalles de tu orden, pero tu pago fue procesado.');
             }

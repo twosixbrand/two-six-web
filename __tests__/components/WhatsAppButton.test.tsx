@@ -2,16 +2,6 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import WhatsAppButton from '../../src/components/WhatsAppButton';
 
-jest.mock('next/link', () => ({
-    __esModule: true,
-    default: ({ children, href, ...props }: any) => <a href={href} {...props}>{children}</a>,
-}));
-
-jest.mock('next/image', () => ({
-    __esModule: true,
-    default: (props: any) => <img {...props} />,
-}));
-
 describe('WhatsAppButton component', () => {
     it('renders the WhatsApp link', () => {
         render(<WhatsAppButton />);

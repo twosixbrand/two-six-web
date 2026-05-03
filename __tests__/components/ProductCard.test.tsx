@@ -2,16 +2,6 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ProductCard from '../../src/components/ProductCard';
 
-jest.mock('next/image', () => ({
-    __esModule: true,
-    default: ({ onError, ...props }: any) => <img {...props} data-testid="product-img" onClick={onError} />,
-}));
-
-jest.mock('next/link', () => ({
-    __esModule: true,
-    default: ({ children, href }: any) => <a href={href}>{children}</a>,
-}));
-
 describe('ProductCard component', () => {
     const mockProduct = {
         id_design: 1,
@@ -49,7 +39,7 @@ describe('ProductCard component', () => {
         render(<ProductCard product={mockProduct as any} />);
         const img = screen.getByTestId('product-img');
         // Trigger the onError handler
-        fireEvent.click(img);
+        fireEvent.error(img);
         expect(img).toHaveAttribute('src', '/placeholder.png');
     });
 

@@ -3,13 +3,6 @@ import { render, screen } from '@testing-library/react';
 import { HeroCarousel } from '../../src/components/HeroCarousel';
 
 // Mock next/image
-jest.mock('next/image', () => ({
-    __esModule: true,
-    default: (props: any) => {
-        // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
-        return <img {...props} priority={undefined} fetchPriority={undefined} fill={undefined} />;
-    },
-}));
 
 // Mock matchMedia for Embla Carousel
 Object.defineProperty(window, 'matchMedia', {

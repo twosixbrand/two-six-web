@@ -40,8 +40,10 @@ describe('LoginPage', () => {
         global.fetch = originalFetch;
     });
 
-    it('renders the email input (not document_number)', () => {
+    it('renders the email input (not document_number)', async () => {
         render(<LoginPage />);
+        // Wait for initial useEffect to finish (loading locations)
+        await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
 
         const emailInput = screen.getByPlaceholderText('Tu Correo Electrónico');
         expect(emailInput).toBeInTheDocument();
@@ -52,8 +54,9 @@ describe('LoginPage', () => {
         expect(screen.queryByLabelText(/Número de Documento/i)).not.toBeInTheDocument();
     });
 
-    it('renders Bienvenido heading and submit button', () => {
+    it('renders Bienvenido heading and submit button', async () => {
         render(<LoginPage />);
+        await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
 
         expect(screen.getByText('Bienvenido')).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /Enviar Código de Acceso/i })).toBeInTheDocument();
@@ -67,6 +70,7 @@ describe('LoginPage', () => {
         });
 
         render(<LoginPage />);
+        await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
 
         const emailInput = screen.getByPlaceholderText('Tu Correo Electrónico');
         await user.type(emailInput, 'test@example.com');
@@ -96,6 +100,7 @@ describe('LoginPage', () => {
         });
 
         render(<LoginPage />);
+        await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
 
         const emailInput = screen.getByPlaceholderText('Tu Correo Electrónico');
         await user.type(emailInput, 'new@example.com');
@@ -118,6 +123,7 @@ describe('LoginPage', () => {
         });
 
         render(<LoginPage />);
+        await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
 
         await user.type(screen.getByPlaceholderText('Tu Correo Electrónico'), 'new@example.com');
         fireEvent.click(screen.getByRole('button', { name: /Enviar Código de Acceso/i }));
@@ -156,6 +162,7 @@ describe('LoginPage', () => {
         });
 
         render(<LoginPage />);
+        await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
 
         await user.type(screen.getByPlaceholderText('Tu Correo Electrónico'), 'new@example.com');
         fireEvent.click(screen.getByRole('button', { name: /Enviar Código de Acceso/i }));
@@ -195,6 +202,7 @@ describe('LoginPage', () => {
             });
 
         render(<LoginPage />);
+        await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
 
         await user.type(screen.getByPlaceholderText('Tu Correo Electrónico'), 'new@example.com');
         fireEvent.click(screen.getByRole('button', { name: /Enviar Código de Acceso/i }));
@@ -243,6 +251,7 @@ describe('LoginPage', () => {
             });
 
         render(<LoginPage />);
+        await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
 
         await user.type(screen.getByPlaceholderText('Tu Correo Electrónico'), 'dup@example.com');
         fireEvent.click(screen.getByRole('button', { name: /Enviar Código de Acceso/i }));
@@ -270,6 +279,7 @@ describe('LoginPage', () => {
         (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
 
         render(<LoginPage />);
+        await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
 
         await user.type(screen.getByPlaceholderText('Tu Correo Electrónico'), 'error@test.com');
         fireEvent.click(screen.getByRole('button', { name: /Enviar Código de Acceso/i }));

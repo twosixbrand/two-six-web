@@ -52,7 +52,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       }
     });
     // Aquí podrías añadir una notificación de "Producto añadido"
-    console.log('Producto añadido:', item.name);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Producto añadido:', item.name);
+    }
   };
 
   const removeFromCart = (itemId: number) => {

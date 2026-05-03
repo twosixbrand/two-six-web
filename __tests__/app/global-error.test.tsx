@@ -17,6 +17,20 @@ jest.mock("next/error", () => {
 });
 
 describe('GlobalError', () => {
+    let originalError: typeof console.error;
+
+    beforeAll(() => {
+        originalError = console.error;
+        console.error = jest.fn((msg) => {
+            if (typeof msg === 'string' && msg.includes('cannot be a child of')) return;
+            originalError(msg);
+        });
+    });
+
+    afterAll(() => {
+        console.error = originalError;
+    });
+
     it('captures exception and renders error page', () => {
         const error = new Error('Test Global Error') as Error & { digest?: string };
         error.digest = 'test-digest';

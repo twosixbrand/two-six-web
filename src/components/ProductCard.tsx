@@ -29,6 +29,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           alt={product.name}
           width={500}
           height={650}
+          data-testid="product-img"
           className="w-full h-full object-contain object-center bg-gray-100/30 aspect-[3/4] transition-transform duration-700 ease-out group-hover:scale-105"
           onError={() => setImgSrc('/placeholder.png')}
         />

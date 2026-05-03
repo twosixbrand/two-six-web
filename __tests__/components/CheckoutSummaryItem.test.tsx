@@ -3,13 +3,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import CheckoutSummaryItem from '../../src/components/CheckoutSummaryItem';
 
 // Mock next/image
-jest.mock('next/image', () => ({
-    __esModule: true,
-    default: (props: any) => {
-        // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
-        return <img {...props} priority={undefined} fetchPriority={undefined} fill={undefined} />;
-    },
-}));
 
 const mockFormatPrice = (price: number) => `$${price.toLocaleString()}`;
 

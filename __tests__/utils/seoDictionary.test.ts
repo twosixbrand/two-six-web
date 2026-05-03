@@ -30,9 +30,52 @@ describe('seoDictionary', () => {
         expect(result?.title).toContain('Mujer Negra');
     });
 
-    it('returns proper overrides for Q4A16 (Gorila Espalda)', () => {
-        const result = getSeoOverrides('q4a16', 'Blanco', 'Masculino');
-        expect(result?.title).toContain('Camiseta Blanca');
+    it('returns proper overrides for Q4A15 (Estampado Frente)', () => {
+        const result = getSeoOverrides('q4a15', 'Rojo');
+        expect(result?.title).toContain('Original');
         expect(result?.audience).toBe('Masculino');
+    });
+
+    it('handles empty or null parameters', () => {
+        // @ts-ignore
+        expect(getSeoOverrides(null, null)).toBeNull();
+        expect(getSeoOverrides('', '')).toBeNull();
+    });
+
+    it('handles default cases for Q4A12 colors', () => {
+        const result = getSeoOverrides('q4a12', 'Café');
+        expect(result?.alt).toContain('estilo urbano');
+    });
+
+    it('handles grey for Q4A12', () => {
+        const result = getSeoOverrides('q4a12', 'Gris');
+        expect(result?.alt).toContain('marca Two Six');
+    });
+
+    it('handles default cases for Q4A13 colors', () => {
+        const result = getSeoOverrides('q4a13', 'Azul');
+        expect(result?.alt).toContain('marca Two Six');
+        expect(result?.title).toContain('Azul');
+    });
+
+    it('handles black for Q4A12', () => {
+        const result = getSeoOverrides('q4a12', 'Negro');
+        expect(result?.alt).toContain('Crop Top negro');
+    });
+
+    it('handles white for Q4A16', () => {
+        const result = getSeoOverrides('q4a16', 'Blanco');
+        expect(result?.title).toContain('Camiseta Blanca');
+    });
+
+    it('handles white/crudo for Q4A13', () => {
+        const result = getSeoOverrides('q4a13', 'Blanco');
+        expect(result?.title).toContain('Mujer Cruda');
+        expect(result?.alt).toContain('camiseta blanca/cruda');
+    });
+
+    it('handles non-white colors for Q4A16', () => {
+        const result = getSeoOverrides('q4a16', 'Negro');
+        expect(result?.title).toContain('Camiseta Negro');
     });
 });
