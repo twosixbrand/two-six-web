@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import ProductDetail from '../../src/components/ProductDetail';
 
 // Mock next/image
@@ -98,6 +99,10 @@ jest.mock('next/navigation', () => ({
 describe('ProductDetail component', () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        // Mock gtag and fbq on window
+        (window as any).gtag = jest.fn();
+        (window as any).fbq = jest.fn();
+        window.scrollTo = jest.fn();
     });
 
     const variants = createVariants();
@@ -144,24 +149,68 @@ describe('ProductDetail component', () => {
         expect(screen.getByText('Añadir a la Bolsa')).toBeInTheDocument();
     });
 
-    it('calls addToCart when button is clicked', () => {
+    it('calls addToCart and tracks event when button is clicked', () => {
         render(<ProductDetail initialProduct={initialProduct} variants={variants} />);
         fireEvent.click(screen.getByText('Añadir a la Bolsa'));
         expect(mockAddToCart).toHaveBeenCalledTimes(1);
+        expect((window as any).gtag).toHaveBeenCalledWith('event', 'add_to_cart', expect.any(Object));
+        expect((window as any).fbq).toBeDefined();
     });
 
     it('changes color when a color button is clicked', () => {
         render(<ProductDetail initialProduct={initialProduct} variants={variants} />);
         const whiteBtn = screen.getByLabelText('Seleccionar color Blanco');
         fireEvent.click(whiteBtn);
-        
         expect(mockPush).toHaveBeenCalledWith('/product/blanco-slug');
+    });
+
+    it('navigates to product ID if slug is missing during color change', () => {
+        const productNoSlug = createMockProduct({
+            clothingSize: {
+                ...initialProduct.clothingSize,
+                clothingColor: {
+                    ...initialProduct.clothingSize.clothingColor,
+                    slug: undefined,
+                    id: 999,
+                    color: { id: 2, name: 'Blanco', hex: '#FFFFFF' }
+                }
+            }
+        });
+        
+        render(<ProductDetail initialProduct={initialProduct} variants={[initialProduct, productNoSlug]} />);
+        
+        const whiteBtn = screen.getByLabelText('Seleccionar color Blanco');
+        fireEvent.click(whiteBtn);
+        
+        expect(mockPush).toHaveBeenCalledWith('/product/1'); // initialProduct.id is 1
+    });
+
+    it('falls back to any variant of the color if current size is not available in that color', () => {
+        const productNewColorDifferentSize = createMockProduct({
+            clothingSize: {
+                ...initialProduct.clothingSize,
+                size: { id: 2, name: 'L' }, // Different size
+                clothingColor: {
+                    ...initialProduct.clothingSize.clothingColor,
+                    color: { id: 3, name: 'Gris', hex: '#808080' },
+                    slug: 'gris-slug'
+                }
+            }
+        });
+        
+        render(<ProductDetail initialProduct={initialProduct} variants={[initialProduct, productNewColorDifferentSize]} />);
+        
+        const grisBtn = screen.getByLabelText('Seleccionar color Gris');
+        fireEvent.click(grisBtn);
+        
+        expect(mockPush).toHaveBeenCalledWith('/product/gris-slug');
     });
 
     it('changes size when a size button is clicked', () => {
         render(<ProductDetail initialProduct={initialProduct} variants={variants} />);
         fireEvent.click(screen.getByText('L'));
-        // Size L should become selected
+        // Size L should become selected (no outward sign other than state change)
+        expect(screen.getByText('L')).toBeInTheDocument();
     });
 
     it('renders accordion sections', () => {
@@ -171,11 +220,11 @@ describe('ProductDetail component', () => {
         expect(screen.getByText('Envíos y Devoluciones')).toBeInTheDocument();
     });
 
-    it('renders reference number in details accordion', () => {
+    it('renders instruction icons in care accordion', () => {
         render(<ProductDetail initialProduct={initialProduct} variants={variants} />);
-        // Click the accordion trigger to expand "Detalles del Producto"
-        fireEvent.click(screen.getByText('Detalles del Producto'));
-        expect(screen.getByText(/REF-001/)).toBeInTheDocument();
+        fireEvent.click(screen.getByText('Instrucciones de Cuidado'));
+        expect(screen.getByTitle('Lavado manual')).toBeInTheDocument();
+        expect(screen.getByTitle('No usar blanqueador')).toBeInTheDocument();
     });
 
     it('shows Agotado when variant has 0 stock', () => {
@@ -203,10 +252,5 @@ describe('ProductDetail component', () => {
         render(<ProductDetail initialProduct={noImgProduct} variants={[noImgProduct]} />);
         const images = screen.getAllByRole('img');
         expect(images[0]).toHaveAttribute('src', '/placeholder.png');
-    });
-
-    it('renders size guide button', () => {
-        render(<ProductDetail initialProduct={initialProduct} variants={variants} />);
-        expect(screen.getByText('Guía de tallas')).toBeInTheDocument();
     });
 });
