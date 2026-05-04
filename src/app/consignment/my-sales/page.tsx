@@ -543,8 +543,9 @@ export default function MySalesPage() {
               >
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-700">Monto (COP)</label>
+                    <label htmlFor="pay-amount" className="block text-sm font-medium mb-1 text-gray-700">Monto (COP)</label>
                     <input
+                      id="pay-amount"
                       type="number"
                       step="0.01"
                       value={payAmount}
@@ -554,8 +555,9 @@ export default function MySalesPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-700">Medio de pago</label>
+                    <label htmlFor="pay-method" className="block text-sm font-medium mb-1 text-gray-700">Medio de pago</label>
                     <select
+                      id="pay-method"
                       value={payMethod}
                       onChange={(e) => setPayMethod(e.target.value as any)}
                       className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
@@ -570,8 +572,9 @@ export default function MySalesPage() {
                 {payMethod === 'TRANSFERENCIA' && (
                   <>
                     <div>
-                      <label className="block text-sm font-medium mb-1 text-gray-700">Número de referencia</label>
+                      <label htmlFor="pay-ref" className="block text-sm font-medium mb-1 text-gray-700">Número de referencia</label>
                       <input
+                        id="pay-ref"
                         type="text"
                         value={payRef}
                         onChange={(e) => setPayRef(e.target.value)}
@@ -580,8 +583,9 @@ export default function MySalesPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1 text-gray-700">Comprobante de transferencia *</label>
+                      <label htmlFor="pay-file" className="block text-sm font-medium mb-1 text-gray-700">Comprobante de transferencia *</label>
                       <input
+                        id="pay-file"
                         type="file"
                         accept="image/*,.pdf"
                         onChange={(e) => setPayFile(e.target.files?.[0] || null)}

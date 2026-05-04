@@ -233,4 +233,73 @@ describe('CheckoutForm', () => {
             expect(screen.getByLabelText(/Número de Documento/i)).toHaveValue('987654');
         });
     });
+
+    it('handles customer fetch error gracefully', async () => {
+        const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        window.localStorage.setItem('customerData', JSON.stringify({ id: 1, name: 'Test' }));
+        (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Fetch failed'));
+
+        renderWithProviders(<CheckoutForm />);
+        
+        await waitFor(() => {
+            expect(screen.getByText('Método de Entrega')).toBeInTheDocument();
+        });
+        consoleSpy.mockRestore();
+    });
+
+    it('navigates to login when clicking login banner button', async () => {
+        window.localStorage.setItem('shopping-cart', JSON.stringify(mockCartItems));
+        renderWithProviders(<CheckoutForm />);
+        
+        // Wait for locations to settle to avoid act(...) warning
+        await waitFor(() => screen.getByText('Antioquia'));
+        
+        const loginBtn = screen.getByRole('button', { name: /Iniciar Sesión/i });
+        fireEvent.click(loginBtn);
+        
+        expect(mockPush).toHaveBeenCalledWith('/login');
+    });
+
+    it('handles address fetch error', async () => {
+        const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        window.localStorage.setItem('customerData', JSON.stringify({ id: 1, name: 'Test' }));
+        (global.fetch as jest.Mock)
+            .mockResolvedValueOnce({ ok: true, json: async () => ({ id: 1 }) }) // Profile
+            .mockRejectedValueOnce(new Error('Address fetch failed'));
+
+        renderWithProviders(<CheckoutForm />);
+        
+        await waitFor(() => {
+            expect(screen.getByText('Método de Entrega')).toBeInTheDocument();
+        });
+        expect(consoleSpy).toHaveBeenCalled();
+        consoleSpy.mockRestore();
+    });
+
+    it('calculates free shipping for high value orders', async () => {
+        const expensiveCart = [
+            {
+                id: 1,
+                name: 'Expensive Suit',
+                price: 200000,
+                quantity: 1,
+                clothingSize: { size: { name: 'M' }, clothingColor: { color: { name: 'Negro' } } }
+            }
+        ];
+        window.localStorage.setItem('shopping-cart', JSON.stringify(expensiveCart));
+
+        renderWithProviders(<CheckoutForm />);
+
+        await waitFor(() => screen.getByText('Antioquia'));
+        
+        // Select department and city
+        fireEvent.change(screen.getByLabelText(/Departamento/i), { target: { value: '1' } });
+        await waitFor(() => screen.getByText('Medellín'));
+        fireEvent.change(screen.getByLabelText(/Ciudad/i), { target: { value: '10' } });
+
+        // Should show "¡Envío Gratis!"
+        await waitFor(() => {
+            expect(screen.getAllByText(/¡Envío Gratis!/i).length).toBeGreaterThan(0);
+        });
+    });
 });

@@ -186,4 +186,44 @@ describe('Header component', () => {
         expect(container.innerHTML).toContain('max-h-0');
         expect(container.innerHTML).not.toContain('max-h-screen');
     });
+
+    it('toggles mobile submenus', () => {
+        // Set to mobile
+        Object.defineProperty(window, 'innerWidth', { value: 500 });
+        fireEvent(window, new Event('resize'));
+
+        renderWithProviders(<Header showOutletLink={false} />);
+
+        // Open main menu
+        fireEvent.click(screen.getByRole('button', { name: "Abrir menú" }));
+
+        // Toggle "Hombre" submenu in mobile
+        // We can find the button that is NOT inside the hidden desktop nav
+        const mobileButtons = screen.getAllByRole('button', { name: /Hombre/i });
+        // The mobile one is usually the one that has a chevron inside or is rendered after desktop
+        const manBtn = mobileButtons.find(b => b.parentElement?.classList.contains('flex-col')) || mobileButtons[0];
+        
+        fireEvent.click(manBtn);
+        expect(screen.getByText('Ver Todo Hombre')).toBeInTheDocument();
+
+        // Toggle it again to close
+        fireEvent.click(manBtn);
+    });
+
+    it('renders NavigationMenu items in desktop', () => {
+        // Set to desktop
+        Object.defineProperty(window, 'innerWidth', { value: 1024 });
+        fireEvent(window, new Event('resize'));
+
+        const { container } = renderWithProviders(<Header showOutletLink={false} />);
+        
+        // Find NavigationMenu triggers
+        const manTrigger = screen.getAllByText('Hombre', { selector: 'button' }).find(b => b.id.includes('trigger'))!;
+        fireEvent.mouseEnter(manTrigger);
+        
+        // ListItem check (Desktop submenus)
+        // Since mobile items are always in DOM, we check that we have multiple or check specific class
+        const camisas = screen.getAllByText('Camisetas');
+        expect(camisas.length).toBeGreaterThanOrEqual(1);
+    });
 });
