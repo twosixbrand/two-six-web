@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useWompiPayment } from "@/hooks/useWompiPayment";
-import { useBelvoPayment } from "@/hooks/useBelvoPayment";
 import { useCheckout } from "@/hooks/useCheckout";
 import { getDepartments, getCities, Department, City } from "@/services/locationApi";
 import { getAuthHeaders } from "@/lib/auth";
@@ -48,7 +47,7 @@ export default function CheckoutForm() {
     const [selectedAddressId, setSelectedAddressId] = useState<string>("");
 
     // Payment Method
-    const [paymentMethod, setPaymentMethod] = useState<"WOMPI_FULL" | "WOMPI_COD" | "BELVO_A2A">("WOMPI_FULL");
+    const [paymentMethod, setPaymentMethod] = useState<"WOMPI_FULL" | "WOMPI_COD">("WOMPI_FULL");
 
     // Delivery Method
     const [deliveryMethod, setDeliveryMethod] = useState<"SHIPPING" | "PICKUP">("SHIPPING");
@@ -280,15 +279,8 @@ export default function CheckoutForm() {
 
     const { createOrder, isProcessingCheckout } = useCheckout();
     const { startWompiFlow, loadingPayment } = useWompiPayment(paymentHandlers);
-    const { startBelvoFlow, isStartingBelvo } = useBelvoPayment({
-        onSuccess: (ref) => {
-            // Cuando Belvo tenga un flujo completo:
-            // router.push(`/checkout/success?orderId=${ref}`);
-        },
-        onError: (msg) => setError(msg)
-    });
 
-    const isProcessing = isProcessingCheckout || loadingPayment || isStartingBelvo;
+    const isProcessing = isProcessingCheckout || loadingPayment;
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -405,8 +397,6 @@ export default function CheckoutForm() {
 
             if (data.wompi) {
                 await startWompiFlow(data.wompi);
-            } else if (data.belvo) {
-                await startBelvoFlow(data.belvo);
             } else {
                 setError("No se recibieron datos de la pasarela de pagos.");
             }
@@ -815,31 +805,6 @@ export default function CheckoutForm() {
                                 </div>
                             </label>
 
-                            {/* Belvo Open Banking */}
-                            <label className={`relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none transition-all duration-300 ${paymentMethod === 'BELVO_A2A' ? 'border-primary ring-1 ring-primary bg-primary/5' : 'border-gray-300 hover:border-gray-400'}`}>
-                                <input
-                                    type="radio"
-                                    name="payment_method"
-                                    value="BELVO_A2A"
-                                    className="sr-only"
-                                    checked={paymentMethod === 'BELVO_A2A'}
-                                    onChange={() => setPaymentMethod('BELVO_A2A')}
-                                />
-                                <span className="flex flex-1">
-                                    <span className="flex flex-col">
-                                        <span className={`block text-sm font-medium flex items-center gap-2 ${paymentMethod === 'BELVO_A2A' ? 'text-primary' : 'text-gray-900'}`}>
-                                            Transferencia Bancaria Directa (PSE/Open Banking)
-                                            <span className="px-2 py-0.5 bg-blue-100 text-blue-700 border border-blue-200 rounded-full text-[10px] uppercase tracking-wider font-bold">Recomendado</span>
-                                        </span>
-                                        <span className="mt-1 flex items-center text-sm text-gray-500">Paga de forma rápida y segura directamente desde la app de tu banco usando Belvo.</span>
-                                    </span>
-                                </span>
-                                <div className={`mt-2 h-5 w-5 rounded-full border flex items-center justify-center shrink-0 transition-colors ${paymentMethod === 'BELVO_A2A' ? 'border-primary bg-primary text-white' : 'border-gray-300 bg-white'}`}>
-                                    {paymentMethod === 'BELVO_A2A' && (
-                                        <svg className="h-3 w-3 fill-current" viewBox="0 0 12 12"><path d="M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z" /></svg>
-                                    )}
-                                </div>
-                            </label>
 
                             {deliveryMethod === "SHIPPING" && !isFreeShipping && (
                                 <label className={`relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none ${paymentMethod === 'WOMPI_COD' ? 'border-amber-500 ring-1 ring-amber-500 bg-amber-50/50' : 'border-gray-300'}`}>
