@@ -791,9 +791,7 @@ export default function CheckoutForm() {
                                     <span className="flex flex-col">
                                         <span className={`block text-sm font-medium ${paymentMethod === 'WOMPI_FULL' ? 'text-primary' : 'text-gray-900'}`}>
                                             Pago en Línea Completo
-                                            {process.env.NEXT_PUBLIC_WOMPI_SOLO_TARJETAS_CREDITO === 'true' && (
-                                                <span className="ml-2 text-[10px] uppercase tracking-wider bg-gray-200 text-gray-700 px-2 py-0.5 rounded">Solo Tarjetas de Crédito</span>
-                                            )}
+
                                         </span>
                                         <span className="mt-1 flex items-center text-sm text-gray-500">Paga el total del pedido de forma segura a través de Wompi.</span>
                                     </span>

@@ -202,10 +202,7 @@ export const useWompiPayment = ({ onSuccess, onError, onCancel }: UseWompiPaymen
                     : {}),
             };
 
-            // Restringir a solo tarjetas de crédito si la variable de entorno está activa
-            if (process.env.NEXT_PUBLIC_WOMPI_SOLO_TARJETAS_CREDITO === 'true') {
-                checkoutConfig.paymentMethods = ['CARD'];
-            }
+
 
             const integritySignature = wompi.integritySignature || wompi.integrity_signature;
             if (integritySignature) {
