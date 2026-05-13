@@ -1,20 +1,7 @@
 "use server";
 
 import { logError } from "@/lib/actions/error";
-import nodemailer from "nodemailer";
 import { headers } from "next/headers";
-
-/**
- * Escapa caracteres HTML peligrosos para prevenir inyección HTML en emails.
- */
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
 
 export interface FormState {
   success: boolean;
@@ -109,25 +96,20 @@ export async function sendContactEmail(
     return { success: false, message: "Uno de los campos excede la longitud permitida." };
   }
 
-  const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_SERVER_HOST,
-    port: Number(process.env.EMAIL_SERVER_PORT),
-    secure: true,
-    auth: {
-      user: process.env.EMAIL_SERVER_USER,
-      pass: process.env.EMAIL_SERVER_PASSWORD,
-    },
-  });
-
   try {
-    await transporter.sendMail({
-      from: `"${escapeHtml(name)}" <${process.env.EMAIL_SERVER_USER}>`,
-      to: process.env.EMAIL_TO,
-      replyTo: email,
-      subject: `Nuevo mensaje de contacto de ${escapeHtml(name)}`,
-      text: message,
-      html: `<p>Has recibido un nuevo mensaje de tu tienda:</p><p><strong>Nombre:</strong> ${escapeHtml(name)}</p><p><strong>Email:</strong> ${escapeHtml(email)}</p><p><strong>Mensaje:</strong></p><p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>`,
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
+    const res = await fetch(`${apiUrl}/contact`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name, email, message }),
     });
+
+    if (!res.ok) {
+      throw new Error(`Error del servidor: ${res.statusText}`);
+    }
+
     return { success: true, message: "¡Mensaje enviado con éxito!" };
   } catch (error) {
     console.error("Error al enviar email de contacto:", error);
