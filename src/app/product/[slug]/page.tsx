@@ -5,7 +5,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import { notFound, permanentRedirect } from "next/navigation";
 import { getSeoOverrides } from '@/utils/seoDictionary';
 
-export const revalidate = 3600; // ISR: regenerate every hour
+export const revalidate = 60; // ISR: regenerate every minute
 
 // Pre-generate static pages for all known product slugs at build time
 export async function generateStaticParams() {
